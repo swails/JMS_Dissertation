@@ -1,5 +1,7 @@
 PAPER=JMS_Dissertation
 
+install: paper
+
 clean:
 	/bin/rm -f *.aux *.log *~ $(PAPER).dvi *.sty *.def $(PAPER).pdf \
 	        *.ilg $(PAPER).lof $(PAPER).lot $(PAPER).blg $(PAPER).out \
@@ -17,3 +19,4 @@ paper: clean
 	-bibtex $(PAPER)
 	-dvipdfmx $(PAPER).dvi
 	/bin/rm *.sty *.def
+
