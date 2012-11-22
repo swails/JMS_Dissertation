@@ -1,21 +1,57 @@
 \chapter{INTRODUCTION}
 
-\section{Introduction}%
-This and that
-\section{Getting Started}
-This and that
-\section{Basic Tools Needed}
-This, that and the other
-\subsection{Required Files and Programs} %
-List them out now...
- \begin{enumerate} %
-    \item this \vspace{-10pt}%
-    \item that \vspace{-10pt}
-    \item other \vspace{-10pt}%
- \end{enumerate}
+\section{Origins of Computational Chemistry}
+The seeds of computational chemistry were sown in the mid-1800s with Ludwig
+Eduard Boltzmann's formulation of \textit{statistical mechanics}. In an era when
+the existence of atoms and molecules was hotly disputed within the physics
+community, Boltzmann fathered a theory in which the behavior and interaction of
+individual atoms or molecules on the microscopic scale could be used to
+describe and predict macroscopic phenomena. Using his theorems and equations,
+it became possible to reduce the problem of simulating $\sim 10^{23}$ molecules
+to simulating $\sim ~1$ molecule. Boltzmann used this to great effect in
+describing and deriving previously-known, phenomenological equations for ideal
+gases, such as the widely known equation of state, $P V = n R T$. All that
+remains is the proper description of atoms and molecules on the microscopic
+scale.
 
-We will indent now...
+The theories required to accurately model the behavior of individual atoms
+interacting with each other and their surroundings would not be developed until
+the first half of the $20^{th}$ century with the advent of \textit{quantum
+mechanics}. The limits of classical mechanics became apparent when considering
+the Rayleigh-Jeans formula for calculating the spectral emission of a radiating
+black body. The Rayleigh-Jeans law, given by equation \ref{eq:RayleighJeans} and
+completely derived from the laws of classical mechanics, predicts infinite
+emission at high frequencies---a clear violation of the well-established law of
+conservation of energy that directly contradicts well-established experimental
+observations.
+\begin{equation}
+   B_{\nu} (T)  = \frac{2 \nu^2 k T} {c^2}
+   \label{eq:RayleighJeans}
+\end{equation}
+To address this apparent disparity, Max Planck suggested that the error in the
+classical mechanical approach was to assume a continuous emission spectrum.
+Instead, Planck suggested that the emission spectra was quantized, leading to an
+equation that agreed much closer with experiment. This idea of quantized energy
+emissions, while developed to reconcile the mathematics of black-body radiation
+with experimental measurements, would forever change our understanding of the
+microscopic world.
 
-\subsection{Optional Files and Programs}
+As quantum mechanics matured, our ability to explain and predict behavior at the
+atomic scale dramatically improved. In 1929, Paul Dirac proclaimed, ``The
+fundamental laws necessary for the mathematical treatment of a large part of
+physics and the whole of chemistry are thus completely known, and the difficulty
+lies only in the fact that the application of these laws leads to equations that
+are too complex to be solved.'' Even approximations designed to simplify the
+equations of quantum mechanics in molecular systems resulted in computations too
+complex to apply to all but the simplest systems. With the fundamental theory
+necessary to describe single molecules and the machinery required to extend
+that description to experimental measurements now established, computers
+provided the catalyst that thrust theoretical chemistry into a prominent role in
+the field.
 
-All you need is Amber!
+The next sections will describe the theory of quantum mechanics and the
+approximations typically employed to simplify its equations followed by
+statistical mechanics.
+
+\section{Quantum Mechanics}
+
