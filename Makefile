@@ -15,9 +15,9 @@ paper: clean
 	@for f in STYS/*; do ln -s $$f; done
 	-cp YorkLib.bib $(PAPER).bib
 	-cat Extra.bib >> $(PAPER).bib
-	-pdflatex $(PAPER).tex
-	-pdflatex $(PAPER).tex
-	-pdflatex $(PAPER).tex
+	-yes s | pdflatex $(PAPER).tex
+	-yes s | pdflatex $(PAPER).tex
+	-yes s | pdflatex $(PAPER).tex
 	-bibtex $(PAPER)
 	-dvipdfmx $(PAPER).dvi
 	/bin/rm *.sty *.def $(PAPER).bib

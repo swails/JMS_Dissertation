@@ -55,15 +55,23 @@ statistical mechanics.
 
 \section{Quantum Mechanics}
 Twenty years after Planck introduced the idea of quantized oscillators to
-explain black-body radiation, Erwin Schr\"{o}dinger introduced a wave equation
-formulation of quantum mechanics based, resulting in equation
-\ref{eq:TimeDependentSchrodinger}. \cite{Schrodinger1926}
+explain black-body radiation, Erwin Schr\"odinger introduced a wave equation
+formulation of quantum mechanics. \cite{Schrodinger1926} Schr\"odinger's
+equation (\ref{eq:TimeDependentSchrodinger}) bears a strong resemblance
+to Hamilton's formulation of classical mechanics by employing an analogous
+\textit{Hamiltonian} operator comprised of a kinetic energy term (related to
+the momentum operator) and a potential energy term.
 \begin{equation}
-   \imath \hbar \frac {\partial} {\partial t} \Psi = \hat{H} \Psi
+   i \hbar \frac {\partial} {\partial t} \Psi  =  \hat{H} \Psi(\vec{x}, t)
+         =  \left ( - \frac {\hbar^2} {2m} \bigtriangledown^2 + V(\vec{x}, t)
+           \right ) \Psi(\vec{x}, t)
    \label{eq:TimeDependentSchrodinger}
 \end{equation}
-where $\imath$ is $\sqrt {-1}$, $\hbar$ is Planck's constant divided by $2 \pi$,
-$\hat H$ is the Hamiltonian operator, and $\Psi$ is the wavefunction.
+where $V(\vec{x}, t)$ is the potential energy function, and $\Psi$ is the
+wavefunction.
+
+The wavefunction is the central object of Schr\"odinger's equation, and contains
+all of the information and properties inherent to the system. All
 
 \subsection{Ab Initio Quantum Mechanics}
 
