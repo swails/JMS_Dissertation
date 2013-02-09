@@ -8,22 +8,21 @@ community, Boltzmann fathered a theory in which the behavior and interaction of
 individual atoms or molecules on the microscopic scale could be used to
 describe and predict macroscopic phenomena. Using his theorems and equations,
 it became possible to reduce the problem of simulating $\sim 10^{23}$ molecules
-to simulating $\sim ~1$ molecule. Boltzmann used this to great effect in
+to simulating $\sim 1$ molecule. Boltzmann used this to great effect in
 describing and deriving previously-known, phenomenological equations for ideal
 gases, such as the widely known equation of state, $P V = n R T$. All that
-remains is the proper description of atoms and molecules on the microscopic
-scale.
+remains to provide the foundation for using molecular simulations is the proper
+description of atoms and molecules on the microscopic scale.
 
 The theories required to accurately model the behavior of individual atoms
 interacting with each other and their surroundings would not be developed until
 the first half of the $20^{th}$ century with the advent of \textit{quantum
 mechanics}. The limits of classical mechanics became apparent when considering
 the Rayleigh-Jeans formula for calculating the spectral emission of a radiating
-black body. The Rayleigh-Jeans law, given by equation \ref{eq:RayleighJeans} and
+black body. The Rayleigh-Jeans law, given by Eq. \ref{eq:RayleighJeans} and
 completely derived from the laws of classical mechanics, predicts infinite
 emission at high frequencies---a clear violation of the well-established law of
-conservation of energy that directly contradicts well-established experimental
-observations.
+conservation of energy that directly contradicts experimental observations.
 \begin{equation}
    B_{\nu} (T)  = \frac{2 \nu^2 k T} {c^2}
    \label{eq:RayleighJeans}
@@ -51,32 +50,96 @@ the field.
 
 The next sections will describe the theory of quantum mechanics and the
 approximations typically employed to simplify its equations, followed by
-statistical mechanics.
+a description of statistical mechanics.
 
-\section{Quantum Mechanics}
+\subsection{Quantum Mechanics}
+
 Twenty years after Planck introduced the idea of quantized oscillators to
 explain black-body radiation, Erwin Schr\"odinger introduced a wave equation
-formulation of quantum mechanics. \cite{Schrodinger1926} Schr\"odinger's
-equation (\ref{eq:TimeDependentSchrodinger}) bears a strong resemblance
-to Hamilton's formulation of classical mechanics by employing an analogous
-\textit{Hamiltonian} operator comprised of a kinetic energy term (related to
-the momentum operator) and a potential energy term.
-\begin{equation}
-   i \hbar \frac {\partial} {\partial t} \Psi  =  \hat{H} \Psi(\vec{x}, t)
-         =  \left ( - \frac {\hbar^2} {2m} \bigtriangledown^2 + V(\vec{x}, t)
-           \right ) \Psi(\vec{x}, t)
-   \label{eq:TimeDependentSchrodinger}
-\end{equation}
-where $V(\vec{x}, t)$ is the potential energy function, and $\Psi$ is the
-wavefunction.
+formulation of quantum mechanics (QM). \cite{Schrodinger1926} Schr\"odinger's
+equation (Eq. \ref{eq:SchrodingerEquation}) bears a strong resemblance to
+Hamilton's formulation of classical mechanics by employing an analogous
+\textit{Hamiltonian} operator comprised of a kinetic energy term (related to the
+momentum operator) and a potential energy term.
+\begin{align}
+   E \Psi(\vec{x}, t) & = \hat{H} \Psi(\vec{x}) \nonumber \\
+   & = \left ( -\frac {\hbar ^ 2} {2 m} \bigtriangledown ^ 2 + V(\vec{x})
+   \right) \Psi(\vec{x})
+   \label{eq:SchrodingerEquation}
+\end{align}
+where $E$ is the total energy, $\hat{H}$ is the Hamiltonian operator, and
+$\Psi(\vec{x}, t)$ is the wavefunction---the central object of Schr\"odinger's
+equation containing all of the information and properties inherent to the
+system.
 
-The wavefunction is the central object of Schr\"odinger's equation, and contains
-all of the information and properties inherent to the system. All
+Equation \ref{eq:SchrodingerEquation} is a special form of Schr\"odinger's
+equation corresponding to a stationary state (\ie the potential function is
+time-independent, so the energy for that state is constant). In chemistry when
+we wish to calculate observable properties of a system composed of atoms, the
+kinetic energy is the sum of the kinetic energies of the atomic particles in the
+system, and the potential energy is calculated as the interaction of all charged
+particles---protons and electrons---in the electric field they create.
 
-\subsection{Ab Initio Quantum Mechanics}
+The wavefunction contains all of the information about each of the particles in
+the system. As the number of particles in the system increases, so too does the
+complexity of wavefunction and the effort required to solve Eq.
+\ref{eq:SchrodingerEquation}. Therefore, we turn to a number of approximations
+developed to simplify computing a solution to Schr\"odinger's equation.
 
-\subsection{Semi-empirical Quantum Mechanics}
+\subsubsection{Born-Oppenheimer Approximation}
 
-\subsection{Density Functional Theory}
+The Born-Oppenheimer approximation (BOA) is almost ubiquitous in the field.
+Electrons can move far more rapidly than nucleons since electrons are roughly
+\mbox{1 000} times lighter. This implies that electrons can reorganize around
+moving nuclei so quickly that nuclear protons are always subject to the
+potential from the average electric field generated by the electrons.
 
-\section{Statistical Mechanics}
+Using the BOA, the wavefunction of a molecular system can be separated into two
+parts: an electronic part where the nuclei are treated as fixed point charges,
+and a nuclear part where the electrons are treated as a mean field.
+\cite{McQuarrie_PhysChem_1997} So critical is the BOA to computational chemistry
+that it appears at the heart of nearly every aspect of the field.
+
+The next section refers to techniques in computational chemistry dealing with
+the solving the electronic wavefunction.
+
+\subsubsection{Computational Quantum Mechanics}
+
+The main goal of most QM calculations in chemistry and molecular physics is to
+determine atomic and molecular properties of the system by estimating the
+electronic part of the wavefunction from the BOA. These calculations have
+provided valuable assistance to experimental investigations. QM calculations
+can provide reliable measurements of molecular geometries,
+\cite{Jeletic_JOrganometChem_2011_v696_p3127} potential and free energy barriers
+of chemical reactions, \cite{Chandrasekhar_JAmChemSoc_1985_v107_p154} ionization
+energies, \cite{Watson_ChemPhysLett_2013_v555_p235} proton affinities and
+gas-phase basicities \cite{Range_PhysChemChemPhys_2005_v7_p3070}, and much more.
+\cite{Hehre_Ab_initio_MO_Theory_Book_1986}
+
+These calculations are becoming routine as more and more experimental studies
+employ some form of calculation to help interpret results or strengthen
+conclusions. Despite all their successes and the rapid increase of computational
+power over recent years, however, the computational demands of QM methods remain
+prohibitively high for systems with more than 100 -- 200 atoms. Furthermore for
+researchers interested in these large systems, calculations on a single
+arrangement of atomic nuclei becomes increasingly insufficient to quantify the
+behavior of those systems.
+
+For such applications, we turn our attention back to statistical mechanics with
+the aim of ultimately applying those principles to molecular mechanical
+simulations of large molecules that often contain thousands---even hundreds of
+thousands---of atoms.
+
+\subsection{Statistical Mechanics}
+
+Armed with very accurate models describing how atoms and molecules behave and
+interact at a molecular level, we are ready to apply the principles of
+statistical mechanics to predict macroscopically observable phenomena. To begin,
+we will start with the idea of an \emph{ensemble}.
+
+Substances that we see are composed of billions of billions of individual atoms.
+The number of atoms contained in things we interact with every day is so large
+that chemists invented the \emph{mole} in order to work with more manageable
+numbers. Similar in concept to the dozen, a mole is a collection of $6.022
+\times 10 ^ {23}$ `things'---it is the number of $^{12}C$ atoms in exactly 12
+grams of carbon.
