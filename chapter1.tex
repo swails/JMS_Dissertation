@@ -19,13 +19,13 @@ interacting with each other and their surroundings would not be developed until
 the first half of the $20^{th}$ century with the advent of \textit{quantum
 mechanics}. The limits of classical mechanics became apparent when considering
 the Rayleigh-Jeans formula for calculating the spectral emission of a radiating
-black body. The Rayleigh-Jeans law, given by Eq. \ref{eq:RayleighJeans} and
+black body. The Rayleigh-Jeans law, given by Eq. \ref{eq1:RayleighJeans} and
 completely derived from the laws of classical mechanics, predicts infinite
 emission at high frequencies---a clear violation of the well-established law of
 conservation of energy that directly contradicts experimental observations.
 \begin{equation}
    B_{\nu} (T)  = \frac{2 \nu^2 k T} {c^2}
-   \label{eq:RayleighJeans}
+   \label{eq1:RayleighJeans}
 \end{equation}
 To address this apparent disparity, Max Planck suggested that the error in the
 classical mechanical approach was to assume a continuous emission spectrum.
@@ -57,7 +57,7 @@ a description of statistical mechanics.
 Twenty years after Planck introduced the idea of quantized oscillators to
 explain black-body radiation, Erwin Schr\"odinger introduced a wave equation
 formulation of quantum mechanics (QM). \cite{Schrodinger1926} Schr\"odinger's
-equation (Eq. \ref{eq:SchrodingerEquation}) bears a strong resemblance to
+equation (Eq. \ref{eq1:SchrodingerEquation}) bears a strong resemblance to
 Hamilton's formulation of classical mechanics by employing an analogous
 \textit{Hamiltonian} operator comprised of a kinetic energy term (related to the
 momentum operator) and a potential energy term.
@@ -65,14 +65,14 @@ momentum operator) and a potential energy term.
    E \Psi(\vec{x}, t) & = \hat{H} \Psi(\vec{x}) \nonumber \\
    & = \left ( -\frac {\hbar ^ 2} {2 m} \bigtriangledown ^ 2 + V(\vec{x})
    \right) \Psi(\vec{x})
-   \label{eq:SchrodingerEquation}
+   \label{eq1:SchrodingerEquation}
 \end{align}
 where $E$ is the total energy, $\hat{H}$ is the Hamiltonian operator, and
 $\Psi(\vec{x}, t)$ is the wavefunction---the central object of Schr\"odinger's
 equation containing all of the information and properties inherent to the
 system.
 
-Equation \ref{eq:SchrodingerEquation} is a special form of Schr\"odinger's
+Equation \ref{eq1:SchrodingerEquation} is a special form of Schr\"odinger's
 equation corresponding to a stationary state (\ie the potential function is
 time-independent, so the energy for that state is constant). In chemistry when
 we wish to calculate observable properties of a system composed of atoms, the
@@ -83,7 +83,7 @@ particles---protons and electrons---in the electric field they create.
 The wavefunction contains all of the information about each of the particles in
 the system. As the number of particles in the system increases, so too does the
 complexity of wavefunction and the effort required to solve Eq.
-\ref{eq:SchrodingerEquation}. Therefore, we turn to a number of approximations
+\ref{eq1:SchrodingerEquation}. Therefore, we turn to a number of approximations
 developed to simplify computing a solution to Schr\"odinger's equation.
 
 \subsubsection{Born-Oppenheimer Approximation}
@@ -148,12 +148,12 @@ provided by Gibbs. The experimental value of any system in the lab is postulated
 to be equal to the value of that mechanical observable averaged over every
 member of the ensemble. \cite{McQuarrie_Book_StatMech_1973} By knowing the
 probability of finding a member of an ensemble with a given set of properties,
-this ensemble average can be calculated according to Eq. \ref{eq:EnsembleAvg}.
+this ensemble average can be calculated according to Eq. \ref{eq1:EnsembleAvg}.
 
 \begin{align}
    \left < A \right > & = \frac {\sum_a W(a) A(a)} {\sum_a W(a)} \nonumber \\
                       & = \sum_a P(a) A(a)
-   \label{eq:EnsembleAvg}
+   \label{eq1:EnsembleAvg}
 \end{align}
 where $W(a)$ can be thought of as the number of states in the ensemble with the
 same value for the property of $A$. $P(a)$ is the normalized probability for
@@ -183,22 +183,22 @@ mathematically.
 
 The link between these ensembles and thermodynamics is the natural logarithm of
 the \emph{partition function}, which happens to be the normalization constant
-from Eq. \ref{eq:EnsembleAvg} for each of the ensembles. The partition functions
-of the common ensembles are shown below in Eqs. \ref{eq:MicrocanonicalPF} to
-\ref{eq:IsobaricIsothermPF}.
+from Eq. \ref{eq1:EnsembleAvg} for each of the ensembles. The partition
+functions of the common ensembles are shown below in Eqs.
+\ref{eq1:MicrocanonicalPF} to \ref{eq1:IsobaricIsothermPF}.
 
 \begin{align}
    \text{Microcanonical} && \Omega(N, V, E) & = \omega(E) 
-      \label{eq:MicrocanonicalPF} \\
+      \label{eq1:MicrocanonicalPF} \\
    \text{Canonical} && Q(N, V, T) & = \sum_E \Omega(N, V, E) 
                \exp(-\beta E) 
-               \label{eq:CanonicalPF} \\
+               \label{eq1:CanonicalPF} \\
    \text{Grand Canonical} && \Xi(\mu, V, T) & = \sum _ N 
                Q(N, V, T) \exp(\beta \mu N) 
-               \label{eq:GrandCanonicalPF} \\
+               \label{eq1:GrandCanonicalPF} \\
    \text{Isobaric-Isothermal} && \Delta(N, p, T) & = \sum _ V
                Q(N, V, T) \exp(-\beta p V)
-               \label{eq:IsobaricIsothermPF}
+               \label{eq1:IsobaricIsothermPF}
 \end{align}
 where $\omega$ is the total number of states with a given energy and $\beta$ is
 $1 / k_BT$. According to the principle of equal \emph{a priori} probabilities,
@@ -207,18 +207,18 @@ reason that there is no reason to assume otherwise.
 
 The logarithm of the partition function for each ensemble is directly
 proportional to the thermodynamic function that has the same set of `natural'
-variables. These connections are summarized below in Eqs. \ref{eq:ThermoLink1}
-to \ref{eq:ThermoLink4}. \cite{McQuarrie_Book_StatMech_1973}
+variables. These connections are summarized below in Eqs. \ref{eq1:ThermoLink1}
+to \ref{eq1:ThermoLink4}. \cite{McQuarrie_Book_StatMech_1973}
 
 \begin{align}
    \text{Microcanonical} && S & = k \ln \left ( \Omega (N, V, E) \right ) 
-      \label{eq:ThermoLink1} \\
+      \label{eq1:ThermoLink1} \\
    \text{Canonical} && A & = -kT \ln \left ( Q (N, V, T) \right ) 
-      \label{eq:ThermoLink2} \\
+      \label{eq1:ThermoLink2} \\
    \text{Grand Canonical} && p V & = kT \ln \left ( \Xi (\mu, V, T) \right ) 
-      \label{eq:ThermoLink3} \\
+      \label{eq1:ThermoLink3} \\
    \text{Isobaric Isothermal} && G & = - kT \ln \left ( \Delta (N, p, T) \right )
-      \label{eq:ThermoLink4}
+      \label{eq1:ThermoLink4}
 \end{align}
 
 With the link to classical thermodynamics now firmly established through the
@@ -229,7 +229,7 @@ efficiently estimate the partition function.
 
 Significant effort in computational chemistry centers on estimating the
 canonical partition function $Q(N, V, T)$. The na\"ive approach to calculate the
-sum in \ref{eq:CanonicalPF} would be to calculate the degeneracy of each energy
+sum in \ref{eq1:CanonicalPF} would be to calculate the degeneracy of each energy
 level ($\Omega(N, V, E)$) and scale it with the exponential weighting factor
 ($\exp(-\beta E)$) called the \emph{Boltzmann factor}. Due to the immeasurable
 size of $\Omega(N, V, E)$, however, this approach is highly inefficient in
@@ -238,48 +238,50 @@ result in terms that contribute very little to the partition function.
 
 The next sections will discuss the various methods used to efficiently
 approximate partition functions. Because it is infeasible to calculate the full
-sums in Eqs. \ref{eq:MicrocanonicalPF} to \ref{IsobaricIsothermPF}, they are
-estimated using a representative subsample of the available points to construct
-the needed distributions. The strategies of generating these subsamples are
-collectively referred to as \emph{sampling}. The two most common
+sums in Eqs. \ref{eq1:MicrocanonicalPF} to \ref{eq1:IsobaricIsothermPF}, they
+are estimated using a representative subsample of the available points to
+construct the needed distributions. The strategies of generating these
+subsamples are collectively referred to as \emph{sampling}. The two most common
 approaches---Monte Carlo and Molecular Dynamics---are discussed in the following
 sections.
 
 \subsubsection{Monte Carlo}
 
-One approach to approximating Eq. \ref{eq:CanonicalPF}, called \emph{Monte
-Carlo} sampling, is to select new configurations of atomic positions at random
-in the molecular system, evaluate the energy of that structure, and add it to
-the sum of the partition function. This is equivalent to reorganizing the sum in
-Eq. \ref{eq:CanonicalPF} to sum over individual states rather than energy
-levels. Eq. \ref{eq:CanonicalPF} is then estimated as
+One approach to approximating Eq. \ref{eq1:CanonicalPF}, called \emph{Monte
+Carlo} (MC) sampling, is to select new configurations of atomic positions at
+random in the molecular system, evaluate the energy of that structure, and add
+it to the sum of the partition function. This is equivalent to reorganizing the
+sum in Eq. \ref{eq1:CanonicalPF} to sum over individual states rather than
+energy levels. Eq. \ref{eq1:CanonicalPF} is then estimated as
 \begin{equation}
    Q(N, V, T) \approx \sum_{i=1}^{N_{samples}} \exp(-\beta E_i)
-   \label{eq:MonteCarloCanonicalPF}
+   \label{eq1:MonteCarloCanonicalPF}
 \end{equation}
 
 Because we assume no prior knowledge of phase space beforehand, using random
-configurations in Monte Carlo sampling is critical to avoid introducing bias
-into the subsample. The Monte Carlo approach to approximating the partition
-function proves to be highly inefficient. Most random atom configurations in a
-chemical system correspond to species that are chemically ridiculous and
-contribute $\sim 0$ to the partition function.
+configurations in MC sampling is critical to avoid introducing bias into the
+subsample. The MC approach to approximating the partition function proves to be
+highly inefficient. Most random atom configurations in a chemical system
+correspond to species that are chemically ridiculous and contribute $\sim 0$ to
+the partition function.
 
 For example, consider characterizing the phase space of an ethane molecule using
-Monte Carlo. A random configuration is generated by placing both carbon atoms
-and all six hydrogen atoms at a random point in space, evaluating the energy of
-that configuration using a QM calculation, and adding that term to the summation
-in Eq. \ref{eq:MonteCarloCanonicalPF}. Figure \ref{fig:EthaneMC} depicts two
+MC. A random configuration is generated by placing both carbon atoms and all six
+hydrogen atoms at a random point in space, evaluating the energy of that
+configuration using a QM calculation, and adding that term to the summation in
+Eq. \ref{eq1:MonteCarloCanonicalPF}. Figure \ref{fig:EthaneMC} depicts two
 conformations of ethane with an equal probability of being chosen and added to
-the summation in Eq. \ref{eq:MonteCarloCanonicalPF}. Of the two conformations,
+the summation in Eq. \ref{eq1:MonteCarloCanonicalPF}. Of the two conformations,
 only one will have an energy low enough to contribute significantly to the $Q(N,
 V, T)$. It should be easy to see that there are far more chemically absurd
-arrangements of the atoms in ethane than chemically reasonable ones.
+arrangements of the atoms in ethane than chemically reasonable ones (try
+throwing eight darts at a dartboard while blindfolded and see how often a
+configuration resembles an ethane molecule).
 
 \begin{figure}
-   \includegraphics[width=6.5in]{EthaneMC.eps}
+   \includegraphics[width=6.5in]{EthaneMC.ps}
    \caption{Two conformations of a molecule of ethane. The conformation on the
-            right is the typical `staggered' conformation known to be the
+            left is the typical `staggered' conformation known to be the
             lowest-energy structure. The structure on the right is an absurd
             conformation that is never found experimentally. While the structure
             on the right contributes negligibly to the partition function, it is
@@ -288,16 +290,99 @@ arrangements of the atoms in ethane than chemically reasonable ones.
    \label{fig:EthaneMC}
 \end{figure}
 
-While Monte Carlo suffers severe limitations,
+While MC suffers severe limitations,
 \citeauthor{Metropolis_JChemPhys_1953_v21_p1087} proposed a modification to the
-traditional Monte Carlo approach that helped alleviate many of the problems
-described above. \cite{Metropolis_JChemPhys_1953_v21_p1087} This variant,
-described below, is called \emph{Metropolis Monte Carlo} after the method's
-architect.
+traditional MC approach that helped alleviate many of the problems described
+above. \cite{Metropolis_JChemPhys_1953_v21_p1087} This variant, described below,
+is called \emph{Metropolis Monte Carlo} after the method's architect.
 
 \subsubsection*{Metropolis Monte Carlo}
 
-\subsection{The Ergodic Hypothesis and Molecular Dynamics}
+Metropolis's great breakthrough in MC methods is a subtle change to the standard
+approach. Instead of generating random structures and adding them all to the
+ensemble with a weight equal to the Boltzmann factor, random structures are
+generated and accepted as \emph{full} members of the ensemble with a probability
+proportional to the Boltzmann factor. This way, lower-energy structures are more
+likely to be added to the ensemble than higher-energy structures, since the
+probability of accepting the former into the ensemble is significantly greater.
+
+In practice, an ensemble is built using Metropolis MC by constructing a chain of
+states beginning with some initial structure. The `next' structure is generated
+randomly and accepted into the ensemble with a probability that ensures the
+constructed ensemble reproduces the correct probability distributions for each
+state. The process of generating a random conformation and evaluating its
+acceptance into the ensemble is called a \emph{trial move}.
+
+The resulting chain of states generated by Metropolis MC is called a
+\emph{Markov chain}, and it has two important qualities. First, trial moves are
+generated via a finite set of available, predetermined moves that cannot change
+as the Markov chain grows. Second, a Markov chain is said to be
+memoryless---that is, the probability of accepting a proposed structure depends
+\emph{only} on the current state and not on any other state that has come
+before. Because thermodynamics deals with chemical equilibria, an ensemble built
+from a Markov chain of states needs an additional property---reversibility.
+
+A reversible Markov chain needs to satisfy the additional constraint of
+reversibility. A reversible Markov chain obeys \emph{detailed balance}, a
+relationship shown in Eq. \ref{eq1:DetailedBalance}.
+\begin{equation}
+   p_i \pi_{i \rightarrow j} = p_j \pi_{i \rightarrow j}
+   \label{eq1:DetailedBalance}
+\end{equation}
+where $p_i$ is the probability of being in state $i$ and $\pi_{i \rightarrow j}$
+is the probability of accepting the proposed change of going to state $j$ from
+state $i$ (called the \emph{transition probability}). The detailed balance
+condition in a Markov chain asserts an equilibrium between all states in the
+chain. Eq. \ref{eq1:DetailedBalance} is nothing more than a common equilibrium
+expression encountered in general chemistry where $p_i$ is the `concentration'
+of state $i$ in the Markov chain and the transition probability is the `rate' of
+changing from state $i$ to state $j$.
+
+The last remaining detail of Metropolis MC is to define a transition probability
+equation that satisfies detailed balance. For the canonical ensemble, where the
+probability of being in state $i$ is proportional to the Boltzmann factor, Eq.
+\ref{eq1:MetropolisMC} satisfies detailed balance.
+\begin{equation}
+   \pi_{i \rightarrow j} = \min \left \lbrace 1, \frac {\exp ( -\beta E _ i )}
+                         {\exp ( -\beta E _ j ) } \right \rbrace
+   \label{eq1:MetropolisMC}
+\end{equation}
+Eq. \ref{eq1:MetropolisMC} can be inserted into Eq. \ref{eq1:DetailedBalance} to
+verify that this choice for the transition probability satisfies detailed
+balance and therefore results in a reversible Markov chain. Models using the
+Metropolis MC approach instead of traditional MC are far more efficient---so
+much so that Monte Carlo is often synonymous with Metropolis Monte Carlo,
+\cite{Tuckerman_Book_StatMech_TheoryAndSim,Leach_Book_MolModel_2001} and that
+convention will be adopted for the rest of this dissertation.
+
+One concern that Metropolis MC does not address, however, is the propensity for
+random choices to result in meaningless structures. This is alleviated by
+starting from a chemically reasonable structure and limiting the magnitude of
+the structure differences allowed in each trial move---a technique referred to
+as \emph{importance sampling}. The step size becomes a tunable parameter of the
+method. If it is too small, then it will take a long time to fill the ensemble
+with different structures. However, if it is too large, the likelihood of
+proposing reasonable structures will drop off and the acceptance rate will
+suffer.
+
+\subsection{Molecular Dynamics and the Ergodic Hypothesis}
+
+An alternative method for constructing a statistical ensemble of states, called
+\emph{molecular dynamics} (MD), corresponds to generating structures by
+integrating the equations of motion for molecular systems and building ensembles
+from the resulting trajectories. The idea that a time-average over a trajectory
+is equal to an ensemble average is called the \emph{ergodic hypothesis}, and is
+the cornerstone of the MD methods that have become some of the most useful tools
+in computational studies of molecular systems.
+
+The most common equations of motion used in MD simulations are those from
+classical mechanics. The force on each atomic nucleus is calculated as the
+gradient of the potential energy function $U(\vec{x})$ at the nuclear centers
+and then integrated numerically according to Newton's laws. A discussion of
+computational MD and numerical integration of the classical equations of motion
+is presented in \ref{appendixA}.
+
+\subsection{An Example}
 
 \section{Molecular Mechanics}
 
