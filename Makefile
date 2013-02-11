@@ -11,14 +11,13 @@ veryclean: clean
 	/bin/rm -f *.bbl
 
 paper: clean
+	-/bin/rm -f $(PAPER).bib
 	@for f in DEFS/*; do ln -s $$f; done
 	@for f in STYS/*; do ln -s $$f; done
-	-cp YorkLib.bib $(PAPER).bib
+	-cp $(GIT_HOME)/Bibliography/BibTeX/YorkLib.bib $(PAPER).bib
 	-cat Extra.bib >> $(PAPER).bib
 	-yes s | pdflatex $(PAPER).tex
 	-yes s | pdflatex $(PAPER).tex
 	-yes s | pdflatex $(PAPER).tex
 	-bibtex $(PAPER)
 	-dvipdfmx $(PAPER).dvi
-	/bin/rm *.sty *.def $(PAPER).bib
-
