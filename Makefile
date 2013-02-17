@@ -2,6 +2,8 @@ PAPER=JMS_Dissertation
 
 install: paper
 
+dissertation: paper
+
 clean:
 	/bin/rm -f *.aux *.log *~ $(PAPER).dvi *.sty *.def $(PAPER).pdf \
 	        *.ilg $(PAPER).lof $(PAPER).lot $(PAPER).blg $(PAPER).out \
