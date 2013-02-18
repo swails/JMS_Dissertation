@@ -511,7 +511,7 @@ where $\vec{x_{eq}}$ is the equilibrium bond length.
    \caption{The exact potential energy surface for H\sub{2} \cite{Kolos1964}
             plotted alongside the best-fitting quadratic, cubic, and quartic
             polynomials and the best-fitting Morse potential (Eq.
-            \ref{fig1:HydrogenMoleculeBond}).}
+            \ref{eq1:MorsePotential}).}
 \end{figure}
 
 Another function commonly used to model chemical bonds, called the Morse
@@ -571,12 +571,12 @@ potentials is given in Eq. \ref{eq1:TorsionPotential}.
 \cite{Cramer_Book_EssentialsCompChem_2004}
 
 \begin{equation}
-   U(\phi) = \sum_i^N k _ i \left [ 1 + \cos \left ( n_i \phi + \psi \right )
+   U(\phi) = \sum_i^N k _ i \left [ 1 + \cos \left ( n_i \phi + \psi _ i \right )
              \right ]
    \label{eq1:TorsionPotential}
 \end{equation}
 where the torsion potential is represented as a sum of $N$ terms with barrier
-heights $k_i$, periodicities of $n_i$, and phase shifts of $\psi$.
+heights $k_i$, periodicities of $n_i$, and phase shifts of $\psi _ i$.
 
 Torsion potentials are easily the most important of all bonded parameters in
 force fields. Bonds and angles are relatively rigid, since they are often
@@ -597,16 +597,84 @@ reasonable estimate of the thermodynamic properties of ethane.
 Unlike bond and angle parameters, there are no spectroscopic techniques that can
 be used to extract torsion parameters. Furthermore, force field parameters are
 not orthogonal with one another---for example, different choices for non-bonded
-potential terms (described in Sections \ref{sec1:MMEEL,sec1:MMVDW}) will impact
-torsion profiles. Therefore, torsion terms are typically the last values
-determined when designing a force field, and are used as correctional terms to
-`fix' the deficiency of the other force field parameters in describing
+potential terms (described in Sections \ref{sec1:MMEEL} and \ref{sec1:MMVDW})
+will impact torsion profiles. Therefore, torsion terms are typically the last
+values determined when designing a force field, and are used as correctional
+terms to `fix' the deficiency of the other force field parameters in describing
 conformational equilibria. Force fields are often systematically improved just
 by changing some torsion terms. \cite{Hornak_Proteins_2006_v65_p712,
 Perez_BiophysJ_2007_v92_p3817, Lindorff-Larsen_Proteins_2010_v78_p1950}
 
 \subsubsection{Electrostatic Interactions}
+\label{sec1:MMEEL}
 
+The three potentials that we just discussed are called \emph{bonded
+interactions} since they occur between atoms connected by bonds. Potentials
+between \emph{all} atoms are called \emph{non-bonded interactions}. The first of
+the non-bonded interactions we will discuss arise due to charge-charge
+interactions, typically referred to as \emph{electrostatic} interactions.
 
+Atoms treated in a force field are assigned partial charges that roughly
+correspond to atomic electronegativities, although each force field has a
+precise recipe for deriving partial atomic charges. A common strategy to assign
+partial charges is to fit to an electrostatic potential (ESP) calculated using a
+QM method. It is common practice to apply constraints to the fit to ensure that
+rotationally degenerate atoms (\eg the three hydrogen atoms in a freely rotating
+methyl group) have the same charge---a technique referred to as restrained
+electrostatic potential (RESP). \cite{Bayly_JPhysChem_1993_v97_p10269,
+Cornell_JAmChemSoc_1993_v115_p9620, Cieplak_JComputChem_1995_v16_p1357}
+
+There are two principle charge-charge interaction models utilized in modern
+force fields: so-called polarizable and fixed-charge force fields. The
+polarizable force fields allow the partial atomic charge of each atom to change
+in response to its surroundings, providing additional flexibility to force field
+parametrization. Due to the added computational expense of computing polarizable
+potentials and the difficulty this imposes on deriving other aspects of the
+force field, fixed-charge force fields (\ie force fields where partial atomic
+charges never change) are more commonly used. All future discussion in this
+dissertation of electrostatic interactions in the MM framework will focus on
+fixed-charge, monopole-monopole interactions.
+
+The electrostatic potential is calculated according to
+\begin{equation}
+   U (\r_{i,j}) = k \frac {q_i q_j} {r_{i,j}}
+   \label{eq1:ElectrostaticInteractions}
+\end{equation}
+where $k$ is the electrostatic constant, $q_i$ is the partial charge on atom
+$i$, and $r_{i,j}$ is the distance between atoms $i$ and $j$. One thing to note
+about Eq. \ref{eq1:ElectrostaticInteractions} is the long-ranged nature of the
+interaction. While the electrostatic energy of two particles falls to 0 as the
+distance between them becomes infinite, Eq. \ref{eq1:ElectrostaticInteractions}
+decays so slowly that $\sum _ {i=1}^{\infty} 1 / i = \infty$. Therefore,
+electrostatic interactions typically have to be evaluated over a very long
+distance (or calculated completely).
+
+\subsubsection{van der Waals Interactions}
+\label{sec1:MMVDW}
+
+In addition to electrostatic interactions, force fields also employ another
+non-bonded potential that accounts for \emph{van der Waals} interactions. The
+van der Waals potential is composed of two parts---a strongly repulsive term at
+interatomic distances corresponding to the overlap of van der Waals spheres of
+the two atoms and an attractive term accounting for dispersion interactions. The
+most common functional form used to model van der Waals interactions is called
+the \emph{Lennard-Jones} (LJ) potential, shown in Eq. \ref{eq1:LennardJones}.
+
+\begin{align}
+   U_{LJ} (r_{i,j}) & = 4 \varepsilon_{i,j} \left [ \left ( \frac {\sigma_{i,j}}
+      {r_{i,j}} \right ) ^ {12} - \left ( \frac {\sigma_{i,j}} {r_{i,j}} 
+      \right ) ^ 6 \right ] \nonumber \\
+                    & = 4 \varepsilon_{i,j} \left [ \frac 1 4 \left ( \frac
+      {R_{min,i,j}} {r_{i,j}} \right ) ^ {12} - \frac 1 2 \left (
+      \frac{R_{min,i,j}} {r_{i,j}} \right ) ^ 6 \right ]
+      \label{eq1:LennardJones} \\
+                    & = \frac {a_{i,j}} {r_{i,j} ^ {12}} - \frac {b_{i,j}}
+      {r_{i,j} ^ 6} \nonumber
+\end{align}
+where $r_{i,j}$ is the distance between atoms $i$ and $j$, and the remaining
+terms are labeled in a schematic diagram showing the nature of the LJ potential
+in Fig. \ref{fig1:LennardJones}.
+
+\subsubsection{Other Force Field Terms}
 
 \subsection{The AMBER Force Field}
