@@ -511,6 +511,7 @@ where $\vec{x_{eq}}$ is the equilibrium bond length.
             plotted alongside the best-fitting quadratic, cubic, and quartic
             polynomials and the best-fitting Morse potential (Eq.
             \ref{eq1:MorsePotential}).}
+   \label{fig1:HydrogenMoleculeBond}
 \end{figure}
 
 Another function commonly used to model chemical bonds, called the Morse
@@ -521,8 +522,9 @@ truncated Taylor series expansion. It is used less frequently than a second- to
 fourth-order truncated Taylor series, however, because it is costlier to compute
 and most simulations employing force fields study conformations in which bonds
 remain close to their equilibrium values. When bond lengths deviate little from
-their equilibrium values, the difference between the Morse potential a quadratic
-or quartic polynomial is minimal. \cite{Cramer_Book_EssentialsCompChem_2004}
+their equilibrium values, the difference between the Morse potential and a
+quadratic (or quartic) polynomial is minimal.
+\cite{Cramer_Book_EssentialsCompChem_2004}
 
 \begin{equation}
    U(\vec{x}) = D_{\vec{x}} \left [ 1 - \exp \left ( \alpha _ {\vec{x}} (
