@@ -429,11 +429,12 @@ clarifying this phenomena.
 
 \begin{figure}
    \includegraphics[width=6.5in]{TimeStepDemo.ps}
-   \caption{The curves represent the potential of simple harmonic oscillators
-            with a high frequency (left) and low frequency (right). At a given
-            point, the force is the slope of the tangent to the potential. The
-            integration error is indicated for both high frequency and low
-            frequency motions.}
+   \caption{The curves represent the trajectory of simple harmonic oscillators
+            with a high frequency (left) and low frequency (right). The black
+            arrows are the trajectory traced out integrating Newton's laws
+            numerically using a time step of 1 time units in the plot. The
+            red line is the analytical trajectory to simple harmonic
+            oscillation.}
    \label{fig1:TimeStepDemo}
 \end{figure}
 
@@ -508,8 +509,8 @@ where $\vec{x_{eq}}$ is the equilibrium bond length.
 \begin{figure}
    \includegraphics[width=6.5in]{HydrogenMoleculeBond.ps}
    \caption{The exact potential energy surface for H\sub{2} \cite{Kolos1964}
-            plotted alongside the best-fitting quadratic, cubic, and quartic
-            polynomials and the best-fitting Morse potential (Eq.
+            plotted alongside the best-fitting quadratic and quartic polynomials
+            and the best-fitting Morse potential (Eq.
             \ref{eq1:MorsePotential}).}
    \label{fig1:HydrogenMoleculeBond}
 \end{figure}
@@ -528,7 +529,7 @@ quadratic (or quartic) polynomial is minimal.
 
 \begin{equation}
    U(\vec{x}) = D_{\vec{x}} \left [ 1 - \exp \left ( \alpha _ {\vec{x}} (
-                \vec{x} - \vec{x_{eq}} ) \right ) ^ 2 \right ]
+                \vec{x} - \vec{x_{eq}} ) \right ) \right ] ^ 2
    \label{eq1:MorsePotential}
 \end{equation}
 
@@ -638,29 +639,38 @@ fixed-charge, monopole-monopole interactions.
 
 The electrostatic potential is calculated according to
 \begin{equation}
-   U (\r_{i,j}) = k \frac {q_i q_j} {r_{i,j}}
+   U (r_{i,j}) = k \frac {q_i q_j} {r_{i,j}}
    \label{eq1:ElectrostaticInteractions}
 \end{equation}
 where $k$ is the electrostatic constant, $q_i$ is the partial charge on atom
 $i$, and $r_{i,j}$ is the distance between atoms $i$ and $j$. One thing to note
 about Eq. \ref{eq1:ElectrostaticInteractions} is the long-ranged nature of the
 interaction. While the electrostatic energy of two particles falls to 0 as the
-distance between them becomes infinite, Eq. \ref{eq1:ElectrostaticInteractions}
-decays so slowly that $\sum _ {i=1}^{\infty} 1 / i = \infty$. Therefore,
-electrostatic interactions typically have to be evaluated over a very long
-distance (or calculated completely).
+distance between them becomes infinite, $1 / i$ decays so slowly that $\sum _
+{i=1}^{\infty} 1 / i = \infty$. Therefore, electrostatic interactions typically
+have to be evaluated over a very long distance (or calculated completely).
 
 \subsubsection{van der Waals Interactions}
 \label{sec1:MMVDW}
 
 In addition to electrostatic interactions, force fields also employ another
 non-bonded potential that accounts for \emph{van der Waals} interactions. The
-van der Waals potential is composed of two parts---a strongly repulsive term at
-interatomic distances corresponding to the overlap of van der Waals spheres of
-the two atoms and an attractive term accounting for dispersion interactions. The
-most common functional form used to model van der Waals interactions is called
-the \emph{Lennard-Jones} (LJ) potential, shown in Eq. \ref{eq1:LennardJones}.
+van der Waals potential is composed of two parts---a strongly repulsive term
+that models steric clashes and an attractive term accounting for dispersion
+interactions.  The attactive term of the van der Waals potential is derived
+mostly from the London dispersion forces shown for an ideal gas dimer in Eq.
+\ref{eq1:LondonDispersion}. \cite{McQuarrie_Book_PhysChem_1997}
+\begin{equation}
+   U(r_{i,j}) = - \frac 3 2 \frac {\alpha I} {r ^ 6}
+   \label{eq1:LondonDispersion}
+\end{equation}
+where $I$ is the first ionization energy and $\alpha$ is the polarizability.
+This attractive interaction arises even in noble gases due to instantaneous
+atomic polarization caused by correlated movements of the electrons.
 
+The most common functional form used to model van der Waals interactions is
+called the \emph{Lennard-Jones} (LJ) potential, shown in Eq.
+\ref{eq1:LennardJones}.
 \begin{align}
    U_{LJ} (r_{i,j}) & = 4 \varepsilon_{i,j} \left [ \left ( \frac {\sigma_{i,j}}
       {r_{i,j}} \right ) ^ {12} - \left ( \frac {\sigma_{i,j}} {r_{i,j}} 
@@ -674,7 +684,24 @@ the \emph{Lennard-Jones} (LJ) potential, shown in Eq. \ref{eq1:LennardJones}.
 \end{align}
 where $r_{i,j}$ is the distance between atoms $i$ and $j$, and the remaining
 terms are labeled in a schematic diagram showing the nature of the LJ potential
-in Fig. \ref{fig1:LennardJones}.
+in Fig. \ref{fig1:LennardJones}. The three forms of Eq. \ref{eq1:LennardJones}
+are equivalent if
+\begin{eqnarray*}
+   R_{min,i,j} & = 2 ^ {1/6} \sigma _ {i,j} \\
+   a_{i,j} & = \varepsilon _ {i,j} R_{min,i,j} ^ {12} \\
+   b_{i,j} & = 2 \varepsilon _ {i,j} R_{min,i,j} ^ 6
+\end{eqnarray*}
+
+Due to its computational efficiency, the third form of Eq.
+\ref{eq1:LennardJones} is typically used in molecular simulations. To use Eq.
+\ref{eq1:LennardJones} in these simulations, the $a_{i,j}$ and $b_{i,j}$ values
+must computed for every pair of atoms in the system. For transferable force
+fields (\ie force fields whose parameters can be used for many different, but
+related, systems), each type of atom defined in the force field is typically
+assigned an individual $\varepsilon$ and $\sigma$ parameter which must be
+combined with every other atom type to yield $a_{i,j}$ and $b_{i,j}$. The way in
+which these individual atomic parameters are mixed is referred to as the
+\emph{combining rules}.
 
 \subsubsection{Other Force Field Terms}
 
