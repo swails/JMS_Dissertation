@@ -7,7 +7,7 @@ from __future__ import division
 from argparse import ArgumentParser
 from matplotlib import pyplot as plt
 import numpy as np
-from scipy.optimize import curve_fit
+from scipy.stats.kde import gaussian_kde
 
 def timestep():
    """ Creates the time step plot """
@@ -129,7 +129,7 @@ def hydrogen():
       return de * (1 - np.exp(alpha * (xeq - x))) ** 2
 
 
-   fig = plt.figure(1, figsize=(8,5))
+   fig = plt.figure(3, figsize=(8,5))
 
    ax = fig.add_subplot(111)
    # Set up options
@@ -159,6 +159,84 @@ def hydrogen():
 
    fig.savefig('HydrogenMoleculeBond.ps')
 
+def LennardJones():
+   """ Makes the lennard-jones plot """
+   fig = plt.figure(4, figsize=(8,5))
+
+   ax = fig.add_subplot(111)
+
+   # Set up axes
+   ax.set_xlim((3,6))
+   ax.set_ylim((-0.5,1.0))
+   ax.set_xlabel('Nuclear Separation ($\AA$)', family='sans-serif',
+                 fontdict={'fontsize' : 16})
+   ax.set_ylabel(r'Energy ($kcal$  $mol^{-1}$)', family='sans-serif',
+                 fontdict={'fontsize' : 16})
+   RMIN = 3.816
+   EPS = 0.1094
+   SIG = RMIN / 2 ** (1/6)
+   ACOEF = EPS * RMIN ** 12
+   BCOEF = 2.0 * EPS * RMIN ** 6
+
+   lj_attr = lambda x: - BCOEF / x ** 6
+   lj_repu = lambda x: ACOEF / x ** 12
+   lj = lambda x: lj_attr(x) + lj_repu(x)
+
+   xdata = np.arange(0.2,10,0.05)
+   ax.grid(lw=1)
+
+   real, = ax.plot(xdata, lj(xdata), color='k', lw=2)
+   attr, = ax.plot(xdata, lj_attr(xdata), linestyle='--', lw=2)
+   repu, = ax.plot(xdata, lj_repu(xdata), linestyle='-.', lw=2)
+   axis, = ax.plot([0,10], [0,0], color='k', lw=1)
+
+   ax.legend((real, attr, repu),
+             ('LJ Potential', 'Attractive Part', 'Repulsive Part'), loc=1)
+
+   # Add attributes
+   r1 = ax.arrow(RMIN, -EPS, 0, EPS - 0.5, linestyle='dashdot', shape='full',
+            length_includes_head=True, color='k', head_width=0.03)
+   r2 = ax.arrow(RMIN, -EPS, -RMIN + 3, 0, linestyle='dashdot', shape='full',
+            length_includes_head=True, color='k', head_width=0.03)
+   r3 = ax.arrow(SIG, 0, 0, -0.5, linestyle='dashdot', shape='full',
+            length_includes_head=True, color='k', head_width=0.03)
+
+   ax.annotate('$R_{min,i,j}$', (RMIN,-0.5), xytext=(4.58, -0.32), size=20,
+               arrowprops={'arrowstyle':'fancy', 'fc':'0.6', 'ec':'none',
+                           'patchB':r1})
+   ax.annotate(r'$-\varepsilon_{i,j}$', (3.0, -EPS), xytext=(3.10,-0.3),
+               size=20, arrowprops={'arrowstyle':'fancy', 'fc':'0.6',
+                                    'ec':'none', 'patchB':r2})
+   ax.annotate(r'$\sigma_{i,j}$', (SIG, -0.5), xytext=(4.2, -0.3), size=20,
+               arrowprops={'arrowstyle':'fancy', 'fc':'0.6', 'ec':'none',
+                           'patchB':r3})
+   fig.savefig('LennardJones.ps')
+
+def cmap(fname):
+   """ Generates the cmap plot """
+   KB = 0.00199 # kcal/mol / K
+   TEMP = 300   # K
+   ydata, xdata = np.loadtxt(fname).transpose()
+   hist, hedge, vedge = np.histogram2d(xdata, ydata, bins=(100,100),
+                              range=((-180,180), (-180,180)))
+   hist /= np.max(hist)
+   # Now turn it into a free energy
+   hist = - KB * TEMP * np.log(hist)
+   # Now time to generate the heat map
+   fig = plt.figure(1, figsize=(8,5))
+
+   ax = fig.add_subplot(111)
+   
+   ax.set_xlim((-180,180))
+   ax.set_ylim((-180,180))
+   ax.set_xlabel(r'$\phi_1$', family='sans-serif', fontdict={'fontsize' : 20})
+   ax.set_ylabel(r'$\phi_2$', family='sans-serif', fontdict={'fontsize' : 20})
+
+   img = ax.imshow(hist, extent=(-180,180,-180,180))
+   fig.colorbar(img).set_label(r'$\Delta G(\phi_1, \phi_2)$')
+
+   fig.savefig('cmap.png')
+
 if __name__ == '__main__':
    """ Determine which plots to make """
    parser = ArgumentParser()
@@ -167,7 +245,11 @@ if __name__ == '__main__':
    parser.add_argument('--hydrogen-atom', dest='hydrogen', default=False,
                        action='store_true', help='''Create the plot for the
                        hydrogen atom.''')
-
+   parser.add_argument('--lennard-jones', dest='lj', default=False,
+                       action='store_true', help='''Create the plot for the
+                       Lennard-Jones potential.''')
+   parser.add_argument('--cmap', dest='cmap', default=None, metavar='FILE',
+                       help='Generate a CMAP plot with the given input file.')
    
    opt = parser.parse_args()
 
@@ -175,4 +257,8 @@ if __name__ == '__main__':
       timestep()
    if opt.hydrogen:
       hydrogen()
+   if opt.lj:
+      LennardJones()
+   if opt.cmap is not None:
+      cmap(opt.cmap)
 

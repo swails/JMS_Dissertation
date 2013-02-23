@@ -5,7 +5,7 @@ install: paper
 dissertation: paper
 
 clean:
-	/bin/rm -f *.aux *.log *~ $(PAPER).dvi *.sty *.def *.bbl \
+	/bin/rm -f *.aux *.log *~ $(PAPER).dvi *.sty *.def \
 	        *.ilg $(PAPER).lof $(PAPER).lot $(PAPER).blg $(PAPER).out \
 	        $(PAPER).toc $(PAPER).ps
 
