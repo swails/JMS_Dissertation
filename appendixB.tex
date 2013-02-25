@@ -171,18 +171,18 @@ NUMEXTRA NCOPY
 This section contains the atom name for every atom in the prmtop.
 
 \noindent {\tt \%FORMAT(20a4)}
-\noindent There are {\tt NATOM} atom names in this section.
+\noindent There are {\tt NATOM} 4-character strings in this section.
 
 \subsection*{CHARGE}
 
 This section contains the charge for every atom in the prmtop. Charges are
 multiplied by 18.2223 ($\sqrt{k_{ele}}$ where $k_{ele}$ is the electrostatic
-constant in $kcal$ $\AA$ $mol^{-1}$ $q^{-2}$, where $q$ is the charge of an
+constant in $kcal\, \AA\, mol^{-1}\, q^{-2}$, where $q$ is the charge of an
 electron).
 
 \noindent {\tt \%FORMAT(5E16.8)}
 
-\noindent There are {\tt NATOM} charges in this section.
+\noindent There are {\tt NATOM} floating point numbers in this section.
 
 \subsection*{ATOMIC\_NUMBER}
 
@@ -191,15 +191,15 @@ section was first introduced in AmberTools 12. \cite{AMBER12}
 
 \noindent {\tt \%FORMAT(10I8)}
 
-\noindent There are {\tt NATOM} atomic numbers in this section.
+\noindent There are {\tt NATOM} integers in this section.
 
 \subsection*{MASS}
 
-This section contains the atomic mass of every atom in $g$ $mol^{-1}$.
+This section contains the atomic mass of every atom in $g\, mol^{-1}$.
 
-\noindent {\tt \%FORMAT(5E16.8}
+\noindent {\tt \%FORMAT(5E16.8)}
 
-\noindent There are {\tt NATOM} atomic masses in this section.
+\noindent There are {\tt NATOM} floating point numbers in this section.
 
 \subsection*{ATOM\_TYPE\_INDEX}
 
@@ -300,12 +300,482 @@ This section lists the first atom in each residue.
 
 \subsection*{BOND\_FORCE\_CONSTANT}
 
-This section lists all of the bond force constants in units $kcal$ $mol^{-1}$
-$\AA^{-2}$ for all unique bond types. Each bond in {\tt BONDS\_INC\_HYDROGEN}
-and {\tt BONDS\_WITHOUT\_HYDROGEN} (see below) contains an index into this
-array.
+Bond energies are calculated according to the equation
+\begin{equation}
+   E_{bond} = \frac 1 2 k \left ( \vec{r} - \vec{r}_{eq} \right ) ^ 2
+   \label{eqB:Bond}
+\end{equation}
+
+This section lists all of the bond force constants ($k$ in Eq. \ref{eqB:Bond})
+in units $kcal\, mol^{-1}\, \AA^{-2}$ for each unique bond type. Each bond in
+{\tt BONDS\_INC\_HYDROGEN} and {\tt BONDS\_WITHOUT\_HYDROGEN} (see below)
+contains an index into this array.
 
 \noindent {\tt \%FORMAT(5E16.8)}
 
-\noindent There are {\tt NUMBND} integers in this section.
-array corresponding 
+\noindent There are {\tt NUMBND} floating point numbers in this section.
+
+\subsection*{BOND\_EQUIL\_VALUE}
+
+This section lists all of the bond equilibrium distances ($\vec{r}_{eq}$ in Eq.
+\ref{eqB:Bond}) in units of \AA for each unique bond type. This list is indexed
+the same way as {\tt BOND\_FORCE\_CONSTANT}.
+
+\noindent {\tt \%FORMAT(5E16.8)}
+
+\noindent There are {\tt NUMBND} floating point numbers in this section.
+
+\subsection*{ANGLE\_FORCE\_CONSTANT}
+
+Angle energies are calculated according to the equation
+\begin{equation}
+   E_{angle} = \frac 1 2 k_{\theta} \left ( \theta - \theta _ {eq} \right ) ^ 2
+   \label{eqB:Angle}
+\end{equation}
+
+This section lists all of the angle force constants ($\k_{\theta}$ in Eq.
+\ref{eqB:Angle}) in units of $kcal\, mol^{-1}\, rad^2$ for each unique angle
+type. Each angle in {\tt ANGLES\_INC\_HYDROGEN} and {\tt
+ANGLES\_WITHOUT\_HYDROGEN} contains an index into this (and the next) array.
+
+\noindent {\tt \%FORMAT(5E16.8)}
+
+\noindent There are {\tt NUMANG} floating point numbers in this section.
+
+\subsection*{ANGLE\_EQUIL\_VALUE}
+
+This section contains all of the angle equilibrium angles ($\theta_{eq}$ in Eq.
+\ref{eqB:Angle}) in radians.  \emph{NOTE:} the AMBER parameter files list
+equilibrium angles in degrees and are converted to radians in \emph{tleap}. This
+list is indexed the same way as {\tt ANGLE\_FORCE\_CONSTANT}.
+
+\noindent {\tt \%FORMAT(5E16.8)}
+
+\noindent There are {\tt NUMBND} floating point numbers in this section.
+
+\subsection*{DIHEDRAL\_FORCE\_CONSTANT}
+
+Torsion energies are calculated for each term according to the equation
+\begin{equation}
+   E_{torsion} = k_{tor} \cos \left ( n \phi + \psi \right )
+   \label{eqB:Dihedral}
+\end{equation}
+
+This section lists the torsion force constants ($k_{tor}$ in Eq.
+\ref{eqB:Dihedral}) in units of $kcal\, mol^{-1}$ for each unique torsion type.
+Each torsion in {\tt DIHEDRALS\_INC\_HYDROGEN} and {\tt
+DIHEDRALS\_WITHOUT\_HYDROGEN} has an index into this array.
+
+Amber parameter files contain a dividing factor and barrier height for each
+dihedral. The barrier height in the parameter files are divided by the provided
+factor inside \emph{tleap} and then discarded. As a result, the torsion barriers
+in this section may not match those in the original parameter files.
+
+\noindent {\tt \%FORMAT(5E16.8)}
+
+\noindent There are {\tt NPTRA} floating point numbers in this section.
+
+\subsection*{DIHEDRAL\_PERIODICITY}
+
+This section lists the periodicity ($n$ in Eq. \ref{eqB:Dihedral}) for each
+unique torsion type. It is indexed the same way as {\tt
+DIHEDRAL\_FORCE\_CONSTANT}. \emph{NOTE:} only integers are read by
+\emph{tleap}, although the AMBER codes support non-integer periodicities.
+
+\noindent {\tt \%FORMAT(5E16.8)}
+
+\noindent There are {\tt NPTRA} floating point numbers in this section.
+
+\subsection*{DIHEDRAL\_PHASE}
+
+This section lists the phase shift ($\psi$ in Eq. \ref{eqB:Dihedral}) for each
+unique torsion type in radians. It is indexed the same way as {\tt
+DIHEDRAL\_FORCE\_CONSTANT}.
+
+\noindent {\tt \%FORMAT(5E16.8)}
+
+\noindent There are {\tt NPTRA} floating point numbers in this section.
+
+\subsection*{SCEE\_SCALE\_FACTOR}
+
+This section was introduced in Amber 11. In previous versions, this variable was
+part of the input file and set a single scaling factor for every torsion.
+
+This section lists the factor by which 1-4 electrostatic interactions are
+divided (\ie the two atoms on either end of a torsion). For torsion types in
+which 1-4 non-bonded interactions are not calculated (\eg improper torsions,
+multi-term torsions, and those involved in ring systems of 6 or fewer atoms), a
+value of 0 is assigned by \emph{tleap}. This section is indexed the same way as
+{\tt DIHEDRAL\_FORCE\_CONSTANT}.
+
+\noindent {\tt \%FORMAT(5E16.8)}
+
+\noindent There are {\tt NPTRA} floating point numbers in this section.
+
+\subsection*{SCNB\_SCALE\_FACTOR}
+
+This section was introduced in Amber 11. In previous versions, this variable was
+part of the input file and set a single scaling factor for every torsion.
+
+This section lists the factor by which 1-4 van der Waals interactions are
+divided (\ie the two atoms on either end of a torsion). This section is
+analogous to {\tt SCEE\_SCALE\_FACTOR} described above.
+
+\noindent {\tt \%FORMAT(5E16.8)}
+
+\noindent There are {\tt NPTRA} floating point numbers in this section.
+
+\subsection*{SOLTY}
+
+This section is currently unused, and while `future use' is planned, this
+assertion has laid dormant for some time.
+
+\noindent {\tt \%FORMAT(5E16.8)}
+
+\noindent There are {\tt NATYP} floating point numbers in this section.
+
+\subsection*{LENNARD\_JONES\_ACOEF}
+
+LJ non-bonded interactions are calculated according to the equation
+\begin{equation}
+   E_{LJ} = \frac {a_{i,j}} {r ^ {12}} - \frac {b_{i,j}} {r ^ 6}
+   \label{eqB:LennardJones}
+\end{equation}
+
+This section contains the LJ A-coefficients ($a_{i,j}$ in Eq.
+\ref{eqB:LennardJones}) for all pairs of distinct LJ types (see sections {\tt
+ATOM\_TYPE\_INDEX} and {\tt NONBONDED\_PARM\_INDEX} above).
+
+\noindent {\tt \%FORMAT(5E16.8)}
+
+\noindent There are $\left [ {\tt NTYPES} \times ( {\tt NTYPES} + 1 ) \right ] /
+2$ floating point numbers in this section.
+
+\subsection*{LENNARD\_JONES\_BCOEF}
+
+This section contains the LJ B-coefficients ($b_{i,j}$ in Eq.
+\ref{eqB:LennardJones}) for all pairs of distinct LJ types (see sections {\tt
+ATOM\_TYPE\_INDEX} and {\tt NONBONDED\_PARM\_INDEX} above).
+
+\noindent {\tt \%FORMAT(5E16.8)}
+
+\noindent There are $\left [ {\tt NTYPES} \times ( {\tt NTYPES} + 1 ) \right ] /
+2$ floating point numbers in this section.
+
+\subsection*{BONDS\_INC\_HYDROGEN}
+
+This section contains a list of every bond in the system in which at least one
+atom is Hydrogen. Each bond is identified by 3 integers---the two atoms involved
+in the bond and the index into the {\tt BOND\_FORCE\_CONSTANT} and {\tt
+BOND\_EQUIL\_VALUE}. For run-time efficiency, the atom indexes are actually
+indexes into a coordinate array, so the actual atom index $A$ is calculated from
+the coordinate array index $N$ by $A = N / 3 + 1$.
+
+\noindent {\tt \%FORMAT(10I8)}
+
+\noindent There are $3 \times {\tt NBONH}$ integers in this section.
+
+\subsection*{BONDS\_WITHOUT\_HYDROGEN}
+
+This section contains a list of every bond in the system in which neither atom
+is Hydrogen. It has the same structure as {\tt BONDS\_INC\_HYDROGEN} described
+above.
+
+\noindent {\tt \%FORMAT(10I8)}
+
+\noindent There are $3 \times {\tt NBONA}$ integers in this section.
+
+\subsection*{ANGLES\_INC\_HYDROGEN}
+
+This section contains a list of every angle in the system in which at least one
+atom is Hydrogen. Each angle is identified by 4 integers---the three atoms
+involved in the angle and the index into the {\tt ANGLE\_FORCE\_CONSTANT} and
+{\tt ANGLE\_EQUIL\_VALUE}. For run-time efficiency, the atom indexes are
+actually indexes into a coordinate array, so the actual atom index $A$ is
+calculated from the coordinate array index $N$ by $A = N / 3 + 1$.
+
+\noindent {\tt \%FORMAT(10I8)}
+
+\noindent There are $4 \times {\tt NTHETH}$ integers in this section.
+
+\subsection*{ANGLES\_WITHOUT\_HYDROGEN}
+
+This section contains a list of every angle in the system in which no atom is
+Hydrogen. It has the same structure as {\tt ANGLES\_INC\_HYDROGEN} described
+above.
+
+\noindent {\tt \%FORMAT(10I8)}
+
+\noindent There are $4 \times {\tt NTHETA}$ integers in this section.
+
+\subsection*{DIHEDRALS\_INC\_HYDROGEN}
+
+This section contains a list of every torsion in the system in which at least
+one atom is Hydrogen. Each torsion is identified by 5 integers---the four atoms
+involved in the torsion and the index into the {\tt DIHEDRAL\_FORCE\_CONSTANT},
+{\tt DIHEDRAL\_PERIODICITY}, {\tt DIHEDRAL\_PHASE}, {\tt SCEE\_SCALE\_FACTOR}
+and {\tt SCNB\_SCALE\_FACTOR} arrays. For run-time efficiency, the atom indexes
+are actually indexes into a coordinate array, so the actual atom index $A$ is
+calculated from the coordinate array index $N$ by $A = N / 3 + 1$.
+
+If the third atom is negative, then the 1-4 non-bonded interactions for this
+torsion is not calculated. This is required to avoid double-counting these
+non-bonded interactions in some ring systems and in multi-term torsions.
+
+If the fourth atom is negative, then the torsion is improper.
+
+\emph{NOTE:} The first atom has an index of zero. Since 0 cannot be negative and
+the 3rd and 4th atom indexes are tested for their sign to determine if 1-4 terms
+are calculated, the first atom must be listed as either the first or second atom
+in whatever torsions it is defined in. The atom ordering in a torsion can be
+reversed to accommodate this requirement if necessary.
+
+\noindent {\tt \%FORMAT(10I8)}
+
+\noindent There are $5 \times {\tt NPHIH}$ integers in this section.
+
+\subsection*{DIHEDRALS\_WITHOUT\_HYDROGEN}
+
+This section contains a list of every torsion in the system in which no atom is
+Hydrogen. It has the same structure as {\tt DIHEDRALS\_INC\_HYDROGEN} described
+above.
+
+\noindent {\tt \%FORMAT(10I8)}
+
+\noindent There are $5 \times {\tt NPHIA}$ integers in this section.
+
+\subsection*{EXCLUDED\_ATOMS\_LIST}
+
+This section contains a list for each atom of excluded partners in the
+non-bonded calculation routines. The subset of this list that belongs to each
+atom is determined from the pointers in {\tt NUMBER\_EXCLUDED\_ATOMS}---see that
+section for more information.
+
+\emph{NOTE:} The periodic boundary code in \emph{sander} and \emph{pmemd}
+currently recalculates this section of the topology file. The GB code, however,
+uses the exclusion list defined in the topology file.
+
+\noindent {\tt \%FORMAT(10I8)}
+
+\noindent There are {\tt NNB} integers in this section.
+
+\subsection*{HBOND\_ACOEF}
+
+This section is analogous to the {\tt LENNARD\_JONES\_ACOEF} array described
+above, but refers to the A-coefficient in a 12-10 potential instead of the
+familiar 12-6 potential. This term has been dropped from most modern force
+fields.
+
+\noindent {\tt \%FORMAT(5E16.8)}
+
+\noindent There are {\tt NPHB} floating point numbers in this section.
+
+\subsection*{HBOND\_BCOEF}
+
+This section is analogous to the {\tt LENNARD\_JONES\_BCOEF} array described
+above, but refers to the B-coefficient in a 12-10 potential instead of the
+familiar 12-6 potential. This term has been dropped from most modern force
+fields.
+
+\noindent {\tt \%FORMAT(5E16.8)}
+
+\noindent There are {\tt NPHB} floating point numbers in this section.
+
+\subsection*{HBCUT}
+
+This section used to be used for a cutoff parameter in the 12-10 potential, but
+is no longer used for anything.
+
+\noindent {\tt \%FORMAT(5E16.8)}
+
+\noindent There are {\tt NPHB} floating point numbers in this section.
+
+\subsection*{AMBER\_ATOM\_TYPE}
+
+This section contains the atom type name for every atom in the prmtop.
+
+\noindent {\tt \%FORMAT(20a4)}
+
+\noindent There are {\tt NATOM} 4-character strings in this section.
+
+\subsection*{TREE\_CHAIN\_CLASSIFICATION}
+
+This section contains information about the tree structure (borrowing concepts
+from \emph{graph theory}) of each atom. Each atom can have one of the following
+character indicators:
+\begin{description}
+   \item[M] This atom is part of the ``main chain''
+   \item[S] This atom is part of the ``sidechain''
+   \item[E] This atom is a chain-terminating atom (\ie an ``end'' atom)
+   \item[3] The structure branches into 3 chains at this point
+   \item[BLA] If none of the above are true
+\end{description}
+
+\noindent {\tt \%FORMAT(20a4)}
+
+\noindent There are {\tt NATOM} 4-character strings in this section.
+
+\subsection*{JOIN\_ARRAY}
+
+This section is no longer used and is currently just filled with zeros.
+
+\noindent {\tt \%FORMAT(10a8)}
+
+\noindent There are {\tt NATOM} integers in this section.
+
+\subsection*{IROTAT}
+
+This section is not used and is currently just filled with zeros.
+
+\noindent {\tt \%FORMAT(10a8)}
+
+\noindent There are {\tt NATOM} integers in this section.
+
+\subsection*{SOLVENT\_POINTERS}
+
+This section is only present if {\tt IFBOX} is greater than 0 (\ie if the system
+was set up for use with periodic boundary conditions). There are 3 integers
+present in this section---the final residue that is part of the solute ({\tt
+IPTRES}), the total number of `molecules' ({\tt NSPM}), and the first solvent
+`molecule' ({\tt NSPSOL}).
+
+A `molecule' is defined as a closed graph---that is, there is a pathway from
+every atom in a molecule to every other atom in the molecule by traversing
+bonds, and there are no pathways to `other' molecules.
+
+\begin{verbatim}
+%FLAG SOLVENT_POINTERS
+%FORMAT(3I8)
+IPTRES   NSPM    NSPSOL
+\end{verbatim}
+
+\subsection*{ATOMS\_PER\_MOLECULE}
+
+This section is only present if {\tt IFBOX} is greater than 0 (\ie if the system
+was set up for use with periodic boundary conditions). This section lists how
+many atoms are present in each `molecule' as defined in the {\tt
+SOLVENT\_POINTERS} section above.
+
+\noindent {\tt \%FORMAT(10I8)}
+
+\noindent There are {\tt NSPM} integers in this section (see the {\tt
+SOLVENT\_POINTERS} section above).
+
+\subsection*{BOX\_DIMENSIONS}
+
+This section is only present if {\tt IFBOX} is greater than 0 (\ie if the system
+was set up for use with periodic boundary conditions). This section lists the
+box angle ({\tt OLDBETA}) and dimensions (${\tt BOX(1)} \times {\tt BOX(2)}
+\times {\tt BOX(3)}$). The values in this section are deprecated now since newer
+and more accurate information about the box size and shape is stored in the
+coordinate file. Since constant pressure simulations can change the box
+dimensions, the values in the coordinate file should be trusted over those in
+the topology file.
+
+\begin{verbatim}
+%FLAG BOX_DIMENSIONS
+%FORMAT(5E16.8)
+OLDBETA         BOX(1)          BOX(2)          BOX(3)
+\end{verbatim}
+
+\subsection*{CAP\_INFO}
+
+This section is present only if {\tt IFCAP} is not 0. If present, it contains a
+single integer which is the last atom before the water cap begins ({\tt NATCAP})
+
+\noindent {\tt \%FORMAT(10I8)}
+
+\subsection*{CAP\_INFO2}
+
+This section is present only if {\tt IFCAP} is not 0. If present, it contains
+four numbers---the distance from the center of the cap to outside the cap ({\tt
+CUTCAP}), and the Cartesian coordinates of the cap center.
+
+\begin{verbatim}
+%FLAG CAP_INFO2
+%FORMAT(5E16.8)
+CUTCAP          XCAP            YCAP            ZCAP
+\end{verbatim}
+
+\subsection*{RADIUS\_SET}
+
+This section contains a one-line string (up to 80 characters) describing the
+intrinsic implicit solvent radii set that are defined in the topology file. The
+available radii sets with their 1-line descriptions are:
+\begin{description}
+   \item[bondi] {\tt Bondi radii (bondi)}
+   \item[amber6] {\tt amber6 modified Bondi radii (amber6)}
+   \item[mbondi] {\tt modified Bondi radii (mbondi)}
+   \item[mbondi2] {\tt H(N)-modified Bondie radii (mbondi2)}
+   \item[mbondi3] {\tt ArgH and AspGlu0 modified Bondi2 radii (mbondi3)}
+\end{description}
+
+\noindent {\tt \%FORMAT(1a80)}
+
+\noindent There is a single line description in this section.
+
+\subsection*{RADII}
+
+This section contains the intrinsic radii of every atom used for implicit
+solvent calculations (typically Generalized Born).
+
+\noindent {\tt \%FORMAT(5E16.8)}
+
+\noindent There are {\tt NATOM} floating point numbers in this section.
+
+\subsection*{IPOL}
+
+This section was introduced in Amber 12. In previous versions of Amber, this was
+a variable in the input file.
+
+This section contains a single integer that is 0 for fixed-charge force fields
+and 1 for force fields that contain polarization.
+
+\subsection*{POLARIZABILITY}
+
+This section is only present if {\tt IPOL} is not 0. It contains the atomic
+polarizabilities for every atom in the prmtop.
+
+\noindent {\tt \%FORMAT(5E16.8)}
+
+\noindent There are {\tt NATOM} floating point numbers in this section.
+
+\noindent {\tt \%FORMAT(1I8)}
+
+\section{Deprecated Sections}
+
+All of the sections of the topology file listed here are only present if {\tt
+IFPERT} is 1. However, no modern programs support such prmtops so these sections
+are rarely (if ever) used. They are included here for completeness, only.
+
+More info can be found online at http://ambermd.org/formats.html
+
+\begin{table*}
+   \caption{List of all of the perturbed topology file sections.}
+   \begin{tabular}{|c|c|c|c|}
+      \hline
+      FLAG name & {\tt \%FORMAT} & # of values & Description \\
+      \hline
+      PERT\_BOND\_ATOMS & {\tt 10I8} &  $2 \times {\tt NBPER}$ & perturbed bond
+         list \\
+      PERT\_BOND\_PARAMS & {\tt 10I8} & $2 \times {\tt NBPER}$ & perturbed bond
+         pointers \\
+      PERT\_ANGLE\_ATOMS & {\tt 10I8} & $3 \times {\tt NGPER}$ & perturbed angle
+         list \\
+      PERT\_ANGLE\_PARAMS & {\tt 10I8} & $2 \times {\tt NGPER}$ & perturbed
+         angle pointers \\
+      PERT\_DIHEDRAL\_ATOMS & {\tt 10I8} & $4 \times {\tt NDPER}$ & perturbed
+         torsion list \\
+      PERT\_DIHEDRAL\_PARAMS & {\tt 10I8} & $2 \times {\tt NDPER}$ & perturbed
+         torsion pointers \\
+      PERT\_RESIDUE\_NAME & {\tt 20a4} & {\tt NRES} & end state residue names \\
+      PERT\_ATOM\_NAME & {\tt 20a4} & {\tt NATOM} & end state atom names \\
+      PERT\_ATOM\_SYMBOL & {\tt 20a4} & {\tt NATOM} & end state atom types \\
+      ALMPER & {\tt 5E16.8} & {\tt NATOM} & Unused \\
+      IAPER & {\tt 10I8} & {\tt NATOM} & Is Atom PERturbed? \\
+      PERT\_ATOM\_TYPE\_INDEX & {\tt ATOM\_TYPE\_INDEX} & {\tt NATOM} &
+         Perturbed LJ Type \\
+      PERT\_CHARGE & {\tt 5E16.8} & {\tt NATOM} & Perturbed charge \\
+      \hline
+   \end{tabular}
+\end{table*}
