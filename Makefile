@@ -13,7 +13,6 @@ veryclean: clean
 	/bin/rm -f *.bbl $(PAPER).pdf $(PAPER).bib
 
 paper: clean bib
-	-/bin/rm -f $(PAPER).bib
 	@for f in DEFS/*; do ln -s $$f; done
 	@for f in STYS/*; do ln -s $$f; done
 	-yes s | pdflatex $(PAPER).tex
@@ -22,7 +21,7 @@ paper: clean bib
 	-yes s | pdflatex $(PAPER).tex
 	-dvipdfmx $(PAPER).dvi
 
-bib:
+bib::
 	-/bin/rm -f $(PAPER).bib
 	-cp $(GIT_HOME)/Bibliography/BibTeX/YorkLib.bib $(PAPER).bib
 	-cat Extra.bib >> $(PAPER).bib

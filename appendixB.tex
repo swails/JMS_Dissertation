@@ -1,61 +1,311 @@
 \chapter{AMBER Parameter-Topology File Format}%
 \label{appendixB}
 
-This is how a section should look if the first page is a landscape page.
-Lorem ipsum dolor sit amet, consectetuer adipiscing elit. Ut sit
-amet nulla. Integer mauris turpis, dapibus ac, auctor non, vehicula
-sit amet, magna. Suspendisse eu tellus. Etiam porta. Donec magna.
-Donec ut dui. In hac habitasse platea dictumst. Nullam suscipit, mi
-at adipiscing commodo, lorem erat scelerisque erat, non pulvinar leo
-mi eu metus. Phasellus id felis. Sed quam purus, molestie quis,
-ultrices nec, dictum at, magna. Proin viverra viverra ante.
+This appendix details the Parameter-Topology file format used extensively by the
+AMBER software suite for biomolecular simulation and analysis, referred to as
+the \emph{prmtop} file for short. The format specification of the AMBER topology
+file was written initially over a decade ago and posted on
+http://ambermd.org/formats.html. I have recently expanded that document to
+account for the drastic change to the file format that occurred with the 2004
+release of Amber 7. The pre-Amber 7 format (\emph{old format}) is described more
+briefly afterwards, although each section provided in the original format
+contains exactly the same information as the newer version.
 
-Maecenas sagittis magna quis ligula. Duis vestibulum mi a felis.
-Aenean accumsan mattis massa. Nullam lacus sem, consectetuer non,
-condimentum sit amet, pharetra ac, odio. Morbi nisi magna, tincidunt
-sed, placerat nec, tincidunt id, lectus. Donec ac dui non mauris
-vulputate aliquam. Nullam scelerisque congue pede. Integer ipsum.
-Vestibulum auctor. Suspendisse eget leo id libero cursus dictum. Sed
-malesuada. Aliquam imperdiet. Donec dui metus, porta eu, aliquet
-vel, vulputate vitae, lacus.
+This appendix also details the format changes and additions introduced by
+\emph{chamber}---the program that translates a CHARMM parameter file (PSF) into
+a topology file that can be used with the \emph{sander} and \emph{pmemd}
+programs in AMBER.
 
-Nulla quis purus id turpis luctus feugiat. Fusce feugiat. Proin
-felis. Morbi elit est, fermentum in, tincidunt vitae, convallis vel,
-orci. Vestibulum justo. Suspendisse non nisl. Pellentesque pretium
-adipiscing elit. Phasellus fermentum consequat augue. Sed pede nisl,
-fermentum vel, vulputate id, sollicitudin sed, ligula. Cras
-suscipit, quam et euismod sagittis, nisl felis gravida felis, quis
-pulvinar purus est vel pede. Suspendisse mattis est ac nunc.
-Curabitur rutrum, turpis sit amet commodo tempus, metus lorem
-commodo lectus, eget fringilla justo nisi et purus. Ut quam sapien,
-vehicula quis, rhoncus non, sagittis nec, risus.
+This appendix draws from the information on http://ambermd.org/formats.html that
+was added by both me and others, as well as the experience I gleaned while
+writing the ParmEd program and working with the various codes in AMBER.
 
-Donec eget augue ac lacus adipiscing porta. Maecenas pede. Vivamus
-molestie. Duis condimentum ligula auctor pede. Nullam ullamcorper
-rhoncus erat. Ut ornare interdum urna. Suspendisse potenti.
-Curabitur mattis mauris nec risus. Aenean iaculis turpis eu tortor.
-Donec nec ante non mauris pellentesque fringilla.
+As a warning, the prmtop file is a result of bookkeeping that becomes
+increasingly complex as the system size increases. Therefore, hand-editing the
+topology file for all but the smallest systems is discouraged---a program or
+script should be written to automate the procedure.
 
-Phasellus vitae dui id orci sodales cursus. Curabitur sed nulla quis
-mauris tincidunt iaculis. Vivamus semper semper orci. Phasellus
-suscipit ante vitae leo. Sed arcu ipsum, condimentum id, luctus in,
-sodales eu, magna. In dictum, arcu quis pharetra vestibulum, ante
-enim placerat lacus, vitae placerat est leo vitae elit. Pellentesque
-bibendum enim vulputate eros. Nunc laoreet. Pellentesque habitant
-morbi tristique senectus et netus et malesuada fames ac turpis
-egestas. Praesent purus odio, euismod sit amet, aliquam a, volutpat
-in, augue. Phasellus id massa. Suspendisse suscipit ligula pharetra
-dolor. Pellentesque vel pede.
+\section{Layout}
 
-Aliquam pharetra est sit amet magna. Aliquam varius. Donec eu lectus
-et nisl iaculis porttitor. Morbi mattis, mauris sed luctus
-hendrerit, nulla velit molestie dolor, ac volutpat urna augue vel
-quam. Maecenas pellentesque libero et massa. Integer vestibulum,
-lacus at mattis euismod, nisl arcu commodo lectus, ut euismod dolor
-ligula sit amet libero. Nam in ligula sit amet ante eleifend
-aliquet. Phasellus feugiat erat at nulla. Proin in lectus. Proin
-laoreet leo laoreet leo congue lacinia. Quisque non diam sit amet
-enim ultrices commodo. Praesent fermentum lectus sed ligula. Integer
-pulvinar accumsan pede. Quisque molestie ligula eget odio.
-Vestibulum ante ipsum primis in faucibus orci luctus et ultrices
-posuere cubilia Curae;
+The first line of the Amber topology file is the version string. An example is
+shown below in which {\tt XX} is replaced by the actual date and time.
+\begin{verbatim}
+%VERSION  VERSION_STAMP = V0001.000  DATE = XX/XX/XX  XX:XX:XX
+\end{verbatim}
+
+The topology format is divided into several sections in a way that is designed
+to be parsed easily using simple Fortran code. A consequence of this is that it
+is difficult for parsers written in other languages (\eg C, C++, Python, etc.)
+to strictly adhere to the standard. These parsers should try, however, to
+support as much of the standard as possible.
+
+\begin{verbatim}
+%FLAG SECTION
+%COMMENT an arbitrary number of optional comments may be put here
+%FORMAT(<FORTRAN FORMAT>)
+... data formatted according to <FORTRAN FORMAT>
+\end{verbatim}
+
+All names (\eg atom names, atom type names, and residue names) are limited to
+4 characters and are printed in fields of width \emph{exactly} 4 characters
+wide, left-justified. This means that names may not be space-delimited if any of
+the names have 4 characters.
+
+\paragraph{Requirements for prmtop parsers}
+
+Parsers, regardless of the language they are written in, should conform to a
+list of attributes to maximize the likelihood that they are parsed correctly.
+
+\begin{itemize}
+   \item Parsers should expect that some 4-character fields (\eg atom or residue
+         names) may have some names that have 4 characters and therefore may not
+         be whitespace-delimited.
+   \item Parsers should not expect {\tt SECTION}s in the prmtop to be in any
+         particular order.
+   \item Parsers should not expect or require {\tt \%COMMENT} lines to exist,
+         but should properly parse the file if any number of {\tt \%COMMENT}
+         lines appear as indicated above
+   \item The topology file may be assumed to have been generated `correctly' by
+         \emph{tleap} or some other credible source. No graceful error checking
+         is required.
+\end{itemize}
+
+\paragraph{Requirements for modifying {\tt SECTION}s}
+
+To minimize the impact of prmtop changes to existing, third-party parsers, the
+following conventions should be followed.
+
+\begin{itemize}
+   \item Any new {\tt SECTION} should be added to the end of the topology file to
+         avoid conflicts with order-dependent parsers.
+   \item The {\tt <FORTRAN FORMAT>} should be as simple as possible (and avoid
+         adding new formats) to maintain simplicity for non-Fortran parsers.
+   \item Avoid modifying if possible. Consider if this section truly belongs in
+         the prmtop.
+\end{itemize}
+
+\section{List of {\tt SECTION}s}
+
+\subsection*{TITLE}
+
+This section contains the title of the topology file on one line (up to 80
+characters). While the title serves a primarily cosmetic purpose, this section
+must be present.
+
+\noindent {\tt \%FORMAT(20a4)}
+
+\subsection*{POINTERS}
+
+This section contains the information about how many parameters are present in
+all of the sections. There are 31 or 32 integer pointers (NCOPY may not be
+present). The format and names of all of the pointers are listed below, followed
+by a description of each pointer.
+
+\vspace{8pt}
+\hline
+\vspace{4pt}
+
+\begin{verbatim}
+%FLAG POINTERS
+%FORMAT(10I8)
+NATOM  NTYPES NBONH  MBONA  NTHETH MTHETA NPHIH  MPHIA  NHPARM NPARM  
+NNB    NRES   NBONA  NTHETA NPHIA  NUMBND NUMANG NPTRA  NATYP  NPHB   
+IFPERT NBPER  NGPER  NDPER  MBPER  MGPER  MDPER  IFBOX  NMXRS  IFCAP  
+NUMEXTRA NCOPY 
+\end{verbatim}
+
+\vspace{4pt}
+\hline
+\vspace{8pt}
+
+\begin{description}
+   \item[NATOM] Number of atoms
+   \item[NTYPES] Number of distinct Lennard-Jones atom types
+   \item[NBONH] Number of bonds containing Hydrogen
+   \item[MBONA] Number of bonds not containing Hydrogen
+   \item[NTHETH] Number of angles containing Hydrogen
+   \item[MTHETA] Number of angles not containing Hydrogen
+   \item[NPHIH] Number of torsions containing Hydrogen
+   \item[MPHIA] Number of torsions not containing Hydrogen
+   \item[NHPARM] Not currently used for anything
+   \item[NPARM] Used to determine if this is a LES-compatible prmtop
+   \item[NNB] Number of excluded atoms (length of total exclusion list)
+   \item[NRES] Number of residues
+   \item[NBONA] MBONA + number of constraint bonds \footnote{AMBER codes no
+         longer support constraints in the topology
+         file.}\addtocounter{footnote}{-1}\addtocounter{Hfootnote}{-1}
+   \item[NTHETA] MTHETA + number of constraint angles
+         \footnotemark\addtocounter{footnote}{-1}\addtocounter{Hfootnote}{-1}
+   \item[NPHIA] MPHIA + number of constraint torsions \footnotemark
+   \item[NUMBND] Number of unique bond types
+   \item[NUMANG] Number of unique angle types
+   \item[NPTRA] Number of unique torsion types
+   \item[NATYP] Number of SOLTY terms. Currently unused.
+   \item[NPHB] Number of distinct 10-12 hydrogen bond pair types
+      \footnote{Modern AMBER force fields do not use a 10-12 potential}
+   \item[IFPERT] Set to 1 if topology contains residue perturbation information.
+      \footnote{No AMBER codes support perturbed topologies anymore}
+      \addtocounter{footnote}{-1}\addtocounter{Hfootnote}{-1}
+   \item[NBPER] Number of perturbed bonds \footnotemark
+      \addtocounter{footnote}{-1} \addtocounter{Hfootnote}{-1}
+   \item[NGPER] Number of perturbed angles \footnotemark
+      \addtocounter{footnote}{-1} \addtocounter{Hfootnote}{-1}
+   \item[NDPER] Number of perturbed torsions \footnotemark
+      \addtocounter{footnote}{-1} \addtocounter{Hfootnote}{-1}
+   \item[MBPER] Number of bonds in which both atoms are being perturbed
+      \footmarknote \addtocounter{footnote}{-1} \addtocounter{Hfootnote}{-1}
+   \item[MGPER] Number of angles in which all 3 atoms are being perturbed
+      \footmarknote \addtocounter{footnote}{-1} \addtocounter{Hfootnote}{-1}
+   \item[MDPER] Number of torsions in which all 4 atoms are being perturbed
+      \footnotemark
+   \item[IFBOX] Flag indicating whether a periodic box is present. Values can be
+      0 (no box), 1 (orthorhombic box) or 2 (truncated octahedron)
+   \item[NMXRS] Number of atoms in the largest residue
+   \item[IFCAP] Set to 1 if a solvent CAP is being used
+   \item[NUMEXTRA] Number of extra points in the topology file
+   \item[NCOPY] Number of PIMD slices or number of beads
+\end{description}
+
+\subsection*{ATOM\_NAME}
+
+This section contains the atom name for every atom in the prmtop.
+
+\noindent {\tt \%FORMAT(20a4)}
+\noindent There are {\tt NATOM} atom names in this section.
+
+\subsection*{CHARGE}
+
+This section contains the charge for every atom in the prmtop. Charges are
+multiplied by 18.2223 ($\sqrt{k_{ele}}$ where $k_{ele}$ is the electrostatic
+constant in $kcal$ $\AA$ $mol^{-1}$ $q^{-2}$, where $q$ is the charge of an
+electron).
+
+\noindent {\tt \%FORMAT(5E16.8)}
+
+\noindent There are {\tt NATOM} charges in this section.
+
+\subsection*{ATOMIC\_NUMBER}
+
+This section contains the atomic number of every atom in the prmtop. This
+section was first introduced in AmberTools 12. \cite{AMBER12}
+
+\noindent {\tt \%FORMAT(10I8)}
+
+\noindent There are {\tt NATOM} atomic numbers in this section.
+
+\subsection*{MASS}
+
+This section contains the atomic mass of every atom in $g$ $mol^{-1}$.
+
+\noindent {\tt \%FORMAT(5E16.8}
+
+\noindent There are {\tt NATOM} atomic masses in this section.
+
+\subsection*{ATOM\_TYPE\_INDEX}
+
+This section contains the Lennard-Jones atom type index. The Lennard-Jones
+potential contains parameters for every pair of atoms in the system. To minimize
+the memory requirements of storing {\tt NATOM} $\times$ {\tt NATOM}
+\footnote{Only half this number would be required, since $a_{i,j} \equiv
+a_{j,i}$} Lennard-Jones A-coefficients and B-coefficients, all atoms with the
+same $\sigma$ and $\varepsilon$ parameters are assigned to the same type
+(regardless of whether they have the same {\tt AMBER\_ATOM\_TYPE}). This
+significantly reduces the number of LJ coefficients which must be stored, but
+introduced the requirement for bookkeeping sections of the topology file to keep
+track of what the LJ type index was for each atom.
+
+This section is used to compute a pointer into the {\tt NONBONDED\_PARM\_INDEX}
+section, which itself is a pointer into the {\tt LENNARD\_JONES\_ACOEF} and {\tt
+LENNARD\_JONES\_BCOEF} sections (see below).
+
+\noindent {\tt \%FORMAT(10I8)}
+
+\noindent There are {\tt NATOM} integers in this section.
+
+\subsection*{NUMBER\_EXCLUDED\_ATOMS}
+
+This section contains the number of atoms that need to be excluded from the
+non-bonded calculation loop for atom $i$ because $i$ is involved in a bond,
+angle, or torsion with those atoms. Each atom in the prmtop has a list of
+excluded atoms that is a subset of the list in {\tt EXCLUDED\_ATOMS\_LIST} (see
+below). The $i$th value in this section indicates how many elements of {\tt
+EXCLUDED\_ATOMS\_LIST} belong to atom $i$.
+
+For instance, if the first two elements of this array is 5 and 3, then elements
+1 to 5 in {\tt EXCLUDED\_ATOMS\_LIST} are the exclusions for atom 1 and elements
+6 to 8 in {\tt EXCLUDED\_ATOMS\_LIST} are the exclusions for atom 2. Each
+exclusion is listed only once in the topology file, and is given to the atom
+with the smaller index. That is, if atoms 1 and 2 are bonded, then atom 2 is in
+the exclusion list for atom 1, but atom 1 is \emph{not} in the exclusion list
+for atom 2. If an atom has no excluded atoms (either because it is a monoatomic
+ion or all atoms it forms a bonded interaction with has a smaller index), then
+it is given a value of 1 in this list which corresponds to an exclusion with (a
+non-existent) atom 0 in {\tt EXCLUDED\_ATOMS\_LIST}.
+
+The exclusion rules for extra points are more complicated. When determining
+exclusions, it is considered an `extension' of the atom it is connected (bonded)
+to. Therefore, extra points are excluded not only from the atom they are
+connected to, but also from every atom that its parent atom is excluded from.
+
+\emph{NOTE}: The non-bonded interaction code in \emph{sander} and \emph{pmemd}
+currently (as of Amber 12) recalculates the exclusion lists for simulations of
+systems with periodic boundary conditions, so this section is effectively
+ignored. The GB code uses the exclusion list in the topology file.
+
+\noindent {\tt \%FORMAT(10I8)}
+
+\noindent There are {\tt NATOM} integers in this section.
+
+\subsection*{NONBONDED\_PARM\_INDEX}
+
+This section contains the pointers for each pair of LJ atom types into the {\tt
+LENNARD\_JONES\_ACOEF} and {\tt LENNARD\_JONES\_BCOEF} arrays (see below). The
+pointer for an atom pair in this array is calculated from the LJ atom type index
+of the two atoms (see {\tt ATOM\_TYPE\_INDEX} above).
+
+The index for two atoms $i$ and $j$ into the {\tt LENNARD\_JONES\_ACOEF} and
+{\tt LENNARD\_JONES\_BCOEF} arrays is calculated as 
+\begin{equation}
+   index = {\tt NONBONDED\_PARM\_INDEX} \left [ {\tt NTYPES} \times \left ( {\tt
+      ATOM\_TYPE\_INDEX}(i) - 1 \right ) + {\tt ATOM\_TYPE\_INDEX}(j) \right ]
+   \label{eqB:ParmIndex}
+\end{equation}
+
+Note, each atom pair can interact with either the standard 12-6 LJ potential
+\emph{or} via a 12-10 hydrogen bond potential. If $index$ in Eq.
+\ref{eqB:ParmIndex} is negative, then it is an index into {\tt HBOND\_ACOEF} and
+{\tt HBOND\_BCOEF} instead (see below).
+
+\noindent {\tt \%FORMAT(10I8)}
+
+\noindent There are ${\tt NTYPES} \times {\tt NTYPES}$ integers in this section.
+
+\subsection*{RESIDUE\_LABEL}
+
+This section contains the residue name for every residue in the prmtop. Residue
+names are limited to 4 letters, and may not be whitespace-delimited if any
+residues have 4-letter names.
+
+\noindent {\tt \%FORMAT(20a4)}
+
+\noindent There are {\tt NRES} 4-character strings in this section.
+
+\subsection*{RESIDUE\_POINTER}
+
+This section lists the first atom in each residue.
+
+\noindent {\tt \%FORMAT(10i8)}
+
+\noindent There are {\tt NRES} integers in this section.
+
+\subsection*{BOND\_FORCE\_CONSTANT}
+
+This section lists all of the bond force constants in units $kcal$ $mol^{-1}$
+$\AA^{-2}$ for all unique bond types. Each bond in {\tt BONDS\_INC\_HYDROGEN}
+and {\tt BONDS\_WITHOUT\_HYDROGEN} (see below) contains an index into this
+array.
+
+\noindent {\tt \%FORMAT(5E16.8)}
+
+\noindent There are {\tt NUMBND} integers in this section.
+array corresponding 
