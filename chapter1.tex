@@ -1,4 +1,5 @@
 \chapter{INTRODUCTION}
+\label{ch1}
 
 \section{Origins of Computational Chemistry}
 The seeds of computational chemistry were sown in the mid-1800s with Ludwig
@@ -793,8 +794,8 @@ between bonded atoms.
           K_{\theta} ( \theta - \theta _ {eq} ) ^ 2 \nonumber \\
       & + \sum _ {\text{torsions}} \frac {V_n} 2 \left [ 1 + \cos (n \phi -
           \gamma) \right ] + \frac 1 2 \sum _ {i} \sum _ {j} \left [ \frac
-          {A_{i,j}} {R_{i,j} ^ {12}} - \frac {B_{i,j}} {R_{i,j} ^ 6} + \frac
-          {q_i q_j} {\epsilon R_{i, j}} \right ]
+          {A_{i,j}} {R_{i,j} ^ {12}} - \frac {B_{i,j}} {R_{i,j} ^ 6} + k_{elec}
+          \frac {q_i q_j} {\epsilon R_{i, j}} \right ]
    \label{eq1:AmberFF}
 \end{align}
 
@@ -802,13 +803,13 @@ between bonded atoms.
     & \sum _ {\text{bonds}} K_r ( r - r_{eq}) ^ 2 + \sum _ {\text{angles}} +
           K_{\theta} ( \theta - \theta _ {eq} ) ^ 2 \nonumber + \\
    U(q) = & \sum _ {\text{torsions}} \frac {V_n} 2 \left [ 1 + \cos (n \phi -
-      \gamma) \right ] + \sum _ {i} \sum _ {j \in l_{1-4,i}} \frac 1 2 \left [
+      \gamma) \right ] + \frac 1 2 \sum _ {i} \sum _ {j \in l_{1-4,i}} \left [
       \frac {A_{i,j}} {2.0 R_{i,j} ^ {12}} - \frac {B_{i,j}} {2.0 R_{i,j} ^ 6} +
       \frac {q_i q_j} {1.2 \epsilon R _{i,j}} \right ] +
       \label{eq1:AmberFF2} \\
     & \frac 1 2 \sum _ {i} \sum _ {j \notin l_{excl,i}} \left [ \frac {A_{i,j}}
-      {R_{i,j} ^ {12}} - \frac {B_{i,j}} {R_{i,j} ^ 6} + \frac {q_i q_j}
-      {\epsilon R_{i, j}} \right ] \nonumber
+      {R_{i,j} ^ {12}} - \frac {B_{i,j}} {R_{i,j} ^ 6} + k_{elec} \frac {q_i
+      q_j} {\epsilon R_{i, j}} \right ] \nonumber
 \end{align}
 
 AMBER employs a simple harmonic potential to model angles and bonds to
@@ -855,7 +856,7 @@ Atom types are descriptors of individual atoms that specifies the properties and
 typical chemical structure of bonds involving that atom. Each atom type, $i$,
 has a predetermined set of atom parameters---an atomic mass, a LJ radius $r_i$,
 and a LJ well-depth $\varepsilon_i$. The pairwise $R_{min,i,j}$ in Eq.
-\ref{eq:LennardJones} of atom types $i$ and $j$ is the sum $r_i + r_j$. The
+\ref{eq1:LennardJones} of atom types $i$ and $j$ is the sum $r_i + r_j$. The
 combined well depth $\varepsilon_{i,j}$ is the geometric mean of the individual
 well depths ($\sqrt {\varepsilon_i \varepsilon_j}$). These are the so-called
 \emph{combining rules} employed by \emph{tleap} when parametrizing a molecule

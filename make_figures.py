@@ -237,19 +237,55 @@ def cmap(fname):
 
    fig.savefig('cmap.png')
 
+def distance_dielectric():
+   """ Creates the plot for a distance-dependent dielectric """
+   def eps_eff(eps, S):
+      """ Returns a distance-dependent dielectric function of r """
+      return lambda r: eps - (eps-1) / 2 * (r*r*S*S + 2*r*S + 2) * np.exp(-r*S)
+   
+   xdata = np.arange(0, 35, 0.1)
+   s0_1 = eps_eff(78.5, 0.2)
+   s0_5 = eps_eff(78.5, 0.5)
+   s1 = eps_eff(78.5, 1.0)
+
+   fig = plt.figure(5, figsize=(8,5))
+
+   ax = fig.add_subplot(111)
+
+   ax.grid(linewidth=1)
+   ax.set_xlim((0,30))
+   ax.set_ylim((0,80))
+   ax.set_xlabel(r"Distance ($\AA$)", family='sans-serif',
+                 fontdict={'fontsize' : 20})
+   ax.set_ylabel(r"Effective Dielectric ($\varepsilon_{eff}$)",
+                 family='sans-serif', fontdict={'fontsize' : 20})
+
+   pl1, = ax.plot(xdata, s0_1(xdata), linewidth=3, linestyle='-', color='b')
+   pl2, = ax.plot(xdata, s0_5(xdata), linewidth=3, linestyle='--', color='r')
+   pl3, = ax.plot(xdata, s1(xdata), linewidth=3, linestyle='-.', color='g')
+
+   ax.legend((pl1, pl2, pl3), ('S = 0.2', 'S = 0.5', 'S = 1.0'), loc=4)
+
+   fig.savefig('DistanceDielectric.ps')
+
 if __name__ == '__main__':
    """ Determine which plots to make """
    parser = ArgumentParser()
-   parser.add_argument('--time-step', dest='timestep', default=False,
-                       action='store_true', help='Create the time step plot')
-   parser.add_argument('--hydrogen-atom', dest='hydrogen', default=False,
-                       action='store_true', help='''Create the plot for the
-                       hydrogen atom.''')
-   parser.add_argument('--lennard-jones', dest='lj', default=False,
-                       action='store_true', help='''Create the plot for the
-                       Lennard-Jones potential.''')
-   parser.add_argument('--cmap', dest='cmap', default=None, metavar='FILE',
-                       help='Generate a CMAP plot with the given input file.')
+   group = parser.add_argument_group('Chapter 1 Figures')
+   group.add_argument('--time-step', dest='timestep', default=False,
+                      action='store_true', help='Create the time step plot')
+   group.add_argument('--hydrogen-atom', dest='hydrogen', default=False,
+                      action='store_true', help='''Create the plot for the
+                      hydrogen atom.''')
+   group.add_argument('--lennard-jones', dest='lj', default=False,
+                      action='store_true', help='''Create the plot for the
+                      Lennard-Jones potential.''')
+   group.add_argument('--cmap', dest='cmap', default=None, metavar='FILE',
+                      help='Generate a CMAP plot with the given input file.')
+   group = parser.add_argument_group('Chapter 2 Figures')
+   group.add_argument('--distance-dielectric', dest='distdiel', default=False,
+                      action='store_true', help='''Create the plot for the
+                      distance-dependent dielectric figure.''')
    
    opt = parser.parse_args()
 
@@ -261,4 +297,5 @@ if __name__ == '__main__':
       LennardJones()
    if opt.cmap is not None:
       cmap(opt.cmap)
-
+   if opt.distdiel:
+      distance_dielectric()
