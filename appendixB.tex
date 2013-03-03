@@ -48,8 +48,8 @@ support as much of the standard as possible.
 
 All names (\eg atom names, atom type names, and residue names) are limited to
 4 characters and are printed in fields of width \emph{exactly} 4 characters
-wide, left-justified. This means that names may not be space-delimited if any of
-the names have 4 characters.
+wide, left-justified. This means that names might not be space-delimited if any
+of the names have 4 characters.
 
 \paragraph{Requirements for prmtop parsers}
 
@@ -58,8 +58,8 @@ list of attributes to maximize the likelihood that they are parsed correctly.
 
 \begin{itemize}
    \item Parsers should expect that some 4-character fields (\eg atom or residue
-         names) may have some names that have 4 characters and therefore may not
-         be whitespace-delimited.
+         names) may have some names that have 4 characters and therefore might
+         not be whitespace-delimited.
    \item Parsers should not expect {\tt SECTION}s in the prmtop to be in any
          particular order.
    \item Parsers should not expect or require {\tt \%COMMENT} lines to exist,
@@ -70,7 +70,7 @@ list of attributes to maximize the likelihood that they are parsed correctly.
          is required.
 \end{itemize}
 
-\paragraph{Requirements for modifying or adding {\tt SECTION}s}
+\paragraph{Requirements for modifying {\tt SECTION}s}
 
 To minimize the impact of prmtop changes to existing, third-party parsers, the
 following conventions should be followed.
@@ -80,8 +80,8 @@ following conventions should be followed.
          avoid conflicts with order-dependent parsers.
    \item The {\tt <FORTRAN FORMAT>} should be as simple as possible (and avoid
          adding new formats) to maintain simplicity for non-Fortran parsers.
-   \item Avoid modifying if possible. Consider if this section truly belongs in
-         the prmtop.
+   \item Avoid modifying if possible. Consider if this new section or change is
+         truly necessary \emph{and} belongs in the prmtop.
 \end{itemize}
 
 \section{List of {\tt SECTION}s}
@@ -97,7 +97,7 @@ must be present.
 \subsection*{POINTERS}
 
 This section contains the information about how many parameters are present in
-all of the sections. There are 31 or 32 integer pointers (NCOPY may not be
+all of the sections. There are 31 or 32 integer pointers (NCOPY might not be
 present). The format and names of all of the pointers are listed below, followed
 by a description of each pointer.
 
@@ -238,7 +238,7 @@ exclusion is listed only once in the topology file, and is given to the atom
 with the smaller index. That is, if atoms 1 and 2 are bonded, then atom 2 is in
 the exclusion list for atom 1, but atom 1 is \emph{not} in the exclusion list
 for atom 2. If an atom has no excluded atoms (either because it is a monoatomic
-ion or all atoms it forms a bonded interaction with has a smaller index), then
+ion or all atoms it forms a bonded interaction with have a smaller index), then
 it is given a value of 1 in this list which corresponds to an exclusion with (a
 non-existent) atom 0 in {\tt EXCLUDED\_ATOMS\_LIST}.
 
@@ -283,7 +283,7 @@ Note, each atom pair can interact with either the standard 12-6 LJ potential
 \subsection*{RESIDUE\_LABEL}
 
 This section contains the residue name for every residue in the prmtop. Residue
-names are limited to 4 letters, and may not be whitespace-delimited if any
+names are limited to 4 letters, and might not be whitespace-delimited if any
 residues have 4-letter names.
 
 \noindent {\tt \%FORMAT(20a4)}
@@ -333,7 +333,7 @@ Angle energies are calculated according to the equation
    \label{eqB:Angle}
 \end{equation}
 
-This section lists all of the angle force constants ($\k_{\theta}$ in Eq.
+This section lists all of the angle force constants ($k_{\theta}$ in Eq.
 \ref{eqB:Angle}) in units of $kcal\, mol^{-1}\, rad^2$ for each unique angle
 type. Each angle in {\tt ANGLES\_INC\_HYDROGEN} and {\tt
 ANGLES\_WITHOUT\_HYDROGEN} contains an index into this (and the next) array.
@@ -369,7 +369,7 @@ DIHEDRALS\_WITHOUT\_HYDROGEN} has an index into this array.
 Amber parameter files contain a dividing factor and barrier height for each
 dihedral. The barrier height in the parameter files are divided by the provided
 factor inside \emph{tleap} and then discarded. As a result, the torsion barriers
-in this section may not match those in the original parameter files.
+in this section might not match those in the original parameter files.
 
 \noindent {\tt \%FORMAT(5E16.8)}
 
@@ -428,7 +428,7 @@ analogous to {\tt SCEE\_SCALE\_FACTOR} described above.
 \subsection*{SOLTY}
 
 This section is currently unused, and while `future use' is planned, this
-assertion has laid dormant for some time.
+assertion has lain dormant for some time.
 
 \noindent {\tt \%FORMAT(5E16.8)}
 
@@ -469,7 +469,8 @@ atom is Hydrogen. Each bond is identified by 3 integers---the two atoms involved
 in the bond and the index into the {\tt BOND\_FORCE\_CONSTANT} and {\tt
 BOND\_EQUIL\_VALUE}. For run-time efficiency, the atom indexes are actually
 indexes into a coordinate array, so the actual atom index $A$ is calculated from
-the coordinate array index $N$ by $A = N / 3 + 1$.
+the coordinate array index $N$ by $A = N / 3 + 1$. ($N$ is the value in the
+topology file)
 
 \noindent {\tt \%FORMAT(10I8)}
 
@@ -492,7 +493,8 @@ atom is Hydrogen. Each angle is identified by 4 integers---the three atoms
 involved in the angle and the index into the {\tt ANGLE\_FORCE\_CONSTANT} and
 {\tt ANGLE\_EQUIL\_VALUE}. For run-time efficiency, the atom indexes are
 actually indexes into a coordinate array, so the actual atom index $A$ is
-calculated from the coordinate array index $N$ by $A = N / 3 + 1$.
+calculated from the coordinate array index $N$ by $A = N / 3 + 1$. ($N$ is the
+value in the topology file)
 
 \noindent {\tt \%FORMAT(10I8)}
 
@@ -516,7 +518,8 @@ involved in the torsion and the index into the {\tt DIHEDRAL\_FORCE\_CONSTANT},
 {\tt DIHEDRAL\_PERIODICITY}, {\tt DIHEDRAL\_PHASE}, {\tt SCEE\_SCALE\_FACTOR}
 and {\tt SCNB\_SCALE\_FACTOR} arrays. For run-time efficiency, the atom indexes
 are actually indexes into a coordinate array, so the actual atom index $A$ is
-calculated from the coordinate array index $N$ by $A = N / 3 + 1$.
+calculated from the coordinate array index $N$ by $A = N / 3 + 1$. ($N$ is the
+value in the topology file)
 
 If the third atom is negative, then the 1-4 non-bonded interactions for this
 torsion is not calculated. This is required to avoid double-counting these
@@ -619,7 +622,7 @@ character indicators:
 
 This section is no longer used and is currently just filled with zeros.
 
-\noindent {\tt \%FORMAT(10a8)}
+\noindent {\tt \%FORMAT(10I8)}
 
 \noindent There are {\tt NATOM} integers in this section.
 
@@ -627,7 +630,7 @@ This section is no longer used and is currently just filled with zeros.
 
 This section is not used and is currently just filled with zeros.
 
-\noindent {\tt \%FORMAT(10a8)}
+\noindent {\tt \%FORMAT(10I8)}
 
 \noindent There are {\tt NATOM} integers in this section.
 
@@ -706,7 +709,7 @@ available radii sets with their 1-line descriptions are:
    \item[bondi] {\tt Bondi radii (bondi)}
    \item[amber6] {\tt amber6 modified Bondi radii (amber6)}
    \item[mbondi] {\tt modified Bondi radii (mbondi)}
-   \item[mbondi2] {\tt H(N)-modified Bondie radii (mbondi2)}
+   \item[mbondi2] {\tt H(N)-modified Bondi radii (mbondi2)}
    \item[mbondi3] {\tt ArgH and AspGlu0 modified Bondi2 radii (mbondi3)}
 \end{description}
 
@@ -746,7 +749,8 @@ polarizabilities for every atom in the prmtop.
 
 All of the sections of the topology file listed here are only present if {\tt
 IFPERT} is 1. However, no modern programs support such prmtops so these sections
-are rarely (if ever) used. They are included here for completeness, only.
+are rarely (if ever) used. They are included in Table \ref{tblB:PertSections}
+for completeness, only.
 
 More info can be found online at http://ambermd.org/formats.html
 
@@ -778,6 +782,7 @@ More info can be found online at http://ambermd.org/formats.html
       PERT\_CHARGE & {\tt 5E16.8} & {\tt NATOM} & Perturbed charge \\
       \hline
    \end{tabular}
+   \label{tblB:PertSections}
 \end{table}
 
 \section{CHAMBER Topologies}
@@ -842,6 +847,9 @@ those from the AMBER topology files:
    \item ATOMS\_PER\_MOLECULE
 \end{itemize}
 
+In Table \ref{tblB:ChamberDiffs} is a list of sections that have the same name
+and the same data, but with a different Fortran format identifier.
+
 \begin{table*}
    \caption{List of flags that are common between Amber and chamber topology
             files, but have different {\tt FORMAT} identifiers.}
@@ -855,6 +863,7 @@ those from the AMBER topology files:
       LENNARD\_JONES\_BCOEF & {\tt 5E16.8} & {\tt 3E24.16} \\
       \hline
    \end{tabular}
+   \label{tblB:ChamberDiffs}
 \end{table*}
 
 \subsection*{FORCE\_FIELD\_TYPE}
