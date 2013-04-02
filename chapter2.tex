@@ -262,7 +262,7 @@ $f_{GB}$ devised by \citeauthor{Still_JAmChemSoc_1990_v112_p6127}, and still
 used predominantly today, is shown in Eq. \ref{eq2:fGB}.
 
 \begin{equation}
-   f_{GB} = \sqrt{r_{i,j}^2 + \alpha_i \alpha_j \exp \left( \frac {r_{i,j}^2}
+   f_{GB} = \sqrt{r_{i,j}^2 + \alpha_i \alpha_j \exp \left( - \frac {r_{i,j}^2}
             {4 \alpha_i \alpha_j} \right)}
    \label{eq2:fGB}
 \end{equation}
@@ -288,19 +288,377 @@ radii of the two particles) the result agrees with the Kirkwood-Onsager solution
 \cite{Still_JAmChemSoc_1990_v112_p6127}
 
 The next major challenge in solving Eq. \ref{eq2:GB} is calculating the
-effective Born radii, $\alpha_i$, for each atom.
+effective Born radii, $\alpha_i$, for each atom. The effective radius of an atom
+reflects the spherically average distance of that atom from the solvent excluded
+surface. Calculating the effective radii is particularly challenging because it
+must be done rapidly, accurately, and so gradients may be easily computed.
+Because GB was developed as an efficient alternative to solving the PB equation,
+computationally intensive approaches to calculating the effective radii offer
+little advantage over using the more precise PB equation. Furthermore,
+\citeauthor{Onufriev_JComputChem_2002_v23_p1297} has demonstrated the importance
+of computing effective Born radii accurately,
+\cite{Onufriev_JComputChem_2002_v23_p1297} showing that so-called `perfect
+radii' reproduce PB results very closely. Finally, gradients are necessary to
+perform either geometry optimization or molecular dynamics, and an expression
+that lends itself to rapid computation of an accurate gradient is an attractive
+feature.
+
+The most common approach to computing the effective radius is called the
+\emph{coulomb field approximation}, shown below in Eq. \ref{eq2:CFA}.
+\cite{Cramer_Book_EssentialsCompChem_2004}
+
+\begin{equation}
+   I _ i = \int _ {\Omega_i} \frac {d^3r} {4 \pi r ^ 4}
+   \label{eq2:CFA}
+\end{equation}
+where $I_i$ is the coulomb field integral for atom $i$ and $\Omega_i$ signifies
+the integral is over all space centered on atom $i$. The effective radius is
+then computed from this integral using Eq. \ref{eq2:reff}
+
+\begin{equation}
+   \alpha _ {i} = \left( \rho _ i ^ {-1} - I _ i \right) ^ {-1}
+   \label{eq2:reff}
+\end{equation}
+where $\rho_i$ is the intrinsic van der Waals radius of atom $i$ and $I_i$ is
+the integral from Eq. \ref{eq2:reff}.
+
+As computational power increased and simulations reached longer time scales and
+larger systems, however, deficiencies in these equations began to surface,
+leading to efforts to improve the calculation of the effective Born radii.
+\cite{Onufriev_JComputChem_2002_v23_p1297, Onufriev_Proteins_2004_v55_p383,
+Mongan_JChemTheoryComput_2007_v3_p156, Nguyen_JChemTheoryComput_2013_ASAP} The
+two approaches that have been implemented in the Amber suite of programs are
+briefly described below.
+
+\citeauthor{Onufriev_Proteins_2004_v55_p383} noticed that Eqs. \ref{eq2:CFA} and
+\ref{eq2:reff} tended to underestimate the effective radii of buried atoms
+because it assumed that interstitial regions of space between atoms were
+solvent-filled, despite the fact that they were too small to contain a full
+water molecule. \cite{Onufriev_Proteins_2004_v55_p383} As a result, they
+modified Eq. \ref{eq2:reff} into the following form:
+\begin{equation}
+   \alpha _ i = \left[ \rho _ i ^ {-1} - \rho _ i ^ {-1} \tanh \left( a
+   \Psi - \beta \Psi^2 + \gamma \Psi^3 \right) \right] ^ {-1}
+   \label{eq2:reffOBC}
+\end{equation}
+where $I_i$ is taken from Eq. \ref{eq2:CFA}, $\Psi = I \rho_i$, and $a$,
+$\beta$, and $\gamma$ are fitting parameters. The $\tanh$ function was chosen
+because it is infinitely differentiable (analytically) and increases the
+effective radii of more deeply-buried atoms while leaving the effective radii of
+atoms closer to the surface unchanged. In this way, Eq. \ref{eq2:reffOBC}
+maintains the success Eq. \ref{eq2:reff} displayed for small compounds while
+improving the behavior of deeply-buried residues.
+\cite{Onufriev_Proteins_2004_v55_p383} This GB variant is referred to as
+GB\super{OBC} (where OBC comes from the authors Onufriev, Bashford, and Case).
+
+\citeauthor{Mongan_JChemTheoryComput_2007_v3_p156} took a different approach.
+While Eq. \ref{eq2:reffOBC} provided uniform scaling for all atoms with a given
+degree of burial (as measured by the value of $I_i$ in Eq. \ref{eq2:CFA}),
+\citeauthor{Mongan_JChemTheoryComput_2007_v3_p156} adopted an approach based on
+geometry. By treating each atom and each solvent molecule as a sphere---a good
+approximation for a water molecule---the interstitial space between two solute
+atoms that is inaccessible to solvent (Fig. \ref{fig2:Interstitial}) can be
+quantified. Because this interstitial region resembles a neck, this model is
+referred to as GB\super{neck}. \cite{Mongan_JChemTheoryComput_2007_v3_p156}
+
+\begin{figure}
+   \includegraphics[width=4in]{Interstitial.ps}
+   \caption{Region of space between two atoms $i$ and $j$ of radius $R_i$ and
+            $R_j$ that is inaccessible to a spherical solvent molecule of radius
+            $R_solv$. This inaccessible region is called the \emph{neck} and is
+            shaded gray.}
+   \label{fig2:Interstitial}
+\end{figure}
+
+The most recent approach by \citeauthor{Nguyen_JChemTheoryComput_2013_ASAP}
+involves a re-parametrization of the intrinsic atomic radii ($\rho_i$ in Eq.
+\ref{eq2:reff}) for atoms commonly involved in salt bridges and a combination of
+the ideas presented in the GB\super{OBC} and GB\super{neck} models described
+above. \cite{Nguyen_JChemTheoryComput_2013_ASAP}
 
 \subsubsection{Non-polar Solvation}
 
+The process of solvation can be broken down into two fictitious steps---a
+cavitation step in which the solvent is excluded from a region of space equal to
+the solute's solvent excluded volume, and a charging step where the
+solvent-polarized charge distribution of the solute is inserted into that
+cavity. Because the free energy is a state function, this gedanken decomposition
+will yield an identical free energy to the true process that occurs in
+experiment---assuming of course that each process can be calculated exactly.
+The free energies of these two steps are referred to as the non-polar and polar
+solvation free energy, respectively.
+
+The Poisson-Boltzmann and Generalized Born equations shown in Eqs.
+\ref{eq2:PoissonBoltzmann} and \ref{eq2:GB} are used to compute the polar
+solvation free energy (\ie the portion of the free energy derived from the
+reaction field). There are several methods for calculating the non-polar
+solvation free energy.
+
+Methods for calculating the non-polar contribution to solvation are often
+parametrized by assuming that the solvation free energy for extended and
+branched alkanes is non-polar in nature. The most common way to calculate
+non-polar solvation is to fit a surface tension value to the experimental
+solvation free energies of the alkanes.
+\cite{Cramer_Book_EssentialsCompChem_2004} This approach can be rationalized
+using the idea that the presence of a non-polar solute immersed in solvent
+disrupts the solvent-solvent interactions, thereby restricting solvent structure
+in the solvation shell surrounding the solute. This effect imposes an entropic
+penalty to solvation (that is offset by the polar solvation term for soluble
+compounds).  If this was the only source of the `non-polar' solvation free
+energy, then its magnitude would vary with the size of the molecule, which is
+directly related to its surface area.
+
+Combining this surface-area non-polar solvation term with either the Generalized
+Born or Poisson-Boltzmann equations for the polar solvation term results in the
+so-called \emph{GBSA} and \emph{PBSA} methods, respectively. One of the most
+common methods for calculating the surface area in GBSA molecular dynamics
+simulations is called the \emph{linear combination of pairwise overlaps} (LCPO)
+method---so-called because it is parametrized by fitting five parameters to the
+spherical overlaps of individual atoms. \cite{Weiser_JComputChem_1999_v20_p217}
+The chief advantage of LCPO is that it provides an efficient way to calculate
+surface areas using an analytical formula whose derivatives can be easily
+calculated for use in molecular dynamics.
+
 \subsection{Explicit Solvent}
+
+While the implicit solvent methods described above are useful ways of
+incorporating solvation effects in molecular simulations, all solvent effects
+are accounted for in an average way. Therefore, individual water molecules that
+play structurally important roles in biomolecules are not treated well by either
+PB or GB methodologies. In such cases, it is advantageous to include the solvent
+molecules explicitly in the simulation. Explicit solvent significantly increases
+the cost of the simulation by adding a large number of atoms to the system, but
+should improve the accuracy by creating a model closer to reality.
+
+A large drawback when adding explicit solvent, however, is the fact that modern
+simulations at an atomic resolution (\ie where all atoms are treated explicitly)
+are limited to, at most, $10^8$ atoms, \cite{100M_Stupid} although simulations
+between $10^5$ to $10^6$ atoms are more reasonable. Macroscopic systems, on the
+other hand, contain on the order of $10^{23}$ atoms---a number far outside the
+range of possibility for modern hardware, so our simulations must be scaled down
+to a microscopic size.
+
+As a demonstration, the hairpin ribozyme is a biomolecule that contains roughly
+\mbox{2 100} atoms. Adding only \mbox{22 000} water molecules---enough to create
+a 20 \AA spherical solvent buffer around the ribozyme---increases the simulation
+size to roughly \mbox{90 000} atoms. It is quite clear, therefore, that even on
+the largest supercomputers, we can only model a microscopic droplet in explicit
+solvent. At such small sizes, the ratio of surface area to volume for these
+minuscule droplets is astronomically large, and water molecules at the
+solvent-air interface behave quite differently from those molecules in bulk
+solvent that is typically encountered experimentally.
+
+While early approaches of applying a `cap' potential---an artificial biasing
+potential penalizing solvent that diffuses too far away from the solute---helped
+overcome some surface effects like evaporation, it made direct comparison to
+experiment dubious. A major breakthrough in explicit solvent calculations came
+with the introduction of periodic boundary conditions. \cite{Allen_Tildesley}
 
 \subsubsection{Periodic Boundary Conditions}
 
+To emulate bulk solution behavior using a system composed of a tractable number
+of atoms, we impose periodic boundary conditions (PBC) on the system,
+replicating it infinitely in every dimension. In such a system, each atom
+interacts with all other atoms in all other simulation cells---including its own
+periodic images. \cite{Allen_Tildesley} A two-dimensional illustration of PBC is
+shown in Fig. \ref{fig2:PBC} for a rectangular unit cell illustrating these
+ideas.
+
+A practice commonly adopted in PBC simulations in which each atom interacts
+directly with only a single image of every other atom---specifically the nearest
+image---is called the \emph{minimum image convention}. The minimum image
+convention is employed to simplify the problem, but also imposes a limit to the
+range of calculated interactions. Specifically, the non-bonded interactions do
+not extend beyond half the length of the shortest side of the unit cell.
+Employing the minimum image convention, the energy calculated for a system with
+PBC is the energy of a single unit cell in the field generated by all other
+periodic cells. The challenge is how to calculate the non-bonded interactions
+for every atom in the system. The common approaches employed in biomolecular
+simulation is explored in the next three sections.
+
+\begin{figure}
+   \includegraphics[width=6.5in]{PBC.ps}
+   \caption{Periodic simulation in two dimensions with a rectangular unit cell.}
+   \label{fig2:PBC}
+\end{figure}
+
 \subsubsection{Cutoff Methods}
+
+The simplest approach to calculating non-bonded interactions is to employ a
+simple cutoff that is smaller than half the length of the shortest side of the
+unit cell---\ie all non-bonded interactions between atoms closer than the cutoff
+are included and all those between atoms greater than the cutoff are neglected.
+Because the common forms of the non-bonded potential decay as the distance
+between atoms increases (see Eqs. \ref{eq1:ElectrostaticInteractions} and
+\ref{eq1:LennardJones}), interactions between distant atoms are significantly
+smaller than interactions between nearby atoms. The non-bonded interactions are
+modeled as the simple piecewise function shown in Eq. \ref{eq2:cutoff}.
+
+\begin{equation}
+   U^{\prime}(\vec{x}_{i,j}) = \left \{
+   \begin{array}{lr}
+      U(\vec{x}_{i,j}) & : \left | \vec{x}_{i,j} \right | < x_{cut} \\
+      0 & : \left | \vec{x}_{i,j} \right | > x_{cut}
+   \end{array}
+   \right.
+   \label{eq2:cutoff}
+\end{equation}
+
+While conceptually simple and computationally efficient, simple cutoffs suffer
+from a severe limitation. The potential, and therefore the force, encounters a
+discontinuity at the cutoff distance, shown in Fig.
+\ref{fig2:Cutoff}A. This discontinuity results in simulations that do not
+conserve energy and leads to numerous, non-physical artifacts.
+\cite{Schreiber_JMolBiol_1992_v228_p909, Schreiber_Biochemistry_1992_v31_p5856,
+Saito_JChemPhys_1994_v101_p4055, Auffinger_ChemPhysLett_1995_v234_p413,
+Cheatham_JAmChemSoc_1995_v117_p4193, Feller_JPhysChem_1996_v100_p17011,
+Patra_BiophysJ_2003_v84_p3636} This effect is particularly pronounced for
+electrostatic interactions---a very long-range potential of the form $1/r$. This
+function decays so slowly, in fact, that $\sum_{i=1}^{\infty} 1/r = \infty$.
+Two monovalent ions must be separated by ~332 \AA before their interaction
+energy drops to 1 kcal/mol. Such a cutoff would require a unit cell size at
+least 664 \AA on each edge containing $\sim 10^7$ water molecules.
+
+Given the need to improve the behavior of the non-bonded potentials near the
+cutoff distance, two popular modifications to the simple cutoff approach were
+introduced---a smooth switching function and a shifting function. The switching
+function approach applies a smooth function at a given distance that satisfies
+the following criteria: a) the potential and its gradient is continuous
+everywhere, b) the short-ranged form of the potential is unchanged, and c) the
+potential approaches 0 at the cutoff. Eq. \ref{eq2:cutoff} is an example of a
+very simple switching function in which the original potential is multiplied by
+1 when the interparticle distance is less than the cutoff and 0 otherwise. Of
+course, this switching function does not obey either the a) or c) conditions
+listed above. An example of a smooth switching function is shown in Fig.
+\ref{fig2:Cutoff}B.
+
+The second family of methods commonly employed are so-called shifting functions
+since the potential is modified by `shifting' the potential up such that the
+value of the potential becomes zero at the cutoff distance.
+\cite{Allen_Tildesley} Simply shifting the potential, though, is not enough for
+MD simulations, since the force will remain unchanged and still faces a
+discontinuity at the cutoff. Therefore, the shifting function often contains a
+force-shifting component, as shown in Eq. \ref{eq2:ShiftingFunction}.
+\cite{Allen_Tildesley} The effect of the shifting function is shown in Fig.
+\ref{fig2:Cutoff}C.
+
+\begin{equation}
+   U_s(\vec{r}_{i,j}) = \left\{
+   \begin{array}{lr}
+      U(\vec{r}_{i,j} - U(\vec{r}_{cut}) - \left( \frac {dU(\vec{r}_{i,j})}
+        {d\vec{r}_{i,j}} \right) _ {\vec{r}_{i,j} = \vec{r}_{cut}}
+        (\vec{r}_{i,j} - \vec{r}_{cut}) & \vec{r}_{i,j} \lt \vec{r}_{cut} \\
+      0 & \vec{r}_{i,j} \geq \vec{r}_{cut}
+   \end{array}
+   \right.
+   \label{eq2:ShiftingFunction}
+\end{equation}
+
+\begin{figure}
+   \includegraphics[width=6.5in]{Cutoff.ps}
+   \caption{Effects of various cutoff schemes. A) shows the effect of imposing a
+            strict cutoff at 10 \AA. B) shows a typical switching function where
+            the original potential is shown in black and the switching function
+            is shown in red. C) shows a typical shifting function for the
+            electrostatic potential.}
+   \label{fig2:Cutoff}
+\end{figure}
 
 \subsubsection{Ewald Summation}
 
+Ideally, simulations in the condensed phases would be performed \emph{without}
+truncating electrostatic interactions at all. The full electrostatic interaction
+for a net neutral unit cell takes the functional form $\sum_{i=1}^N (-1)^i / i$,
+since there are an equal number of charges of both signs. This sum is
+\emph{conditionally convergent}, meaning that, while its value converges to a
+finite value, the value that it converges to depends on the order in which the
+terms are summed. \cite{Allen_Tildesley} A natural choice for ordering the
+summation of the infinite number of electrostatic interactions with particle $i$
+is by summing all of the electrostatic interactions with each particle $j$ in
+every unit cell extending radially from the unit cell containing $i$. This
+approach is shown diagrammatically in Fig. \ref{fig2:PeriodicCells}.
+\cite{Allen_Tildesley}
+
+\begin{figure}
+   \includegraphics[width=6.5in]{PeriodicCells.ps}
+   \caption{Periodic cells added in a spherical shape radially from the central
+            unit cell. The progression shows the order in which interactions are
+            accumulated in the sum of the electrostatic interactions. The
+            example is shown in two dimensions, but can be trivially extended to
+            three dimensions.}
+   \label{fig2:PeriodcCells}
+\end{figure}
+
+In 1921, \citeauthor{Ewald_AnnPhys_1921_v64_p253} devised a method whereby the
+electrostatic interactions between an ion and all of its periodic images in a
+crystal lattice could be computed according to the technique presented in Fig.
+\ref{fig2:PeriodicCells}. \cite{Ewald_AnnPhys_1921_v64_p253} The same approach
+can be used for simulations in the condensed phase when PBC are used.  The
+technique, called the Ewald sum, utilizes a trick to cause the electrostatic
+interactions between particles to decay arbitrarily rapidly, allowing the
+interactions to be truncated at a distance where the interactions themselves are
+negligible. To do this, a Gaussian charge distribution is centered at each point
+charge whose integral is the same magnitude as the point charge around which it
+is centered, but with opposite sign (Fig. \ref{fig2:Ewald}). Given a width of
+the Gaussian distribution $\alpha$, the functional form of the neutralizing
+charge distribution is shown in Eq. \ref{eq2:NeutralizingDistribution}.
+
+\begin{equation}
+   \rho_i(r) = \frac{q_i \alpha ^ 3} {\pi ^ {3/2}} \exp \left( -\alpha ^ 2 r^2
+               \right)
+   \label{eq2:NeutralizingDistribution}
+\end{equation}
+where $\rho_i$ is the charge distribution due to particle $i$ and its
+neutralizing Gaussian and $\alpha$ is the tunable parameter controlling how
+diffuse the Gaussian is.
+
+\begin{figure}
+   \includegraphics[width=6.5in]{Ewald.ps}
+   \caption{A one-dimensional example of particles with a given charge (red)
+            with a neutralizing Gaussian charge distribution (blue) shown.}
+   \label{fig2:Ewald}
+\end{figure}
+
+The electrostatic interaction of two charged particles $i$ and $j$ with their
+neutralizing charge distribution is 
+\begin{equation*}
+   E_{i,j} = q_i q_j \frac {erfc(\alpha r_{i,j})} {r_{i,j}}
+\end{equation*}
+where $erfc$ is the complementary error function. The complementary error
+function decays rapidly---more rapidly for narrower neutralizing distributions.
+The narrower the neutralizing distributions are, the smaller the cutoff that may
+be used without compromising accuracy. In fact, at the limit where the Gaussian
+width is zero, the neutralizing charge distribution becomes a delta function
+that exactly cancels the original point charge, allowing a cutoff of zero!
+
+However, while adding the neutralizing charge distributions has allowed us to
+compute the direct electrostatic energies between particles rapidly by imposing
+a relatively short cutoff, we have changed our system. The effect of the
+neutralizing charge distributions must be canceled by inverting all of the
+neutralizing charge distributions---called canceling charge distributions since
+it cancels the effect of the neutralizing charge distributions (Fig.
+\ref{fig2:Ewald}). The interactions between these neutralizing charge
+distributions represent a number of convolution integrals. These integrals may
+be computed very rapidly by taking the Fourier transform of the distributions
+and summing the contributions in reciprocal space. The result is then
+reverse-Fourier transformed to obtain the electrostatic potential at each of the
+particles. \cite{Allen_Tildesley}
+
 \paragraph{Particle-Mesh Ewald}
+
+A weakness of Ewald's summation is that the Fourier transform is a slow
+operation---on the order of $O(N^2)$ where $N$ is the number of particles. To
+address this shortcoming, the charge density due to the canceling charge
+distributions is discretized on a 3-dimensional mesh with a given grid spacing.
+This allows us to use the fast Fourier transform algorithm (FFT) to perform both
+the Fourier transform and reverse Fourier transform to calculate the
+electrostatic potential at each of the mesh points. Unlike the standard Fourier
+transform, the FFT scales as $O(N\log(N))$, resulting in a huge increase in
+computational efficiency. The potential at each of the particles---and its
+gradient---can then be interpolated from the adjacent grid points on the mesh
+using cardinal B-splines. This approach is termed \emph{Particle-Mesh Ewald}
+(PME) due to the way in which the particles interact with the mesh to determine
+the long-range electrostatic interactions.
 
 \subsubsection{Other Approaches}
 
