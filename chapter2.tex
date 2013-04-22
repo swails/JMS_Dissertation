@@ -362,7 +362,8 @@ quantified. Because this interstitial region resembles a neck, this model is
 referred to as GB\super{neck}. \cite{Mongan_JChemTheoryComput_2007_v3_p156}
 
 \begin{figure}
-   \includegraphics[width=4in]{Interstitial.ps}
+   \includegraphics[height=6.5in, angle=90, trim=1cm 0.5cm 1cm 0.5cm, clip=true]
+                   {Interstitial.ps}
    \caption{Region of space between two atoms $i$ and $j$ of radius $R_i$ and
             $R_j$ that is inaccessible to a spherical solvent molecule of radius
             $R_solv$. This inaccessible region is called the \emph{neck} and is
@@ -440,11 +441,11 @@ to a microscopic size.
 
 As a demonstration, the hairpin ribozyme is a biomolecule that contains roughly
 \mbox{2 100} atoms. Adding only \mbox{22 000} water molecules---enough to create
-a 20 \AA spherical solvent buffer around the ribozyme---increases the simulation
-size to roughly \mbox{90 000} atoms. It is quite clear, therefore, that even on
-the largest supercomputers, we can only model a microscopic droplet in explicit
-solvent. At such small sizes, the ratio of surface area to volume for these
-minuscule droplets is astronomically large, and water molecules at the
+a 20 {\AA} spherical solvent buffer around the ribozyme---increases the
+simulation size to roughly \mbox{90 000} atoms. It is quite clear, therefore,
+that even on the largest supercomputers, we can only model a microscopic droplet
+in explicit solvent. At such small sizes, the ratio of surface area to volume
+for these minuscule droplets is astronomically large, and water molecules at the
 solvent-air interface behave quite differently from those molecules in bulk
 solvent that is typically encountered experimentally.
 
@@ -477,8 +478,12 @@ for every atom in the system. The common approaches employed in biomolecular
 simulation is explored in the next three sections.
 
 \begin{figure}
-   \includegraphics[width=6.5in]{PBC.ps}
-   \caption{Periodic simulation in two dimensions with a rectangular unit cell.}
+   \includegraphics[height=6.5in, angle=90, trim=0.7cm 3cm 0.7cm 3cm, clip=true]
+                   {PBC.ps}
+   \caption{Periodic simulation in two dimensions with a rectangular unit cell.
+            The maximum permissible cutoff (r\sub{cut}) for the minimum image
+            convention is shown with a blue dotted circle centered on particle 1
+            in the first box.}
    \label{fig2:PBC}
 \end{figure}
 
@@ -515,9 +520,9 @@ Cheatham_JAmChemSoc_1995_v117_p4193, Feller_JPhysChem_1996_v100_p17011,
 Patra_BiophysJ_2003_v84_p3636} This effect is particularly pronounced for
 electrostatic interactions---a very long-range potential of the form $1/r$. This
 function decays so slowly, in fact, that $\sum_{i=1}^{\infty} 1/r = \infty$.
-Two monovalent ions must be separated by ~332 \AA before their interaction
+Two monovalent ions must be separated by ~332 {\AA} before their interaction
 energy drops to 1 kcal/mol. Such a cutoff would require a unit cell size at
-least 664 \AA on each edge containing $\sim 10^7$ water molecules.
+least 664 {\AA} on each edge containing $\sim 10^7$ water molecules.
 
 Given the need to improve the behavior of the non-bonded potentials near the
 cutoff distance, two popular modifications to the simple cutoff approach were
@@ -530,17 +535,17 @@ very simple switching function in which the original potential is multiplied by
 1 when the interparticle distance is less than the cutoff and 0 otherwise. Of
 course, this switching function does not obey either the a) or c) conditions
 listed above. An example of a smooth switching function is shown in Fig.
-\ref{fig2:Cutoff}B.
+\ref{fig2:Cutoff}B. \cite{Steinbach_JComputChem_1994_v15_p667}
 
 The second family of methods commonly employed are so-called shifting functions
 since the potential is modified by `shifting' the potential up such that the
 value of the potential becomes zero at the cutoff distance.
-\cite{Allen_Tildesley} Simply shifting the potential, though, is not enough for
-MD simulations, since the force will remain unchanged and still faces a
-discontinuity at the cutoff. Therefore, the shifting function often contains a
-force-shifting component, as shown in Eq. \ref{eq2:ShiftingFunction}.
-\cite{Allen_Tildesley} The effect of the shifting function is shown in Fig.
-\ref{fig2:Cutoff}C.
+\cite{Steinbach_JComputChem_1994_v15_p667, Allen_Tildesley} Simply shifting the
+potential, though, is not enough for MD simulations, since the force will remain
+unchanged and still faces a discontinuity at the cutoff. Therefore, the shifting
+function often contains a force-shifting component, as shown in Eq.
+\ref{eq2:ShiftingFunction}. \cite{Allen_Tildesley} The effect of the shifting
+function is shown in Fig. \ref{fig2:Cutoff}C.
 
 \begin{equation}
    U_s(\vec{r}_{i,j}) = \left\{
@@ -555,12 +560,14 @@ force-shifting component, as shown in Eq. \ref{eq2:ShiftingFunction}.
 \end{equation}
 
 \begin{figure}
-   \includegraphics[width=6.5in]{Cutoff.ps}
-   \caption{Effects of various cutoff schemes. A) shows the effect of imposing a
-            strict cutoff at 10 \AA. B) shows a typical switching function where
-            the original potential is shown in black and the switching function
-            is shown in red. C) shows a typical shifting function for the
-            electrostatic potential.}
+   \includegraphics[height=6.5in, angle=90]{Cutoff.ps}
+   \caption{Effects of various 16 {\AA} cutoff schemes on the electrostatic
+   interaction of two monovalent ions with opposite charges. A) shows the
+   effect of imposing a hard cutoff. B) shows a typical switching function
+   starting at 8 {\AA}. C) shows a typical shifting function for the
+   electrostatic potential. The energies as a function of distance are shown in
+   the top 3 plots and the forces as a function of distance are the bottom 3
+   plots.}
    \label{fig2:Cutoff}
 \end{figure}
 
@@ -580,13 +587,16 @@ approach is shown diagrammatically in Fig. \ref{fig2:PeriodicCells}.
 \cite{Allen_Tildesley}
 
 \begin{figure}
-   \includegraphics[width=6.5in]{PeriodicCells.ps}
+   \includegraphics[height=4in, angle=90, trim=0.1cm 2cm 0.1cm 2cm, clip=true]
+                    {PeriodicCells.ps}
    \caption{Periodic cells added in a spherical shape radially from the central
-            unit cell. The progression shows the order in which interactions are
-            accumulated in the sum of the electrostatic interactions. The
-            example is shown in two dimensions, but can be trivially extended to
-            three dimensions.}
-   \label{fig2:PeriodcCells}
+            unit cell. The progression from darker to lighter cells shows the
+            order in which interactions are accumulated in the sum of the
+            electrostatic interactions (with the darker cells being added before
+            the lighter ones). The example, adapted from
+            \citeauthor{Allen_Tildesley}, is shown in two dimensions, but can
+            be trivially extended to three dimensions. \cite{Allen_Tildesley}}
+   \label{fig2:PeriodicCells}
 \end{figure}
 
 In 1921, \citeauthor{Ewald_AnnPhys_1921_v64_p253} devised a method whereby the
@@ -649,16 +659,16 @@ particles. \cite{Allen_Tildesley}
 A weakness of Ewald's summation is that the Fourier transform is a slow
 operation---on the order of $O(N^2)$ where $N$ is the number of particles. To
 address this shortcoming, the charge density due to the canceling charge
-distributions is discretized on a 3-dimensional mesh with a given grid spacing.
-This allows us to use the fast Fourier transform algorithm (FFT) to perform both
-the Fourier transform and reverse Fourier transform to calculate the
-electrostatic potential at each of the mesh points. Unlike the standard Fourier
-transform, the FFT scales as $O(N\log(N))$, resulting in a huge increase in
-computational efficiency. The potential at each of the particles---and its
-gradient---can then be interpolated from the adjacent grid points on the mesh
-using cardinal B-splines. This approach is termed \emph{Particle-Mesh Ewald}
-(PME) due to the way in which the particles interact with the mesh to determine
-the long-range electrostatic interactions.
+distributions can be discretized on a 3-dimensional mesh with a given grid
+spacing. This allows us to use the fast Fourier transform algorithm (FFT) to
+perform both the Fourier transform and reverse Fourier transform to calculate
+the electrostatic potential at each of the mesh points. Unlike the standard
+Fourier transform, the FFT scales as $O(N\log(N))$, resulting in a substantial
+increase in computational efficiency. The potential at each of the
+particles---and its gradient---can then be interpolated from the adjacent grid
+points on the mesh using cardinal B-splines. This approach is termed
+\emph{Particle-Mesh Ewald} (PME) due to the way in which the particles interact
+with the mesh to determine the long-range electrostatic interactions.
 
 \subsubsection{Other Approaches}
 

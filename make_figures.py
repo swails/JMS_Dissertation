@@ -6,8 +6,16 @@ from __future__ import division
 
 from argparse import ArgumentParser
 from matplotlib import pyplot as plt
+from matplotlib import patches
+from matplotlib.lines import Line2D
 import numpy as np
 from scipy.stats.kde import gaussian_kde
+
+def _evaluate(x, func):
+   result = np.ndarray(x.shape)
+   for i, val in enumerate(x):
+      result[i] = func(val)
+   return result
 
 def timestep():
    """ Creates the time step plot """
@@ -268,6 +276,219 @@ def distance_dielectric():
 
    fig.savefig('DistanceDielectric.ps')
 
+def cutoff_effects():
+   
+   CUTOFF = 16.0
+   SWITCH_START = 8.0
+
+   fig = plt.figure(6, figsize=(16,10))
+
+   # Create all of the axes
+   trunce = fig.add_subplot(231, xlim=(1,20), ylim=(-100,5))
+   truncf = fig.add_subplot(234, xlim=(1,20), ylim=(-10,100))
+   switche = fig.add_subplot(232, xlim=(1,20), ylim=(-100,5))
+   switchf = fig.add_subplot(235, xlim=(1,20), ylim=(-10,100))
+   shifte = fig.add_subplot(233, xlim=(1,20), ylim=(-100,5))
+   shiftf = fig.add_subplot(236, xlim=(1,20), ylim=(-10,100))
+
+   # Make a list for handling them easily
+   grids = [trunce, truncf, switche, switchf, shifte, shiftf]
+
+   # Show the grid
+   for grid in grids: grid.grid(lw=1)
+
+   xd = np.arange(1, 20, 0.01)
+
+   # The various potentials
+   def no_cutoff(x): return -332.0522017 / x
+   def hard_cutoff(x):
+      if x <= CUTOFF: return no_cutoff(x)
+      return 0.0
+   def _switch(x):
+      return ((CUTOFF**2 - x*x)**2 * (CUTOFF**2+2*x*x-3*SWITCH_START**2)) / (
+               CUTOFF**2-SWITCH_START**2)**3
+   def switch(x):
+      if x < SWITCH_START: return no_cutoff(x)
+      if x < CUTOFF:
+         return no_cutoff(x) * _switch(x)
+      return 0.0
+   def shift(x):
+      if x < CUTOFF:
+         return no_cutoff(x) * (1 - (x/CUTOFF)**2)**2
+      return 0.0
+
+   # The derivatives of the various potentials
+   def dno_cutoff(x): return 332.0522017 / (x*x)
+   def dhard_cutoff(x):
+      if x <= CUTOFF: return dno_cutoff(x)
+      return 0.0
+   def dswitch(x):
+      # Do the numerical derivative here, since it's simpler (and I know
+      # switch(x) is continuous)
+      return (switch(x+1e-8) - switch(x-1e-8)) / 2e-8
+   def dshift(x):
+      if x < CUTOFF:
+         return dno_cutoff(x)*(1-(x/CUTOFF)**2)**2 + no_cutoff(x)*(
+                2*(1-(x/CUTOFF)**2)*(-2*(x/CUTOFF**2)))
+      return 0.0
+
+   # Define the font dictionaries
+   titlefont = {'fontsize' : 25, 'family' : 'sans-serif'}
+   axisfont = {'fontsize' : 20, 'family' : 'sans-serif'}
+   legendfont = {'fontsize' : 18, 'family' : 'sans-serif'}
+
+   # Plot everything
+   trunce.plot(xd, _evaluate(xd,no_cutoff), 'k-', lw=3, label='No Cutoff')
+   trunce.plot(xd, _evaluate(xd,hard_cutoff), 'r--', lw=2, label='Hard Cutoff')
+   truncf.plot(xd, _evaluate(xd,dno_cutoff), 'k-', lw=3, label='No Cutoff')
+   truncf.plot(xd, _evaluate(xd,dhard_cutoff), 'r--', lw=2, label='Hard Cutoff')
+
+   switche.plot(xd, _evaluate(xd,no_cutoff), 'k-', lw=3, label='No Cutoff')
+   switche.plot(xd, _evaluate(xd,switch), 'r--', lw=2, label='Switching Function')
+   switchf.plot(xd, _evaluate(xd,dno_cutoff), 'k-', lw=3, label='No Cutoff')
+   switchf.plot(xd, _evaluate(xd,dswitch), 'r--', lw=2, label='Switching Function')
+
+   shifte.plot(xd, _evaluate(xd,no_cutoff), 'k-', lw=3, label='No Cutoff')
+   shifte.plot(xd, _evaluate(xd,shift), 'r--', lw=2, label='Shifting Function')
+   shiftf.plot(xd, _evaluate(xd,dno_cutoff), 'k-', lw=3, label='No Cutoff')
+   shiftf.plot(xd, _evaluate(xd,dshift), 'r--', lw=2, label='Shifting Function')
+
+   # Create the force subplots to zoom in on important parts
+   subtrunc = plt.axes([1/6.3, 0.25, 0.5/3, 0.2])
+   subtrunc.set_xlim((15,20))
+   subtrunc.set_ylim((-1,2))
+   subtrunc.grid(lw=1)
+   subtrunc.plot(xd, _evaluate(xd, dno_cutoff), 'k-', lw=3)
+   subtrunc.plot(xd, _evaluate(xd,dhard_cutoff), 'r--', lw=2)
+   subtrunc.set_xticklabels(())
+
+   subswitch = plt.axes([1/6.7+1/3, 0.25, 0.5/3, 0.2])
+   subswitch.set_xlim((7, 20))
+   subswitch.set_ylim((-1,10))
+   subswitch.grid(lw=1)
+   subswitch.plot(xd, _evaluate(xd, dno_cutoff), 'k-', lw=3)
+   subswitch.plot(xd, _evaluate(xd, dswitch), 'r--', lw=3)
+   subswitch.set_xticklabels(())
+
+   subshift = plt.axes([1/7.2+2/3, 0.25, 0.5/3, 0.2])
+   subshift.set_xlim((5, 20))
+   subshift.set_ylim((-1,15))
+   subshift.grid(lw=1)
+   subshift.plot(xd, _evaluate(xd, dno_cutoff), 'k-', lw=3)
+   subshift.plot(xd, _evaluate(xd, dshift), 'r--', lw=3)
+   subshift.set_xticklabels(())
+
+   # Now draw the rectangles
+   truncrect = patches.Rectangle((15,-1), 5, 3, fill=False, lw=1, ls='solid',
+                                 ec='k')
+   switchrect = patches.Rectangle((7,-1), 13, 11, fill=False, lw=1, ls='solid', 
+                                 ec='k')
+   shiftrect = patches.Rectangle((5,-1), 15, 16, fill=False, lw=1, ls='solid', 
+                                 ec='k')
+
+   # Now add the necessary lines
+   ar1 = Line2D([15,7.206], [2,35.433], c='k', ls='--')
+   ar2 = Line2D([20,18.842], [2,35.433], c='k', ls='--')
+   ar3 = Line2D([7,7.51277], [10, 35.433], c='k', ls='--')
+   ar4 = Line2D([20,19.094], [10,35.433], c='k', ls='--')
+   ar5 = Line2D([5,7.65601], [15,35.433], c='k', ls='--')
+   ar6 = Line2D([20,19.2368], [15,35.433], c='k', ls='--')
+
+   truncf.add_patch(truncrect); truncf.add_line(ar1); truncf.add_line(ar2)
+   switchf.add_patch(switchrect); switchf.add_line(ar3); switchf.add_line(ar4)
+   shiftf.add_patch(shiftrect); shiftf.add_line(ar5); shiftf.add_line(ar6)
+   
+
+   # Show the legend
+   for grid in [trunce, shifte, switche]:
+      grid.legend(loc='lower right')
+
+   # Set titles on the energy plots
+   trunce.set_title('A) Hard Cutoff', fontdict=titlefont)
+   switche.set_title('B) Switching Function', fontdict=titlefont)
+   shifte.set_title('C) Shifting Function', fontdict=titlefont)
+
+   # Set axis labels on all force plots (x-axis) and the 2 trunc plots (y-axis)
+   trunce.set_ylabel(r'Energy (kcal mol$^{-1}$)',
+                     fontdict=axisfont)
+   truncf.set_ylabel(r'Force (kcal mol$^{-1}\,\AA^{-1}$)',
+                     fontdict=axisfont)
+   truncf.set_xlabel(r'Distance ($\AA$)', fontdict=axisfont)
+   switchf.set_xlabel(r'Distance ($\AA$)', fontdict=axisfont)
+   shiftf.set_xlabel(r'Distance ($\AA$)', fontdict=axisfont)
+
+   # Tight layout
+   fig.tight_layout()
+
+   fig.savefig('Cutoff.png')
+
+def ewald():
+   """ Plots each charge with its neutralizing charge distribution """
+   ALPHA = 5.0
+   def neutralizing(q, xeq, x):
+      x -= xeq
+#     return -q*ALPHA**3/(np.pi**1.5)*np.exp(-ALPHA*ALPHA*x*x)
+      return -q*np.sqrt(2)*np.pi**-0.5*np.exp(-ALPHA*ALPHA*x*x)
+
+   axisfont = {'fontsize' : 25, 'family' : 'sans-serif'}
+
+   fig = plt.figure(6, figsize=(8,5))
+   ax = fig.add_subplot(111)
+   ax.set_xlim((0,10))
+   ax.set_ylim((-1.1,1.1))
+   ax.set_ylabel('Charge ($e^{-}$)', fontdict=axisfont)
+   ax.set_xlabel('Distance ($\\AA$)', fontdict=axisfont)
+   ax.grid(lw=1)
+
+   # Plot the first charge with neutralizing distribution
+   xdata = np.arange(1,2.01,0.05)
+   ydata = _evaluate(xdata, lambda x: neutralizing(1, 1.5, x))
+
+   chdi, = ax.plot(xdata, ydata, 'b-', lw=2)
+   ch, = ax.plot([1.5,1.5], [0,1], 'r-', lw=2)
+
+   # Plot the second charge with neutralizing distribution (at 2.1)
+   xdata = np.arange(1.6, 2.61, 0.05)
+   ydata = _evaluate(xdata, lambda x: neutralizing(-1, 2.1, x))
+
+   ax.plot(xdata, ydata, 'b-', lw=2)
+   ax.plot([2.1,2.1], [0,-1], 'r-', lw=2)
+
+   # Plot the third charge with neutralizing distribution (at 3.2)
+   xdata = np.arange(2.7, 3.71, 0.05)
+   ydata = _evaluate(xdata, lambda x: neutralizing(-0.6, 3.2, x))
+
+   ax.plot(xdata, ydata, 'b-', lw=2)
+   ax.plot([3.2,3.2], [0,-0.6], 'r-', lw=2)
+
+   # Plot the fourth charge with neutralizing distribution (at 5.0)
+   xdata = np.arange(4.5, 5.51, 0.05)
+   ydata = _evaluate(xdata, lambda x: neutralizing(0.8, 5.0, x))
+
+   ax.plot(xdata, ydata, 'b-', lw=2)
+   ax.plot([5.0,5.0], [0,0.8], 'r-', lw=2)
+
+   # Plot the fifth charge with neutralizing distribution (at 6.3)
+   xdata = np.arange(5.8, 6.81, 0.05)
+   ydata = _evaluate(xdata, lambda x: neutralizing(0.7, 6.3, x))
+
+   ax.plot(xdata, ydata, 'b-', lw=2)
+   ax.plot([6.3,6.3], [0,0.7], 'r-', lw=2)
+
+   # Plot the sixth charge with neutralizing distribution (at 8.6)
+   xdata = np.arange(8.1, 9.11, 0.05)
+   ydata = _evaluate(xdata, lambda x: neutralizing(-0.9, 8.6, x))
+
+   ax.plot(xdata, ydata, 'b-', lw=2)
+   ax.plot([8.6,8.6], [0,-0.9], 'r-', lw=2)
+
+   ax.plot([0,10], [0,0], 'k-', lw=2)
+
+   ax.legend((ch, chdi), ('Point Charge', 'Neutralizing Distribution'),
+             loc='best')
+   fig.tight_layout()
+   fig.savefig('Ewald.ps')
+
 if __name__ == '__main__':
    """ Determine which plots to make """
    parser = ArgumentParser()
@@ -286,6 +507,13 @@ if __name__ == '__main__':
    group.add_argument('--distance-dielectric', dest='distdiel', default=False,
                       action='store_true', help='''Create the plot for the
                       distance-dependent dielectric figure.''')
+   group.add_argument('--cutoff-effects', dest='cutoff', default=False,
+                      action='store_true', help='''Create the plot showing the
+                      effect of hard cutoffs and shifting/switching
+                      functions''')
+   group.add_argument('--ewald', dest='ewald', default=False,
+                      action='store_true', help='''Create the figure
+                      demonstrating how the Ewald sum works''')
    
    opt = parser.parse_args()
 
@@ -299,3 +527,7 @@ if __name__ == '__main__':
       cmap(opt.cmap)
    if opt.distdiel:
       distance_dielectric()
+   if opt.cutoff:
+      cutoff_effects()
+   if opt.ewald:
+      ewald()
