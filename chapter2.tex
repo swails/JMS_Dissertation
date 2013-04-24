@@ -672,4 +672,61 @@ with the mesh to determine the long-range electrostatic interactions.
 
 \subsubsection{Other Approaches}
 
+Ewald-based methods employing the discrete fast Fourier transform have been very
+popular over the past two decades. As the rapid increase in computational power
+allowed simulations to run increasingly longer, the deficiency of typical cutoff
+methods for simulating highly charged systems---such as DNA or RNA---became
+readily apparent. \cite{Miaskiewicz_JAmChemSoc_1993_v115_p1526,
+McConnell_JAmChemSoc_1994_v116_p4461} Properly accounting for long-range
+electrostatic effects using PME resulted in stable simulations of not only
+protein simulations, but also highly charged systems like DNA and RNA.
+\cite{Cheatham_JAmChemSoc_1995_v117_p4193} Furthermore, by employing the FFT,
+PME allowed calculations to be done more rapidly by reducing the computational
+cost of the non-bonded interactions.
 
+However, there are two principle drawbacks of Ewald-based methods. First, the
+use of periodic boundaries may introduce artifacts into the system caused by the
+correlated motions of each periodic image. For instance, if periodic boundary
+conditions was imposed on a gas of monovalent ions such that each cell had a
+single particle, the distribution would necessarily be uniform since periodic
+symmetry reduces dimensionality of the system to a single degree of freedom.
+While this effect does not seem to induce measurable artifacts,
+\cite{SOME_PAPER} a more serious limitation of Ewald-based methods has to do
+with the changing architecture of modern computers.
+
+For many years, the efficiency of the central processing unit (CPU), typically
+measured in the speed with which it executes each operation (\ie clock speed),
+improved as engineers were able to shrink the size of the transistors and place
+increasingly more of these transistors onto each CPU die. Recently, however, the
+laws of physics---such as the wavelength of light used in the photo-exposure of
+the chip's design pattern---began to impede the rate at which these transistors
+could be shrunk. In turn, this limited the gains in clock speed, driving chip
+manufacturers to increase the computational power of these CPUs by simply adding
+additional cores. To take advantage of this form of improved CPU efficiency,
+computational algorithms must be designed to run in parallel. It turns out that
+due to the non-local nature of the FFT and the algorithmic details of its
+efficient implementation, calculations employing such methods are limited in
+their ability to take advantage of the increasing parallelism of modern
+processors.
+
+For these reasons, many researchers have investigated alternatives to the PME
+treatment of long-range electrostatic interactions in bimolecular simulations.
+One such method, the \emph{isotropic periodic sum} (IPS), assumes an isotropic
+distribution of particles by replicating the surrounding region---within a
+cutoff--around each particle infinitely in all directions.
+\cite{Wu_JChemPhys_2005_v122_p044107} While this method necessitates using a
+larger cutoff to more fully characterize each particle's surroundings, it avoids
+needing a charge grid populated from every atom in the system, thereby reducing
+the communication overhead. Therefore, IPS can be implemented in such a way that
+is more scalable on modern hardware than PME.
+
+Another approach, termed \emph{Multi-level Ewald}, divides the system into
+smaller charge grids so that the reciprocal-space sum can be performed in
+parallel. \cite{Cerutti_JChemTheoryComput_2010_v6_p443} These independent grids
+can then be `stitched' together using a much coarser global grid that can be
+computed far more rapidly.
+
+While the list of methods here is not comprehensive, the general aim of
+PME-replacements is to either lessen the likelihood of observing periodicity
+artifacts in simulations and to present an algorithm that is more amenable to
+parallelization.
