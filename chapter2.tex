@@ -577,13 +577,13 @@ Ideally, simulations in the condensed phases would be performed \emph{without}
 truncating electrostatic interactions at all. The full electrostatic interaction
 for a net neutral unit cell takes the functional form $\sum_{i=1}^N (-1)^i / i$,
 since there are an equal number of charges of both signs. This sum is
-\emph{conditionally convergent}, meaning that, while its value converges to a
-finite value, the value that it converges to depends on the order in which the
-terms are summed. \cite{Allen_Tildesley} A natural choice for ordering the
-summation of the infinite number of electrostatic interactions with particle $i$
-is by summing all of the electrostatic interactions with each particle $j$ in
-every unit cell extending radially from the unit cell containing $i$. This
-approach is shown diagrammatically in Fig. \ref{fig2:PeriodicCells}.
+\emph{conditionally convergent}, meaning that, while it converges to a finite
+value, that value depends on the order in which the terms are summed.
+\cite{Allen_Tildesley} A natural choice for ordering the summation of the
+infinite number of electrostatic interactions with particle $i$ is by summing
+all of the electrostatic interactions with each particle $j$ in every unit cell
+extending radially from the unit cell containing $i$. This approach is shown
+diagrammatically in Fig. \ref{fig2:PeriodicCells}.
 \cite{Allen_Tildesley}
 
 \begin{figure}
@@ -686,13 +686,15 @@ cost of the non-bonded interactions.
 
 However, there are two principle drawbacks of Ewald-based methods. First, the
 use of periodic boundaries may introduce artifacts into the system caused by the
-correlated motions of each periodic image. For instance, if periodic boundary
+correlated motions of each periodic image.
+\cite{Hunenberger_JChemPhys_1999_v110_p1856} For instance, if periodic boundary
 conditions was imposed on a gas of monovalent ions such that each cell had a
 single particle, the distribution would necessarily be uniform since periodic
 symmetry reduces dimensionality of the system to a single degree of freedom.
-While this effect does not seem to induce measurable artifacts,
-\cite{SOME_PAPER} a more serious limitation of Ewald-based methods has to do
-with the changing architecture of modern computers.
+While this effect does not seem to induce measurable artifacts for most
+simulations, \cite{Hunenberger_JChemPhys_1999_v110_p1856} a more serious
+limitation of Ewald-based methods has to do with the changing architecture of
+modern computers.
 
 For many years, the efficiency of the central processing unit (CPU), typically
 measured in the speed with which it executes each operation (\ie clock speed),
@@ -709,24 +711,224 @@ efficient implementation, calculations employing such methods are limited in
 their ability to take advantage of the increasing parallelism of modern
 processors.
 
-For these reasons, many researchers have investigated alternatives to the PME
-treatment of long-range electrostatic interactions in bimolecular simulations.
-One such method, the \emph{isotropic periodic sum} (IPS), assumes an isotropic
-distribution of particles by replicating the surrounding region---within a
-cutoff--around each particle infinitely in all directions.
-\cite{Wu_JChemPhys_2005_v122_p044107} While this method necessitates using a
-larger cutoff to more fully characterize each particle's surroundings, it avoids
-needing a charge grid populated from every atom in the system, thereby reducing
-the communication overhead. Therefore, IPS can be implemented in such a way that
-is more scalable on modern hardware than PME.
-
-Another approach, termed \emph{Multi-level Ewald}, divides the system into
-smaller charge grids so that the reciprocal-space sum can be performed in
-parallel. \cite{Cerutti_JChemTheoryComput_2010_v6_p443} These independent grids
+To alleviate the limited scalability of standard PME,
+\citeauthor{Cerutti_JChemTheoryComput_2010_v6_p443} devised an approach, termed
+\emph{Multi-level Ewald}, to divide the system into smaller charge grids so that
+the reciprocal-space sum can be performed in parallel in multiple, independent
+`chunks.' \cite{Cerutti_JChemTheoryComput_2010_v6_p443} These independent grids
 can then be `stitched' together using a much coarser global grid that can be
 computed far more rapidly.
+
+To combat both shortcomings mentioned for Ewald-based methods, many researchers
+have investigated alternatives to the PME treatment of long-range electrostatic
+interactions in bimolecular simulations.  One such method, the \emph{isotropic
+periodic sum} (IPS), assumes an isotropic distribution of particles by
+replicating the surrounding region---within a cutoff--around each particle
+infinitely in all directions. \cite{Wu_JChemPhys_2005_v122_p044107} While this
+method necessitates using a larger cutoff to more fully characterize each
+particle's surroundings, it avoids needing a charge grid populated from every
+atom in the system, thereby reducing the communication overhead. As a result,
+IPS can be implemented in such a way that is more scalable on modern hardware
+than PME.
+
+The generalized reaction field (GRF) method employs yet another approach to
+treating long-range electrostatics based on the PB equation. A sphere is
+constructed around each particle whose radius is equal to the non-bonded cutoff
+distance, inside which all interactions are computed directly. The surroundings
+are modeled as a bulk dielectric environment, and the reaction field potential
+is calculated on the sphere analytically according to the linearized PB
+equation. The force exerted by this electric field can be calculated on the atom
+at the center of the constructed sphere. \cite{Tironi_JChemPhys_1995_v102_p5451}
+This approach has the same cost as typical cutoff methods, but models
+interactions outside the cutoff as though it were bulk solvent. Such treatment
+necessitates the use of a larger cutoff value than that required by Ewald
+methods.
 
 While the list of methods here is not comprehensive, the general aim of
 PME-replacements is to either lessen the likelihood of observing periodicity
 artifacts in simulations and to present an algorithm that is more amenable to
-parallelization.
+parallelization. Despite the challenges in computational scaling and efficiency
+associated with parallelizing the reciprocal-space Ewald sum, Ewald-based
+methods are still widely used today, even on highly tuned, specialized hardware
+designed specifically to accelerate MD simulations. \cite{Anton}
+
+\section{Sampling}
+
+Sampling is the principle problem in most condensed phase
+simulations---especially involving biomolecules. For such large systems, the
+size of phase space---a $6N$-dimensional hyperspace composed of positions and
+momenta for $N$ particles in all 3 spatial dimensions---is unconscionably large.
+Although any chemical system can be characterized completely if the density of
+states is known at an arbitrary energy ($\Omega(E)$), this number is so vast
+that it cannot be directly computed.
+
+Luckily, the partition functions of most thermodynamic ensembles---in particular
+that for the canonical ensemble (Eq. \ref{eq1:CanonicalPF}) are almost
+entirely comprised of low-energy structures due to the exponential weighting in
+the Boltzmann factor. Despite this fortuitous simplification, no simulation is
+capable of truly exhaustive sampling for typical biomolecular simulations, and
+it is unlikely that exhaustive sampling will ever be attainable. 
+
+The most na\"ive approach to sampling---running pure molecular dynamics or Monte
+Carlo simulations---is frequently insufficient to characterize rare events that
+happen on the millisecond or even second timescale. Even with highly specialized
+(and expensive) hardware, pure MD simulations are currently confined to the
+millisecond timescale. \cite{Shaw2010} In this section, I will discuss three
+approaches to enhance sampling compared to traditional MD simulations---umbrella
+sampling, steered molecular dynamics (SMD), and expanded ensemble techniques
+(and the special case of replica exchange).
+
+\subsection{Umbrella Sampling}
+
+Umbrella sampling is a biased sampling technique that acts on a specific
+reaction coordinate. In complex systems, there are often free energy barriers
+separating different states that are far larger than the average available
+thermal energy, $k_BT$. An example is shown in Fig.
+\ref{fig2:FreeEnergyProfile}A in which the $6N$-dimensional free energy surface
+(reduced to $3N$-dimensional when the momentum integral is separated from the
+canonical partition function) is projected onto a 1-dimensional reaction
+coordinate. This reduced-dimension free energy surface, called a \emph{potential
+of mean force} (PMF) shows a free energy barrier of roughly $5\,k_BT$. In
+standard dynamics simulations, it would take a very long unbiased simulation to
+cross that barrier.
+
+\begin{figure}
+   \includegraphics[width=6.5in]{FreeEnergyProfile.ps}
+   \caption{A) Sample free energy surface projected onto a 1-dimensional reaction
+            coordinate. B) A harmonic `umbrella' potential is added to the
+            transition state in order to bias the simulation to sample the
+            high-energy structures more frequently.}
+   \label{fig2:FreeEnergyProfile}
+\end{figure}
+
+The trick involved in umbrella sampling is to modify the underlying potential
+with a harmonic biasing potential to encourage the simulation to sample higher
+energy structures more often. Fig. \ref{fig2:FreeEnergyProfile}B shows the
+underlying potential energy surface along that reaction pathway along with a
+biasing potential aimed at increasing the number of structures sampled near the
+transition state between the two minima.
+
+The resulting ensemble from the modified potential, shown in Eq.
+\ref{eq2:umbrella}, contains more snapshots around the areas that are
+traditionally sampled poorly by MD simulations of finite duration. However, all
+properties calculated based on these statistics refer to a fictitious system,
+and will not translate into experimental observables. In other words, the
+statistics collected from an umbrella sampling simulation correspond to the
+$H_{bias}$ Hamiltonian in Eq. \ref{eq2:umbrella}, whereas the physical system
+actually obeys the $H_{orig}$ Hamiltonian. \cite{Leach_Book_MolModel_2001}
+
+\begin{equation}
+   H_{bias}(\vec{x}) = H_{orig}(\vec{x}) + \frac 1 2 k_{umb}(f(\vec{x}) - s)^2
+   \label{eq2:umbrella}
+\end{equation}
+where $H_{orig}$ is the original, unbiased Hamiltonian, $k_{umb}$ is the force
+constant on the harmonic umbrella potential, $f(\vec{x})$ is the reaction
+coordinate, and $s$ is the center of the umbrella potential along that reaction
+coordinate.
+
+Since the exact shape of the biasing potential is known, and the sampling
+provides information about the shape of the total biased potential, we can use
+that information to deduce the underlying shape of the original Hamiltonian
+along the chunk of the PMF that our simulation has effectively characterized
+through sampling. However, because the umbrella potential is monotonically
+increasing on either side of the umbrella center, configurations far away from
+that center will be sampled very poorly, leading to poor convergence in those
+regions. To alleviate this issue, a series of umbrella sampling simulations are
+performed in intervals along the reaction coordinate---called windows---which
+are used to construct `pieces' of the PMF near the center of the respective
+umbrellas. These pieces are then stitched together to approximate the total,
+unbiased PMF.
+
+The free energy of the biased potential along the PMF is related to the
+probability density function at that point according to
+\begin{equation*}
+   \pi_{bias}(\vec{x}_0) = \frac {\int \exp \left( -\beta H_{bias} (\vec{x})
+         \right) \delta (\vec{x} - \vec{x}_0) d\vec{x}}
+         {\exp\left(-\beta A_{bias}(\vec{x}_0)\right)}
+\end{equation*}
+where $\pi$ is the probability distribution function, $\delta$ is the Dirac
+delta function that serves to extract only those ensemble members that
+correspond to the specific point on the PMF $\vec{x}_0$, and $A$ is the free
+energy along the PMF at that value. The unbiased probability distribution, which
+is directly related to the unbiased free energy up to an arbitrary constant, can
+be estimated according to \cite{Tuckerman_Book_StatMech_TheoryAndSim}
+\begin{equation*}
+   \pi_{unbias}(\vec{x}) = \exp\left(-\beta(A_{bias}-A_{unbias}) \right)
+                  \exp\left[\beta\left(\frac 1 2 k_{umb}(f(\vec{x})-s)^2 \right)
+                  \right] \pi_{bias}(\vec{x})
+\end{equation*}
+where $A$ is the Helmholtz free energy along the PMF. The unbiased probability
+distribution function is estimated for each window, and must be recombined to
+calculate the full PMF. \cite{Tuckerman_Book_StatMech_TheoryAndSim}
+
+While the weighted histogram analysis method has been arguably the most popular
+method for determining the additive constants necessary at each window to
+construct the `best' complete PMF, \cite{Grossfield_WHAM_2005} more recent
+methods have been shown to be better estimators of the unbiased PMF. Such
+examples include the multistate Bennett acceptance ratio (MBAR)
+\cite{Shirts_JChemPhys_2008_v129_p124105} and variational free energy
+profile, \cite{Lee_JChemTheoryComput_2013_v9_p153} which have demonstrated
+superior performance in computing not only the PMF more efficiently with less
+data, \cite{Lee_JChemTheoryComput_2013_v9_p153} but also reasonable estimations
+of the statistical errors. \cite{Shirts_JChemPhys_2008_v129_p124105}
+
+\subsection{Steered Molecular Dynamics}
+
+The idea of steered molecular dynamics (SMD) is very similar to that of umbrella
+sampling. A harmonic biasing potential is added to the underlying potential
+along a reaction coordinate to drive the sampling along that coordinate. Unlike
+umbrella sampling in which the harmonic potentials are fixed at a given position
+along the reaction coordinate, the potential is moved along the reaction
+coordinate at some speed in SMD simulations.
+
+While SMD appears similar to umbrella sampling, the fact that the umbrella
+potential moves marks a significant fundamental difference between the two
+techniques. Umbrella sampling performs equilibrium sampling with the biased
+Hamiltonian, whereas the finite speed of the moving umbrella in SMD simulations
+is inherently non-equilibrium. \cite{Tuckerman_Book_StatMech_TheoryAndSim} The
+non-equilibrium work done by moving umbrella is tabulated, and effectively
+represents an upper-bound estimate on the free energy according to Eq.
+\ref{eq2:noneq_work}. \cite{Tuckerman_Book_StatMech_TheoryAndSim}
+
+\begin{equation}
+   \left\langle W_{1,2}(\vec{x}) \right\rangle \geq \Delta A_{1,2}
+   \label{eq2:noneq_work}
+\end{equation}
+where $W$ is the work along the path given by $\vec{x}$ between states $1$ and
+$2$ and $\Delta A$ is the free energy change between those two states. Clearly,
+the utility of the work profile calculated using SMD simulations is severely
+limited considering just Eq. \ref{eq2:noneq_work}.
+
+The link between equilibrium free energies and computed work profiles from SMD
+simulations was supplied by \citeauthor{Jarzynski_PhysRevLett_1997_v78_p2690} in
+\citeyear{Jarzynski_PhysRevLett_1997_v78_p2690}.
+\cite{Jarzynski_PhysRevLett_1997_v78_p2690} The so-called \emph{Jarzynski
+equality}, shown in Eq. \ref{eq2:Jarzynski}, shows that equilibrium free
+energies can be calculated from a complete ensemble of work profiles computed
+for the same potential between an ensemble of starting points at state
+$\vec{x}_1$ and driving the center of the umbrella to state $\vec{x}_2$.
+
+\begin{equation}
+   \exp \left(-\beta \Delta A _{1,2} \right) = 
+      \left \langle \exp \left( -\beta W_{1,2}(\vec{x}_0) \right) \right \rangle
+   \label{eq2:Jarzynski}
+\end{equation}
+
+A caveat to Eq. \ref{eq2:Jarzynski} is that an infinite number of work profiles
+between states 1 and 2 are necessary for the equality to hold. Because
+simulating an infinite number of trajectories is impossible, we must be content
+to estimate the total free energy using a finite number of simulations.
+Fortunately, the exponential average converges very rapidly with a small number
+of `good' work profiles (\ie low-energy work profiles that follow the true PMF
+closely), since high-energy profiles contribute little to the average.
+
+Optimizing the computational performance of SMD simulations is a balancing
+act. Pull too quickly and chances are all computed work profiles will be much
+higher than the true PMF, giving you a poor estimate of the actual free energy.
+Pull too slowly and the simulations will take too long to traverse the full
+reaction coordinate. The \emph{optimal} pulling speed will generate a wide
+distribution of work profiles that gives a good estimate of the total PMF.
+
+\subsection{Expanded Ensemble}
+
+\subsection{Replica Exchange Molecular Dynamics}
