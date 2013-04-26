@@ -923,12 +923,60 @@ of `good' work profiles (\ie low-energy work profiles that follow the true PMF
 closely), since high-energy profiles contribute little to the average.
 
 Optimizing the computational performance of SMD simulations is a balancing
-act. Pull too quickly and chances are all computed work profiles will be much
+act. Pull too quickly and all computed work profiles will most likely be much
 higher than the true PMF, giving you a poor estimate of the actual free energy.
 Pull too slowly and the simulations will take too long to traverse the full
 reaction coordinate. The \emph{optimal} pulling speed will generate a wide
 distribution of work profiles that gives a good estimate of the total PMF.
 
 \subsection{Expanded Ensemble}
+
+A common class of techniques used to enhance sampling compared to standard
+molecular dynamics are so-called \emph{expanded ensemble} techniques. The
+canonical ensemble, for instance,  is limited by the thermodynamic constraints
+imposed by requiring all members of the ensemble to have the same number of
+particles, volume, and temperature (\emph{NVT}). These variables are referred to
+as \emph{state} parameters, since they define each state present in the
+ensemble.
+
+The way expanded ensemble techniques enhance sampling is to generate a larger
+ensemble in which many, smaller thermodynamic ensembles are brought into
+equilibrium. True to its name, enhanced sampling is obtained by sampling from an
+\emph{expanded} ensemble of numerous standard thermodynamic ensembles. The first
+example examined in the literature involved expanding the canonical ensemble to
+multiple temperatures. \cite{Lyubartsev_JChemPhys_1992_v96_p1776} This new
+ensemble is a combination of multiple canonical ensembles each at a different
+temperature. By allowing a simulation to migrate through temperature-space as it
+is sampling new conformations, expanded ensemble simulations can take advantage
+of the flatter free energy surfaces present at higher temperatures to enhance
+conformational sampling while still collecting statistics at the target
+temperature of interest.
+
+The total partition function for this new, expanded ensemble is shown in Eq.
+\ref{eq2:ExpandedEnsemble}. \cite{Lyubartsev_JChemPhys_1992_v96_p1776}
+\begin{equation}
+   Q = \sum _ {m=0} ^ M Q_m \exp{\eta_m}
+   \label{eq2:ExpandedEnsemble}
+\end{equation}
+where $Q_m$ is the canonical partition function at a given temperature $m$ and
+$\eta_m$ is a carefully chosen set of tuning parameters designed to bias the
+simulation toward spending more time near the temperatures of interest.
+\cite{Lyubartsev_JChemPhys_1992_v96_p1776} Either periodically or at random
+intervals throughout the MD or MC simulation, a Monte Carlo attempt to change
+the temperature of the `current' conformation is performed. Successful attempts
+between temperatures $k$ and $m$ are evaluated according to the Monte Carlo
+criteria shown in Eq. \ref{eq2:ExpandedEnsembleSuccess}.
+
+\begin{equation}
+   P_{k \rightarrow m} = \min \left \lbrace \left( \beta _ k - \beta _ m \right)
+         H(\vec{x}) + \eta _ m - \eta _ k \right \rbrace
+   \label{eq2:ExpandedEnsembleSuccess}
+\end{equation}
+where $P_{k \rightarrow m}$ is the probability of changing from temperature $k$
+to temperature $m$ and $\eta$ is the constant tuned to control the residence
+time of the simulation at each temperature (see Eq. \ref{eq2:ExpandedEnsemble}).
+
+If statistics are desired for a specific temperature, an ensemble can be
+generated from all snapshots with the target temperature.
 
 \subsection{Replica Exchange Molecular Dynamics}
