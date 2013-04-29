@@ -794,7 +794,7 @@ cross that barrier.
 
 \begin{figure}
    \includegraphics[width=6.5in]{FreeEnergyProfile.ps}
-   \caption{A) Sample free energy surface projected onto a 1-dimensional reaction
+   \caption{A) Example free energy surface projected onto a 1-dimensional reaction
             coordinate. B) A harmonic `umbrella' potential is added to the
             transition state in order to bias the simulation to sample the
             high-energy structures more frequently.}
@@ -930,6 +930,7 @@ reaction coordinate. The \emph{optimal} pulling speed will generate a wide
 distribution of work profiles that gives a good estimate of the total PMF.
 
 \subsection{Expanded Ensemble}
+\label{sec2:ExpandedEnsemble}
 
 A common class of techniques used to enhance sampling compared to standard
 molecular dynamics are so-called \emph{expanded ensemble} techniques. The
@@ -977,6 +978,80 @@ to temperature $m$ and $\eta$ is the constant tuned to control the residence
 time of the simulation at each temperature (see Eq. \ref{eq2:ExpandedEnsemble}).
 
 If statistics are desired for a specific temperature, an ensemble can be
-generated from all snapshots with the target temperature.
+generated from all snapshots with the target temperature. By allowing the
+simulation to visit higher temperatures, new pathways around and over barriers
+are opened up by traversing temperature-space and configuration (conformation)
+space simultaneously. The available kinetic energy at higher temperatures makes
+it more likely that high barriers will be crossed than at lower temperatures,
+while the samples taken at lower temperatures provide the resolution necessary
+to characterize the thermodynamic properties at biologically relevant
+temperatures. However, since the simulation is allowed to visit multiple
+temperatures, a significant portion of the simulation is `wasted' sampling
+higher temperatures that contribute little to the low-temperature ensemble. The
+amount of time that the simulation is permitted to spend at each temperature
+must be carefully balanced to enhance sampling with enough simulation done at
+higher temperatures and maintain a desired level of resolution of the low
+temperature ensemble. This distribution is controlled by the $\eta$ parameter at
+each temperature (Eq. \ref{eq2:ExpandedEnsemble}), whose values are determined
+by running short simulations at each temperature to estimate the shape of phase
+space. \cite{Lyubartsev_JChemPhys_1992_v96_p1776}
 
 \subsection{Replica Exchange Molecular Dynamics}
+
+Replica exchange molecular dynamics (REMD) simulations are a special case of
+expanded ensemble simulations that are designed to be scalable to modern,
+parallel computers. In these simulations, a finite number of independent
+simulations (replicas) are run, each with a different state parameter (\eg
+different temperatures). These replicas periodically attempt to exchange
+information between each other---either configurations or state parameters---in
+such a way that maintained the validity of the `subensemble' of each replica. A
+diagrammatic representation of REMD simulations is shown in Fig.
+\ref{fig2:REMD}. \cite{Sugita_ChemPhysLett_1999_v314_p141}
+
+To ensure that each replica is in a state of equilibrium with all other replicas
+in the REMD simulation, a reversible Markov chain of moves along the state
+parameter dimension is necessary (see Fig. \ref{fig2:REMD}). Trial moves are
+typically done between a single pair of replicas to simplify the expression for
+calculating the exchange probability. As we saw in Section \ref{sec1:MC},
+applying the Metropolis criteria to a randomly proposed MC move satisfies the
+requirement of detailed balance. Therefore, Metropolis MC is used to enable
+replicas to sample along the state space coordinate in REMD calculations.
+
+\begin{figure}
+%  \includegraphics[height=6.5in, angle=90, trim=1cm 0.5cm 1cm 0.5cm, clip=true]
+   \includegraphics[height=6.5in, angle=90]
+                   {REMD.ps}
+   \caption{Diagrammatic sketch of REMD simulations. Replicas are represented as
+            thick arrows and exchange attempts are shown between adjacent
+            replicas connected by thin black arrows. The question-mark indicates
+            that a MC move is accepted with the probability calculated according
+            to the Metropolis criteria. Successful and unsuccessful exchange
+            attempts are shown with a green or red question mark, respectively.}
+   \label{fig2:REMD}
+\end{figure}
+
+There are several different choices one can make for the state space parameter
+when setting up a REMD calculation. Common choices include temperature
+\cite{Sugita_ChemPhysLett_1999_v314_p141}, umbrella potentials (for umbrella
+sampling simulations) \cite{Babin_JChemPhys_2008_v128_p134101,
+Sugita_JChemPhys_2000_v113_p6042}, Hamiltonians,
+\cite{Fukunishi_JChemPhys_2002_v116_p9058, Fajer_JComputChem_2009_v30_p1719,
+Arrar_JChemTheoryComput_2013_v9_p18, Jiang_JChemTheoryComput_2010_v6_p2559,
+Meng_JChemTheoryComput_2011_v7_p2721} and solution pH,
+\cite{Wallace_JChemTheoryComput_2011_v7_p2617, Itoh_Proteins_2011_v79_p3420,
+Swails_JChemTheoryComput_2012_v8_p4393, Dashti_JPhysChemB_2012_v116_p8805}
+among others. \cite{Wu_JChemPhys_2012_v137_p044106,
+Bolhuis_JChemPhys_2008_v129_p114108} These methods are discussed in detail in
+later chapters.
+
+\section{Free Energy Calculations}
+
+\subsection{Thermodynamic Integration}
+
+\subsection{Free Energy Perturbation}
+
+\paragraph{REFEP}
+
+\subsection{End-state Calculations}
+
+\section{Constant pH Calculations}

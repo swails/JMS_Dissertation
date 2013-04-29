@@ -249,6 +249,7 @@ approaches---Monte Carlo and Molecular Dynamics---are discussed in the following
 sections.
 
 \subsubsection{Monte Carlo}
+\label{sec1:MC}
 
 One approach to approximating Eq. \ref{eq1:CanonicalPF}, called \emph{Monte
 Carlo} (MC) sampling, is to select new configurations of atomic positions at
@@ -409,9 +410,9 @@ numerous ways to control temperature and pressure.
 \cite{Leach_Book_MolModel_2001} These techniques are referred to as thermostats
 and barostats, respectively.
 
-The na\"ive approach to maintaining a constant temperature is to calculate scale
-all velocities at each time step such that each point along the trajectory has
-the same temperature. \cite{Woodcock1971} For large systems, however, the
+The na\"ive approach to maintaining a constant temperature is to scale all
+velocities at each time step such that each point along the trajectory has the
+same temperature. \cite{Woodcock1971} For large systems, however, the
 perturbation on the system is too large, so
 \citeauthor{Berendsen_JChemPhys_1984_v81_p3684} proposed a method in which the
 scaling factor by which velocities are scaled is itself scaled so that
@@ -443,10 +444,10 @@ clarifying this phenomena.
 
 As an example, bonds between hydrogen and `heavy' atoms (\eg carbon, oxygen, and
 nitrogen) often give rise to the highest frequency motions in typical
-macromolecules. Except for these degrees of freedom, a time step twice the size
-could be used in MD. As a result, constraints are often applied to these
-high-frequency degrees of freedom to permanently fix them to their equilibrium
-bond lengths using any of a number of algorithms.
+macromolecules. These degrees of freedom cut the maximum time step that can be
+used for MD simulations in half. As a result, constraints are often applied to
+these high-frequency degrees of freedom to permanently fix them to their
+equilibrium bond lengths using any of a number of algorithms.
 \cite{Ryckaert_JComputPhys_1977_v23_p327, Andersen1983,
 Miyamoto_JComputChem_1992_v13_p952, Forester_JComputChem_1998_v19_p102,
 Lee_JComputPhys_2005_v210_p171}
