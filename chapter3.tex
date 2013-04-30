@@ -135,10 +135,10 @@ proposed change, calculated according to \cite{Mongan2004}
          {elec} - \Delta G _ {elec,ref}
    \label{eq3:ProtChange}
 \end{equation}
-\ref{eq3:ProtChange} represents a free energy change of protonating or
+Eq. \ref{eq3:ProtChange} represents a free energy change of protonating or
 deprotonating a titratable residue embedded in a biological system with respect
 to a predefined reference compound.  The reference compound is a monomer of the
-titratable residue capped with small, neutral functional groups.  In
+titratable residue capped with small, neutral functional groups.  In Eq.
 \ref{eq3:ProtChange}, $\Delta G _ {elec}$ is calculated by taking the difference
 of the electrostatic energy between the proposed and existing protonation
 states. \cite{Mongan2004}
@@ -148,12 +148,12 @@ deprotonation is difficult because evaluating the energetic cost of desolvating
 a free proton and making and breaking chemical bonds is impossible in a
 classical mechanical framework.  Therefore, we calculate the free energy cost of
 this protonation state change by comparing the free energy of the protonation
-state change to $\Delta G _ {elec,ref}$ in \ref{eq3:ProtChange}, a precomputed
-free energy for the reference compound that is adjusted to reproduce
-experimental pK\sub{a} values.  \ref{eq3:ProtChange}, then, represents a shift in
-the pK\sub{a} of a titratable residue in a biological system from its value free
-in solution. The reference compound pK\sub{a} values used in the Amber CpHMD
-implementation \cite{Mongan2004} are shown in \ref{tbl3:refpkas}.
+state change to $\Delta G _ {elec,ref}$ in Eq. \ref{eq3:ProtChange}, a
+precomputed free energy for the reference compound that is adjusted to reproduce
+experimental pK\sub{a} values. Eq. \ref{eq3:ProtChange}, then, represents a
+shift in the pK\sub{a} of a titratable residue in a biological system from its
+value free in solution. The reference compound pK\sub{a} values used in the
+Amber CpHMD implementation \cite{Mongan2004} are shown in \ref{tbl3:refpkas}.
 
 \begin{table}
   \caption{Reference pK\sub{a} values for the acidic residues treated in this
