@@ -1110,8 +1110,8 @@ Because doing ``true'' TI would require an infinite number of simulations for
 $\lambda$ equal to all real numbers between 0 and 1, Eq.
 \ref{eq2:ThermoIntegration} is approximated using a Riemann sum, shown below.
 \begin{equation*}
-   \Delta G_{0 \rightarrow 1} = \sum _ {\lambda = 0} ^ 1 \left \langle \frac
-         {\partial H} {\partial \lambda} \right \rangle _ {\lambda} \Delta
+   \Delta G_{0 \rightarrow 1} \approx \sum _ {\lambda = 0} ^ 1 \left \langle
+         \frac {\partial H} {\partial \lambda} \right \rangle _ {\lambda} \Delta
          \lambda
 \end{equation*}
 
@@ -1119,8 +1119,8 @@ Therefore, TI calculations require the selection of a set of \emph{windows} (\ie
 $\lambda$ selections between 0 and 1) at which an ensemble must be generated to
 evaluate the gradient of the coupled Hamiltonian with respect to the coupling
 parameter $\lambda$. A sufficient number of $\lambda$ values must be chosen to
-obtain an converged free energy---the number of required windows varies from
-system to system.
+obtain an accurate and converged free energy---the number of required windows
+varies from system to system.
 
 For the simple linear switching function described previously, the gradients
 required by Eq. \ref{eq2:ThermoIntegration} can be computed analytically based
