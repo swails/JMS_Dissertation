@@ -452,11 +452,11 @@ equilibrium bond lengths using any of a number of algorithms.
 Miyamoto_JComputChem_1992_v13_p952, Forester_JComputChem_1998_v19_p102,
 Lee_JComputPhys_2005_v210_p171}
 
-We have now explored the different approaches of building an ensemble from which
-we can calculate thermodynamic properties using the principles of statistical
-mechanics. We have also discussed computational methods of computing molecular
+I have now explored the different approaches of building an ensemble from which
+thermodynamic properties can be calculated using the principles of statistical
+mechanics. I have also discussed computational methods of computing molecular
 energies very accurately using the principles of quantum mechanics. Due to the
-massive computational expense of QM methods, however, we turn our discussion to
+massive computational expense of QM methods, however, I turn my discussion to
 another formulation of describing molecular interactions using a simpler model
 called \emph{molecular mechanics}.
 
@@ -482,19 +482,19 @@ of the molecule, describing the interaction between every atom in the system.
 These functions typically have analytic derivatives that can be rapidly
 evaluated to facilitate their use in MD simulations. Because the analytic
 gradients of these potentials are the forces that act on the atomic centers,
-these molecular mechanical models are called \emph{force fields}. We will now
+these molecular mechanical models are called \emph{force fields}. I will now
 discuss how these force fields are designed, with special attention payed to the
 \emph{AMBER} family of force fields.
 
 \subsection{Force Fields}
 
-In this section, we will discuss the various parameters found in common force
+In this section, I will discuss the various parameters found in common force
 fields, including bonds, angles, torsions, and non-bonded interactions.
 
 \subsubsection{Bonds}
 \label{sec1:Bond}
 
-We begin with modeling the chemical bond. Using the Born-Oppenheimer
+I begin with modeling the chemical bond. Using the Born-Oppenheimer
 approximation, we can calculate the potential energy surface for a chemical bond
 by calculating the potential energy at different nuclear separations using an
 appropriate QM methodology. A common approach for deriving a function of
@@ -562,7 +562,7 @@ correspond with harmonic force constants.
 \subsubsection{Torsions}
 
 A \emph{torsion} is defined between four atoms connected by three sequential
-bonds---for simplicity we will label them as indicated in Fig.
+bonds---for simplicity I will label them as indicated in Fig.
 \ref{fig1:Parameters}C. The torsion angle ($\phi$), then, is the angle between
 the bonds 1--2 and 3--4 when projected onto a plane whose normal vector is the
 2--3 bond.  This projection is easily visualized for the Newman projection of a
@@ -616,10 +616,10 @@ Perez_BiophysJ_2007_v92_p3817, Lindorff-Larsen_Proteins_2010_v78_p1950}
 \subsubsection{Electrostatic Interactions}
 \label{sec1:MMEEL}
 
-The three potentials that we just discussed are called \emph{bonded
+The three potentials that I just discussed are called \emph{bonded
 interactions} since they occur between atoms connected by bonds. Potentials
 between \emph{all} atoms are called \emph{non-bonded interactions}. The first of
-the non-bonded interactions we will discuss arise due to charge-charge
+the non-bonded interactions I will discuss arise due to charge-charge
 interactions, typically referred to as \emph{electrostatic} interactions.
 
 Atoms treated in a force field are assigned partial charges that roughly
@@ -730,7 +730,7 @@ of the less-commonly used types of parameters.
 Improper torsions are typically used as correction terms to control out-of-plane
 motion. There are numerous instances where four or more atoms should be
 predominantly coplanar---such as aromatic five- and six-membered rings. The
-existing parameters we have already mentioned do not necessarily ensure that the
+existing parameters I have already mentioned do not necessarily ensure that the
 proper planarity of these systems will be maintained. As a result,
 \emph{improper torsion} terms are added to the force field in key locations to
 suppress unwanted out-of-plane motion. An diagrammatic depiction of an improper
