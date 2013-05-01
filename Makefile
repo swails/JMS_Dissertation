@@ -15,7 +15,9 @@ veryclean: clean
 paper: clean bib
 	@for f in DEFS/*; do ln -s $$f; done
 	@for f in STYS/*; do ln -s $$f; done
+	-bibtex $(PAPER)
 	-yes s | pdflatex $(PAPER).tex
+	-bibtex $(PAPER)
 	-dvipdfmx $(PAPER).dvi
 	-yes s | pdflatex $(PAPER).tex
 	-bibtex $(PAPER)
