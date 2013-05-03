@@ -432,7 +432,7 @@ def ewald():
 
    axisfont = {'fontsize' : 25, 'family' : 'sans-serif'}
 
-   fig = plt.figure(6, figsize=(8,5))
+   fig = plt.figure(7, figsize=(8,5))
    ax = fig.add_subplot(111)
    ax.set_xlim((0,10))
    ax.set_ylim((-1.1,1.1))
@@ -489,6 +489,100 @@ def ewald():
    fig.tight_layout()
    fig.savefig('Ewald.ps')
 
+def softcore():
+   """ Create the hard core LJ figure """
+   fig = plt.figure(8, figsize=(16,10))
+
+   ax1 = fig.add_subplot(221)
+   ax2 = fig.add_subplot(222)
+   ax3 = fig.add_subplot(223)
+   ax4 = fig.add_subplot(224)
+   # Set up axes
+   for ax in (ax1, ax2, ax3, ax4):
+      ax.set_xlim((0,6))
+      ax.set_ylim((-0.5,2.0))
+      ax.set_xlabel('Nuclear Separation ($\AA$)', family='sans-serif',
+                    fontdict={'fontsize' : 18})
+      ax.set_ylabel(r'Energy ($kcal$  $mol^{-1}$)', family='sans-serif',
+                    fontdict={'fontsize' : 18})
+      ax.grid(lw=1)
+   RMIN = 3.816
+   EPS = 0.1094
+   SIG = RMIN / 2 ** (1/6)
+   ACOEF = EPS * RMIN ** 12
+   BCOEF = 2.0 * EPS * RMIN ** 6
+
+   def vdw(x, alpha, lam):
+      return 4*EPS*(1-lam)*(1/(alpha*lam + (x/SIG)**6)**2 - 
+               1/(alpha*lam + (x/SIG)**6))
+
+   xdata = np.arange(-0.2,10,0.05)
+
+   for ax, lam in zip((ax1,ax2,ax3,ax4), (0.0, 0.20, 0.80, 1.00)):
+      ax.set_title(r'$\lambda = %.2f$' % lam,
+                    fontdict={'fontsize' : 18})
+      al1, = ax.plot(xdata,_evaluate(xdata,lambda x:vdw(x,0.1,lam)),color='k',lw=2)
+      al2, = ax.plot(xdata,_evaluate(xdata,lambda x:vdw(x,0.5,lam)),color='b',lw=2)
+      al3, = ax.plot(xdata,_evaluate(xdata,lambda x:vdw(x,1.0,lam)),color='r',lw=2)
+      al4, = ax.plot(xdata,_evaluate(xdata,lambda x:vdw(x,2.0,lam)),color='g',lw=2)
+      axis, = ax.plot([0,10], [0,0], color='k', lw=1)
+
+      ax.legend((al1, al2, al3, al4, ),#al5),
+                (r'$\alpha = 0.1$',
+                 r'$\alpha = 0.5$',
+                 r'$\alpha = 1.0$',
+                 r'$\alpha = 2.0$',
+                ), loc=1)
+
+   fig.tight_layout()
+   fig.savefig('SoftCore.ps')
+
+def hardcore():
+   """ Create figure showing hard cores of disappearing atoms """
+   fig = plt.figure(8, figsize=(8,5))
+
+   ax = fig.add_subplot(111)
+   # Set up axes
+   ax.set_xlim((0,6))
+   ax.set_ylim((-0.5,2.0))
+   ax.set_xlabel('Nuclear Separation ($\AA$)', family='sans-serif',
+                 fontdict={'fontsize' : 16})
+   ax.set_ylabel(r'Energy ($kcal$  $mol^{-1}$)', family='sans-serif',
+                 fontdict={'fontsize' : 16})
+   ax.grid(lw=1)
+
+   RMIN = 3.816
+   EPS = 0.1094
+   SIG = RMIN / 2 ** (1/6)
+   ACOEF = EPS * RMIN ** 12
+   BCOEF = 2.0 * EPS * RMIN ** 6
+
+   def vdw(x, lam):
+      xos6 = (x/SIG)**6
+      return 4*EPS*(1-lam)*(1/(xos6*xos6) - 1/(xos6))
+
+   xdata = np.arange(0.1,10,0.05)
+
+   ax.set_title(r'$\lambda = %.2f$' % lam)
+   al1, = ax.plot(xdata,_evaluate(xdata,lambda x:vdw(x,0)),color='k',lw=2)
+   al2, = ax.plot(xdata,_evaluate(xdata,lambda x:vdw(x,0.5,lam)),color='b',lw=2)
+   al3, = ax.plot(xdata,_evaluate(xdata,lambda x:vdw(x,0.9,lam)),color='r',lw=2)
+   al4, = ax.plot(xdata,_evaluate(xdata,lambda x:vdw(x,.99,lam)),color='g',lw=2)
+   al5, = ax.plot(xdata,_evaluate(xdata,lambda x:vdw(x,1.0,lam)),color='m',lw=2)
+   axis, = ax.plot([0,10], [0,0], color='k', lw=1)
+
+   ax.legend((al1, al2, al3, al4, al5),
+             (r'$\lambda = 0.0$',
+              r'$\lambda = 0.5$',
+              r'$\lambda = 0.9$',
+              r'$\lambda = 0.99$',
+              r'$\lambda = 1.0$',
+             ), loc=1)
+
+   fig.tight_layout()
+   fig.savefig('SoftCore.ps')
+
+   
 if __name__ == '__main__':
    """ Determine which plots to make """
    parser = ArgumentParser()
@@ -514,6 +608,12 @@ if __name__ == '__main__':
    group.add_argument('--ewald', dest='ewald', default=False,
                       action='store_true', help='''Create the figure
                       demonstrating how the Ewald sum works''')
+   group.add_argument('--hard-core', dest='hardcore', default=False,
+                      action='store_true', help='''Create the figure showing how
+                      a vanishing atom has a hard vdW core.''')
+   group.add_argument('--soft-core', dest='softcore', default=False,
+                      action='store_true', help='''Create the figure showing
+                      what soft cores are.''')
    
    opt = parser.parse_args()
 
@@ -531,3 +631,7 @@ if __name__ == '__main__':
       cutoff_effects()
    if opt.ewald:
       ewald()
+   if opt.hardcore:
+      hardcore()
+   if opt.softcore:
+      softcore()
