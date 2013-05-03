@@ -535,7 +535,7 @@ def softcore():
                 ), loc=1)
 
    fig.tight_layout()
-   fig.savefig('SoftCore.ps')
+   fig.savefig('SoftCore.png')
 
 def hardcore():
    """ Create figure showing hard cores of disappearing atoms """
@@ -562,13 +562,14 @@ def hardcore():
       return 4*EPS*(1-lam)*(1/(xos6*xos6) - 1/(xos6))
 
    xdata = np.arange(0.1,10,0.05)
+   x2 = np.arange(-1,10,0.1)
 
-   ax.set_title(r'$\lambda = %.2f$' % lam)
+#  ax.set_title(r'$\lambda = %.2f$' % lam)
    al1, = ax.plot(xdata,_evaluate(xdata,lambda x:vdw(x,0)),color='k',lw=2)
-   al2, = ax.plot(xdata,_evaluate(xdata,lambda x:vdw(x,0.5,lam)),color='b',lw=2)
-   al3, = ax.plot(xdata,_evaluate(xdata,lambda x:vdw(x,0.9,lam)),color='r',lw=2)
-   al4, = ax.plot(xdata,_evaluate(xdata,lambda x:vdw(x,.99,lam)),color='g',lw=2)
-   al5, = ax.plot(xdata,_evaluate(xdata,lambda x:vdw(x,1.0,lam)),color='m',lw=2)
+   al2, = ax.plot(xdata,_evaluate(xdata,lambda x:vdw(x,0.5)),color='b',lw=2)
+   al3, = ax.plot(xdata,_evaluate(xdata,lambda x:vdw(x,0.9)),color='r',lw=2)
+   al4, = ax.plot(xdata,_evaluate(xdata,lambda x:vdw(x,.99)),color='g',lw=2)
+   al5, = ax.plot(x2,_evaluate(x2,lambda x:vdw(x,1.0)),color='m',lw=2)
    axis, = ax.plot([0,10], [0,0], color='k', lw=1)
 
    ax.legend((al1, al2, al3, al4, al5),
@@ -580,7 +581,8 @@ def hardcore():
              ), loc=1)
 
    fig.tight_layout()
-   fig.savefig('SoftCore.ps')
+   fig.savefig('HardCore.ps')
+#  plt.show()
 
    
 if __name__ == '__main__':

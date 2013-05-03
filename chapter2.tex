@@ -129,11 +129,11 @@ equation, is shown in Eq. \ref{eq2:PoissonBoltzmann}.
    \bigtriangledown \epsilon(\vec{r}) \cdot \bigtriangledown \phi(\vec{r}) -
       \epsilon(\vec{r}) \lambda(\vec{r}) \kappa^2 \frac{k_B T} {2 q} \exp \left
       ( -\beta q \phi(\vec{r}) \right ) + \epsilon(\vec{r}) \lambda(\vec{r})
-      \kappa^2 \frac{k_B T} {2 q}  \exp \left ( \beta q \phi(\vec{r}) \right )
-      \right ] & = -4 \pi \rho (\vec{r}) \nonumber \\
-   \bigtriangledown \epsilon(\vec{r}) \cdot \bigtriangledown \phi(\vec{r}) -
-      \epsilon(\vec{r}) \lambda(\vec{r}) \kappa^2 \frac{k_B T} q \sinh \left (
-      \frac {q \phi(\vec{r})} {k_B T} \right ) & = -4 \pi \rho (\vec{r})
+      \kappa^2 \frac{k_B T} {2 q}  \exp \left ( \beta q \phi(\vec{r})
+      \right ) & = -4 \pi \rho (\vec{r}) \nonumber \\ \bigtriangledown
+      \epsilon(\vec{r}) \cdot \bigtriangledown \phi(\vec{r}) - \epsilon(\vec{r})
+      \lambda(\vec{r}) \kappa^2 \frac{k_B T} q \sinh \left ( \frac {q
+      \phi(\vec{r})} {k_B T} \right ) & = -4 \pi \rho (\vec{r})
    \label{eq2:PoissonBoltzmann}
 \end{align}
 where $q$ is the charge of the ions (both positive and negative ions are
@@ -552,7 +552,7 @@ function is shown in Fig. \ref{fig2:Cutoff}C.
    \begin{array}{lr}
       U(\vec{r}_{i,j} - U(\vec{r}_{cut}) - \left( \frac {dU(\vec{r}_{i,j})}
         {d\vec{r}_{i,j}} \right) _ {\vec{r}_{i,j} = \vec{r}_{cut}}
-        (\vec{r}_{i,j} - \vec{r}_{cut}) & \vec{r}_{i,j} \lt \vec{r}_{cut} \\
+        (\vec{r}_{i,j} - \vec{r}_{cut}) & \vec{r}_{i,j} < \vec{r}_{cut} \\
       0 & \vec{r}_{i,j} \geq \vec{r}_{cut}
    \end{array}
    \right.
@@ -645,14 +645,15 @@ However, while adding the neutralizing charge distributions has allowed us to
 compute the direct electrostatic energies between particles rapidly by imposing
 a relatively short cutoff, we have changed our system. The effect of the
 neutralizing charge distributions must be canceled by inverting all of the
-neutralizing charge distributions---called canceling charge distributions since
-it cancels the effect of the neutralizing charge distributions (Fig.
-\ref{fig2:Ewald}). The interactions between these neutralizing charge
-distributions represent a number of convolution integrals. These integrals may
-be computed very rapidly by taking the Fourier transform of the distributions
-and summing the contributions in reciprocal space. The result is then
-reverse-Fourier transformed to obtain the electrostatic potential at each of the
-particles. \cite{Allen_Tildesley}
+neutralizing charge distributions and adding their interaction back to the
+original sum. By adding these so-called canceling charge distributions back to
+the electrostatic sum, the original interaction of just the point charges is
+recovered. The interactions between these neutralizing charge distributions
+represent a number of convolution integrals which may be computed very rapidly
+by taking the Fourier transform of the distributions and summing the
+contributions in reciprocal space. The result is then reverse-Fourier
+transformed to obtain the electrostatic potential at each of the particles.
+\cite{Allen_Tildesley}
 
 \paragraph{Particle-Mesh Ewald}
 
@@ -666,9 +667,10 @@ the electrostatic potential at each of the mesh points. Unlike the standard
 Fourier transform, the FFT scales as $O(N\log(N))$, resulting in a substantial
 increase in computational efficiency. The potential at each of the
 particles---and its gradient---can then be interpolated from the adjacent grid
-points on the mesh using cardinal B-splines. This approach is termed
-\emph{Particle-Mesh Ewald} (PME) due to the way in which the particles interact
-with the mesh to determine the long-range electrostatic interactions.
+points on the mesh using cardinal B-splines. \cite{Darden_Structure_1999_v7_p55}
+This approach is termed \emph{Particle-Mesh Ewald} (PME) due to the way in which
+the particles interact with the mesh to determine the long-range electrostatic
+interactions.
 
 \subsubsection{Other Approaches}
 
@@ -1150,11 +1152,13 @@ term of the almost-vanished Hamiltonian. This phenomena, referred to as a
 configurations in which molecules enter the space partially occupied by a
 disappearing atom. \cite{Beutler_ChemPhysLett_1994_v222_p529} Figure
 \ref{fig2:HardCore} demonstrates this effect by plotting the Lennard Jones
-potential between a disappearing oxygen atom and a hydrogen atom.
+potential between two carbon atoms when one of them is vanishing.
 
 \begin{figure}
    \includegraphics[width=6.5in]{HardCore.ps}
-   \caption{Hard core of disappearing atom caused by the Lennard Jones terms.}
+   \caption{Hard core of disappearing atom caused by the Lennard Jones terms.
+            The $\lambda = 1$ state is the one in which a carbon atom has
+            vanished.}
    \label{fig2:HardCore}
 \end{figure}
 
@@ -1202,9 +1206,12 @@ vanishing atoms show significantly better convergence of free energies.
 \cite{Steinbrecher_JChemPhys_2007_v127_p214108, Steinbrecher2011}
 
 \begin{figure}
-   \includegraphics[height=6.5in, angle=90]{SoftCore.ps}
+   \includegraphics[width=6.5in, height=4.06in]{SoftCore.png}
    \caption{Functional form of soft-core Lennard Jones interactions with
-            different values of $\alpha$ from Eq. \ref{eq2:SoftCore}}
+            different values of $\alpha$ from Eq. \ref{eq2:SoftCore}. The
+            $\lambda = 1$ state is the one in which an atom has vanished. See
+            Fig. \ref{fig2:HardCore} to see how soft cores enable sampling close
+            to the center of the vanishing atom when $\lambda \approx 1$.}
    \label{fig2:SoftCore}
 \end{figure}
 
