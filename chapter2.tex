@@ -15,9 +15,9 @@ computational models can be separated into two groups. The most obvious way is
 to include the solvent atoms and molecules directly into the simulation
 alongside the system of interest---referred to collectively as \emph{explicit
 solvent} methods. While explicit solvent models are the most accurate approach
-in principle, they drastically increase the size of the
-simulation---simultaneously increasing the cost of the simulation and amount of
-sampling required to obtain converged results.
+in principle, they drastically increase the size of the system---simultaneously
+increasing the cost of the simulation and amount of sampling required to obtain
+converged results.
 
 An alternative way to include solvent effects is by modifying the electrostatic
 interactions in a system to account for the natural screening that a particular
@@ -28,7 +28,7 @@ implicit solvent models result in smaller simulations in which comformational
 sampling converges more rapidly because the solvent degrees of freedom are
 already included in a mean field way. However, individual solvent molecules
 often play a critical role in the structure and function of biological molecules
-and behave very differently than bulk solvent molecules---an effect implicit
+and behave very differently from molecules in bulk solvent---an effect implicit
 solvent models are ill-equipped to handle.
 
 The following sections describe the various implicit and explicit solvent models
@@ -42,7 +42,7 @@ reducing the magnitude of electrostatic interactions across a given distance.
 While the na\"ive approach of simply applying the solvent dielectric everywhere
 is attractive in its simplicity, solvent-excluded regions should obviously not
 be subject to the screening effects of the solvent. For large biomolecules, the
-solvent-excluded regions can be very large, so it becomes very important to deal
+solvent-excluded regions can be quite large, so it becomes important to deal
 with these regions effectively.
 
 \subsubsection{Distance-dependent Dielectric}
@@ -83,7 +83,7 @@ This effective dielectric constant is then incorporated as $\epsilon$ in Eq.
 \ref{eq1:AmberFF2}, and influences the calculated forces due to its dependence
 on $r_{i,j}$. One of the biggest weaknesses of distance-dependent
 dielectrics is that it treats every atom in the biomolecule as though they are
-in the same environment, and the shapes of biomolecules---and their
+in the same environment, whereas the shapes of biomolecules---and their
 solvent-excluded volumes---are often highly irregular. That is, two atoms buried
 inside the solvent-excluded volume separated by $d$ {\AA} are treated exactly
 the same way as two different atoms $d$ {\AA} apart whose interstitial region is
@@ -96,20 +96,20 @@ unphysical, intermediate values of the dielectric.
 
 For these reasons, the distance-dependent dielectric model is rarely used in
 modern simulations, having given way to the more accurate methods like the
-Poisson-Boltzmann equation and Generalized Born equation.
+Poisson-Boltzmann and Generalized Born equations.
 
 \subsubsection{Poisson-Boltzmann}
 
-At the heart of all modern implicit solvent models lies the Poisson equation
+At the heart of most modern implicit solvent models lies the Poisson equation
 \begin{equation*}
    \bigtriangledown \epsilon(\vec{r}) \cdot \bigtriangledown \phi ( \vec{r} ) =
             -4 \pi \rho(\vec{r})
 \end{equation*}
-where $\phi$ is the electrostatic potential at a given point in space, $\rho$ is
-the charge distribution at a given point in space, and $\epsilon$ is the
-dielectric constant at a given point in space. The dielectric constant is often
-divided into two regions---a region of low dielectric in the solvent-excluded
-volume and that of the bulk solvent `outside' the system of interest.
+where $\phi$ is the electrostatic potential distribution function, $\rho$ is
+the charge distribution function, and $\epsilon$ is the dielectric constant at a
+given point in space. The dielectric constant is often divided into two
+regions---a region of low dielectric in the solvent-excluded volume and that of
+the bulk solvent `outside' the system of interest.
 \cite{Cramer_Book_EssentialsCompChem_2004}
 
 The Poisson equation is only valid, however, at zero ionic strength. When mobile
@@ -163,13 +163,14 @@ term.
    \label{eq2:LinearPB}
 \end{equation}
 
-The Poisson Equation can be solved for only the simplest systems, like solvating
-a point-charge or a conducting sphere with a uniform charge distribution on its
-surface. Eq. \ref{eq2:PoissonBoltzmann} or \ref{eq2:LinearPB} must be solved
-numerically for complex biomolecules with irregular shapes. A common approach is
-to set up a three-dimensional grid surrounding the solute and calculate the
-charge distribution on the grid from the partial charges of each solute atom.
-The dielectric boundary can be calculated from the solvent accessible surface
+The Poisson Equation can be solved exactly for only the simplest systems, like
+solvating a point-charge or a conducting sphere with a uniform charge
+distribution on its surface. Eq. \ref{eq2:PoissonBoltzmann} or
+\ref{eq2:LinearPB} must be solved numerically for complex biomolecules with
+irregular shapes. A common approach is to set up a three-dimensional grid
+surrounding the solute and calculate the charge distribution on the grid from
+the partial charges of each solute atom.  The dielectric boundary can be
+calculated from the solvent accessible surface
 \cite{Sitkoff_JPhysChem_1994_v98_p1978}, so each grid point has an associated
 charge and dielectric value. The differential equations can then be solved via
 finite differences within the defined grid. \cite{Klapper_Proteins_1986_v1_p47}
@@ -280,11 +281,11 @@ nuclear positions---and can be computed rapidly. More importantly, however, Eq.
 \cite{Still_JAmChemSoc_1990_v112_p6127} For a single particle---or two identical
 point charges separated by a distance of 0---$f_{GB}$ reduces to $\alpha$ and
 Eq. \ref{eq2:GB} reduces to the Born equation (Eq. \ref{eq2:Born}) in which the
-radius of the `sphere' is the $\alpha_i$. It is for this reason that the
-$\alpha_i$ values can be thought of as an `effective' radius. Furthermore, for
-two point charges separated by a small distance (\ie smaller than the effective
-radii of the two particles) the result agrees with the Kirkwood-Onsager solution
-(Eq. \ref{eq2:KirkwoodOnsager}) to within 10\% of the true value.
+radius of the `sphere' is $\alpha_i$. It is for this reason that the $\alpha_i$
+values can be thought of as an `effective' radius. Furthermore, for two point
+charges separated by a small distance (\ie smaller than the effective radii of
+the two particles) the result agrees with the Kirkwood-Onsager solution (Eq.
+\ref{eq2:KirkwoodOnsager}) to within 10\% of the true value.
 \cite{Still_JAmChemSoc_1990_v112_p6127}
 
 The next major challenge in solving Eq. \ref{eq2:GB} is calculating the
@@ -320,7 +321,7 @@ then computed from this integral using Eq. \ref{eq2:reff}
    \label{eq2:reff}
 \end{equation}
 where $\rho_i$ is the intrinsic van der Waals radius of atom $i$ and $I_i$ is
-the integral from Eq. \ref{eq2:reff}.
+the integral from Eq. \ref{eq2:CFA}.
 
 As computational power increased and simulations reached longer time scales and
 larger systems, however, deficiencies in these equations began to surface,
@@ -341,7 +342,7 @@ modified Eq. \ref{eq2:reff} into the following form:
    \Psi - \beta \Psi^2 + \gamma \Psi^3 \right) \right] ^ {-1}
    \label{eq2:reffOBC}
 \end{equation}
-where $I_i$ is taken from Eq. \ref{eq2:CFA}, $\Psi = I \rho_i$, and $a$,
+where $\Psi = I \rho_i$ ($I_i$ is taken from Eq. \ref{eq2:CFA}), and $a$,
 $\beta$, and $\gamma$ are fitting parameters. The $\tanh$ function was chosen
 because it is infinitely differentiable (analytically) and increases the
 effective radii of more deeply-buried atoms while leaving the effective radii of
@@ -409,16 +410,16 @@ compounds).  If this was the only source of the `non-polar' solvation free
 energy, then its magnitude would vary with the size of the molecule, which is
 directly related to its surface area.
 
-Combining this surface-area non-polar solvation term with either the Generalized
-Born or Poisson-Boltzmann equations for the polar solvation term results in the
-so-called \emph{GBSA} and \emph{PBSA} methods, respectively. One of the most
-common methods for calculating the surface area in GBSA molecular dynamics
-simulations is called the \emph{linear combination of pairwise overlaps} (LCPO)
-method---so-called because it is parametrized by fitting five parameters to the
-spherical overlaps of individual atoms. \cite{Weiser_JComputChem_1999_v20_p217}
-The chief advantage of LCPO is that it provides an efficient way to calculate
-surface areas using an analytical formula whose derivatives can be easily
-calculated for use in molecular dynamics.
+Combining this surface-area non-polar solvation term with either the
+Poisson-Boltzmann or Generalized Born equations for the polar solvation term
+results in the so-called \emph{PBSA} and \emph{GBSA} methods, respectively. One
+of the most common methods for calculating the surface area in GBSA molecular
+dynamics simulations is called the \emph{linear combination of pairwise
+overlaps} (LCPO) method---so-called because it is parametrized by fitting five
+parameters to the spherical overlaps of individual atoms.
+\cite{Weiser_JComputChem_1999_v20_p217} The chief advantage of LCPO is that it
+provides an efficient way to calculate surface areas using an analytical formula
+whose derivatives can be easily calculated for use in molecular dynamics.
 
 \subsection{Explicit Solvent}
 
@@ -435,9 +436,8 @@ A large drawback when adding explicit solvent, however, is the fact that modern
 simulations at an atomic resolution (\ie where all atoms are treated explicitly)
 are limited to, at most, $10^8$ atoms, \cite{100M_Stupid} although simulations
 between $10^5$ to $10^6$ atoms are more reasonable. Macroscopic systems, on the
-other hand, contain on the order of $10^{23}$ atoms---a number far outside the
-range of possibility for modern hardware, so our simulations must be scaled down
-to a microscopic size.
+other hand, contain on the order of $10^{23}$ atoms---an intractable number for
+modern hardware, so our simulations must be scaled down to a microscopic size.
 
 As a demonstration, the hairpin ribozyme is a biomolecule that contains roughly
 \mbox{2 100} atoms. Adding only \mbox{22 000} water molecules---enough to create
@@ -447,7 +447,7 @@ that even on the largest supercomputers, we can only model a microscopic droplet
 in explicit solvent. At such small sizes, the ratio of surface area to volume
 for these minuscule droplets is astronomically large, and water molecules at the
 solvent-air interface behave quite differently from those molecules in bulk
-solvent that is typically encountered experimentally.
+solvent.
 
 While early approaches of applying a `cap' potential---an artificial biasing
 potential penalizing solvent that diffuses too far away from the solute---helped
@@ -518,11 +518,11 @@ conserve energy and leads to numerous, non-physical artifacts.
 Saito_JChemPhys_1994_v101_p4055, Auffinger_ChemPhysLett_1995_v234_p413,
 Cheatham_JAmChemSoc_1995_v117_p4193, Feller_JPhysChem_1996_v100_p17011,
 Patra_BiophysJ_2003_v84_p3636} This effect is particularly pronounced for
-electrostatic interactions---a very long-range potential of the form $1/r$. This
-function decays so slowly, in fact, that $\sum_{i=1}^{\infty} 1/r = \infty$.
-Two monovalent ions must be separated by ~332 {\AA} before their interaction
-energy drops to 1 kcal/mol. Such a cutoff would require a unit cell size at
-least 664 {\AA} on each edge containing $\sim 10^7$ water molecules.
+electrostatic interactions---a very long-range potential of the form $1/r$. As
+mentioned before, this function decays so slowly that $\sum_{i=1}^{\infty} 1/r =
+\infty$.  Two monovalent ions must be separated by $\sim332$ {\AA} before their
+interaction energy drops to 1 kcal/mol. Such a cutoff would require a unit cell
+size at least 664 {\AA} on each edge containing $\sim 10^7$ water molecules.
 
 Given the need to improve the behavior of the non-bonded potentials near the
 cutoff distance, two popular modifications to the simple cutoff approach were
@@ -691,10 +691,10 @@ use of periodic boundaries may introduce artifacts into the system caused by the
 correlated motions of each periodic image.
 \cite{Hunenberger_JChemPhys_1999_v110_p1856} For instance, if periodic boundary
 conditions was imposed on a gas of monovalent ions such that each cell had a
-single particle, the distribution would necessarily be uniform since periodic
-symmetry reduces dimensionality of the system to a single degree of freedom.
-While this effect does not seem to induce measurable artifacts for most
-simulations, \cite{Hunenberger_JChemPhys_1999_v110_p1856} a more serious
+single particle, the particle distribution would necessarily be uniform since
+periodic symmetry reduces dimensionality of the system to a single degree of
+freedom.  While this effect does not seem to induce measurable artifacts for
+most simulations, \cite{Hunenberger_JChemPhys_1999_v110_p1856} a more serious
 limitation of Ewald-based methods has to do with the changing architecture of
 modern computers.
 
@@ -725,7 +725,7 @@ To combat both shortcomings mentioned for Ewald-based methods, many researchers
 have investigated alternatives to the PME treatment of long-range electrostatic
 interactions in bimolecular simulations.  One such method, the \emph{isotropic
 periodic sum} (IPS), assumes an isotropic distribution of particles by
-replicating the surrounding region---within a cutoff--around each particle
+replicating the surrounding region---within a cutoff---around each particle
 infinitely in all directions. \cite{Wu_JChemPhys_2005_v122_p044107} While this
 method necessitates using a larger cutoff to more fully characterize each
 particle's surroundings, it avoids needing a charge grid populated from every
@@ -748,7 +748,7 @@ methods.
 
 While the list of methods here is not comprehensive, the general aim of
 PME-replacements is to either lessen the likelihood of observing periodicity
-artifacts in simulations and to present an algorithm that is more amenable to
+artifacts in simulations and/or to present an algorithm that is more amenable to
 parallelization. Despite the challenges in computational scaling and efficiency
 associated with parallelizing the reciprocal-space Ewald sum, Ewald-based
 methods are still widely used today, even on highly tuned, specialized hardware
@@ -850,7 +850,7 @@ probability density function at that point according to
 \end{equation*}
 where $\pi$ is the probability distribution function, $\delta$ is the Dirac
 delta function that serves to extract only those ensemble members that
-correspond to the specific point on the PMF $\vec{x}_0$, and $A$ is the free
+correspond to the specific point $\vec{x}_0$ on the PMF, and $A$ is the free
 energy along the PMF at that value. The unbiased probability distribution, which
 is directly related to the unbiased free energy up to an arbitrary constant, can
 be estimated according to \cite{Tuckerman_Book_StatMech_TheoryAndSim}
@@ -899,16 +899,16 @@ represents an upper-bound estimate on the free energy according to Eq.
 where $W$ is the work along the path given by $\vec{x}$ between states $1$ and
 $2$ and $\Delta A$ is the free energy change between those two states. Clearly,
 the utility of the work profile calculated using SMD simulations is severely
-limited considering just Eq. \ref{eq2:noneq_work}.
+limited since Eq. \ref{eq2:noneq_work} is simply an inequality.
 
 The link between equilibrium free energies and computed work profiles from SMD
 simulations was supplied by \citeauthor{Jarzynski_PhysRevLett_1997_v78_p2690} in
 \citeyear{Jarzynski_PhysRevLett_1997_v78_p2690}.
 \cite{Jarzynski_PhysRevLett_1997_v78_p2690} The so-called \emph{Jarzynski
-equality}, shown in Eq. \ref{eq2:Jarzynski}, shows that equilibrium free
-energies can be calculated from a complete ensemble of work profiles computed
-for the same potential between an ensemble of starting points at state
-$\vec{x}_1$ and driving the center of the umbrella to state $\vec{x}_2$.
+equality}, shown in Eq. \ref{eq2:Jarzynski}, states that equilibrium free
+energies can be calculated from a complete ensemble of work profiles along the
+reaction coordinate between an ensemble of starting points at state $\vec{x}_1$
+and driving the center of the umbrella to state $\vec{x}_2$.
 
 \begin{equation}
    \exp \left(-\beta \Delta A _{1,2} \right) = 
@@ -1006,7 +1006,7 @@ parallel computers. In these simulations, a finite number of independent
 simulations (replicas) are run, each with a different state parameter (\eg
 different temperatures). These replicas periodically attempt to exchange
 information between each other---either configurations or state parameters---in
-such a way that maintained the validity of the `subensemble' of each replica. A
+such a way that maintains the validity of the `subensemble' of each replica. A
 diagrammatic representation of REMD simulations is shown in Fig.
 \ref{fig2:REMD}. \cite{Sugita_ChemPhysLett_1999_v314_p141}
 
@@ -1096,10 +1096,10 @@ two states. A linear switching function, with
    f(\lambda) & = \lambda \\
    g(\lambda) & = 1 - \lambda
 \end{eqnarray*}
-due to their simplicity. Because the scaling parameter $\lambda$ is continuous
-and can be made to vary infinitely slowly, sampling done at the intermediate
-states (\ie $0 < \lambda < 1$) are always at equilibrium. The total free energy,
-then, can be calculated via the integral shown in Eq.
+is commonly used due to their simplicity. Because the scaling parameter
+$\lambda$ is continuous and can be made to vary infinitely slowly, sampling done
+at the intermediate states (\ie $0 < \lambda < 1$) are always at equilibrium.
+The total free energy, then, can be calculated via the integral shown in Eq.
 \ref{eq2:ThermoIntegration}. \cite{Leach_Book_MolModel_2001}
 
 \begin{equation}
@@ -1144,15 +1144,15 @@ one end point). The problem arises in the Lennard Jones term which has a very
 strong repulsive force at close intermolecular distances with a singularity at
 the origin. This singularity exists as long as the Hamiltonian containing this
 atom has non-zero weight according to the chosen $\lambda$ value, which is true
-for all values except 0 and 1. Therefore, even when $\lambda$ is arbitrarily
+for all values except 0 or 1. Therefore, even when $\lambda$ is arbitrarily
 close to either 0 or 1, there is a region of space around the center of all
-disappearing atoms in which no atom can enter due to the repulsive $r^-{12}$
-term of the almost-vanished Hamiltonian. This phenomena, referred to as a
+disappearing atoms in which no atom can enter due to the repulsive $r^{-12}$
+term of the almost-vanished atom. This phenomena, referred to as a
 \emph{hard core}, hurts convergence of TI calculations by preventing
 configurations in which molecules enter the space partially occupied by a
 disappearing atom. \cite{Beutler_ChemPhysLett_1994_v222_p529} Figure
 \ref{fig2:HardCore} demonstrates this effect by plotting the Lennard Jones
-potential between two carbon atoms when one of them is vanishing.
+potential between two carbon atoms when one of them vanishes at $\lambda=1$.
 
 \begin{figure}
    \includegraphics[width=6.5in]{HardCore.ps}
@@ -1175,10 +1175,10 @@ in TI calculations, the functional form of this potential is adjusted by Eq.
 \ref{eq2:SoftCore}. A good choice for the functional form of the soft-core
 potential should satisfy several conditions. First, the potential should be
 either 0 for a vanished atom or the original Lennard Jones potential for an atom
-that is `fully' present. Second, potential must not diverge between a partially
-vanished atom and an unperturbed atom when their separation approaches zero.
-Finally, the force must remain conservative (\ie the energy difference between
-any two points must be independent of the path taken between them). Eq.
+that is `fully' present. Second, the potential must not diverge between a
+partially vanished atom and an unperturbed atom when their separation approaches
+zero.  Finally, the force must remain conservative (\ie the energy difference
+between any two points must be independent of the path taken between them). Eq.
 \ref{eq2:SoftCore} satisfies all of these requirements, making it a good
 candidate to replace the standard Lennard-Jones potential in vanishing atoms.
 
@@ -1267,7 +1267,7 @@ MMPBSApy}
 I will discuss two methods within this family that are routinely used in binding
 free energy calculations---the so-called Molecular Mechanics Poisson-Boltzmann
 surface area (MM-PBSA) method \cite{Srinivasan_JAmChemSoc_1998_v120_p9401,
-Massova2000} and linear interaction energy (LIE) method.
+Massova2000} and the linear interaction energy (LIE) method.
 \cite{Aqvist_ProteinEng_1994_v7_p385, Hansson1998}
 
 \subsubsection{MM-PBSA}
@@ -1284,6 +1284,14 @@ typically generated by running either a MD or MC simulation for each of the
 three states---the bound complex, unbound receptor, and unbound ligand.
 \cite{MMPBSApy}
 
+\begin{equation}
+   \Delta G_{binding} = \left \langle \Delta H_{solv,bound} \right \rangle +
+      \left \langle \Delta H_{binding,gas} \right \rangle - \left \langle \Delta
+      H_{solv, unbound} \right \rangle
+   \label{eq2:MMPBSA}
+\end{equation}
+where the averages are taken of the ensembles of each system.
+
 \begin{figure}
    \includegraphics[height=6.5in, angle=90]{MMPBSA.ps}
    \caption{Thermodynamic cycle for MM/PBSA calculations. Implicit solvent is
@@ -1297,13 +1305,14 @@ required to construct each ensemble. To reduce the cost of computing binding
 free energies with MM-PBSA, all three ensembles mentioned above can be extracted
 from a single simulation of the bound complex, a technique referred to as the
 \emph{single trajectory protocol}. \cite{MMPBSApy} This approach will always
-underestimate the binding free energy, since the bound states of the receptor
-and ligand will always be less stable in the bound conformation than they are
-free in solution. However, when making the same approximation for a family of
-related receptors and ligands, the systematic errors in each end-state
-calculation will be similar. Therefore, MM-PBSA methods can be useful for
-tasks like rank-ordering a handful of proposed inhibitors for a specific enzyme
-by calculating accurate relative binding free energies. \cite{Homeyer2012}
+underestimate the binding free energy (predicting overly-stable binding), since
+the bound states of the receptor and ligand will always be less stable in the
+bound conformation than they are free in solution. However, when making the same
+approximation for a family of related receptors and ligands, the systematic
+errors in each end-state calculation will be similar. Therefore, MM-PBSA methods
+can be useful for tasks like rank-ordering a handful of proposed inhibitors for
+a specific enzyme by calculating accurate relative binding free energies.
+\cite{Homeyer2012}
 
 \subsubsection{LIE}
 
@@ -1311,12 +1320,13 @@ The linear interaction energy method (LIE) is another end-state method widely
 used to calculate noncovalent binding free energies of small ligands to
 proteins. LIE is based on assuming that the binding free energy is a result of
 the energetic differences of the ligand in the two environments---bound in the
-active site of the protein versus hydrated in solution---obeys linear response
-theory. \cite{Aqvist_ProteinEng_1994_v7_p385} The electrostatic contribution to
-LIE can be simplified to the concept of charging the atoms of the ligand inside
-a cavity that has the same shape as the ligand. Following the ideas Marcus theory,
-\cite{Marcus1955} the reorganization energy of the surrounding solvent $\lambda$
-can be expressed as \cite{Aqvist_ProteinEng_1994_v7_p385}
+active site of the protein versus hydrated in solution---and obeys linear
+response theory. \cite{Aqvist_ProteinEng_1994_v7_p385} The electrostatic
+contribution to LIE can be simplified to the concept of charging the atoms of
+the ligand inside a cavity that has the same shape as the ligand. Following the
+ideas Marcus theory, \cite{Marcus1955} the reorganization energy of the
+surrounding solvent $\lambda$ can be expressed as
+\cite{Aqvist_ProteinEng_1994_v7_p385}
 \begin{equation}
    \lambda = \left \langle V_B - V_A \right \rangle _ A - \Delta G _ {A
          \rightarrow B} = \left \langle V _ A - V _ B \right \rangle + \Delta G
