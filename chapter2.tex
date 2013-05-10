@@ -785,30 +785,33 @@ sampling, steered molecular dynamics (SMD), and expanded ensemble techniques
 Umbrella sampling is a biased sampling technique that acts on a specific
 reaction coordinate. In complex systems, there are often free energy barriers
 separating different states that are far larger than the average available
-thermal energy, $k_BT$. An example is shown in Fig.
-\ref{fig2:FreeEnergyProfile}A in which the $6N$-dimensional free energy surface
+thermal energy, $k_BT$. An example is shown as a black line in Fig.
+\ref{fig2:FreeEnergyProfile} in which the $6N$-dimensional free energy surface
 (reduced to $3N$-dimensional when the momentum integral is separated from the
 canonical partition function) is projected onto a 1-dimensional reaction
 coordinate. This reduced-dimension free energy surface, called a \emph{potential
-of mean force} (PMF) shows a free energy barrier of roughly $5\,k_BT$. In
+of mean force} (PMF) shows a free energy barrier of roughly $6\,k_BT$. In
 standard dynamics simulations, it would take a very long unbiased simulation to
 cross that barrier.
 
 \begin{figure}
    \includegraphics[width=6.5in]{FreeEnergyProfile.ps}
-   \caption{A) Example free energy surface projected onto a 1-dimensional reaction
-            coordinate. B) A harmonic `umbrella' potential is added to the
-            transition state in order to bias the simulation to sample the
-            high-energy structures more frequently.}
+   \caption{An example 1-dimensional PMF (shown in black). Two biasing umbrella
+            potentials are shown alongside the resulting, biased PMF. All PMF
+            curves have been translated so that the `minimum' free energy is 0.
+            Because only energy differences are significant, vertical
+            translations of the PMF have no effect on calculated properties.}
    \label{fig2:FreeEnergyProfile}
 \end{figure}
 
 The trick involved in umbrella sampling is to modify the underlying potential
 with a harmonic biasing potential to encourage the simulation to sample higher
-energy structures more often. Fig. \ref{fig2:FreeEnergyProfile}B shows the
-underlying potential energy surface along that reaction pathway along with a
-biasing potential aimed at increasing the number of structures sampled near the
-transition state between the two minima.
+energy structures more often. Fig. \ref{fig2:FreeEnergyProfile} shows how a
+quadratic umbrella potential changes the shape of the underlying PMF such that
+higher-energy structures are sampled more frequently. Clearly, the two biasing
+potentials shown in Fig. \ref{fig2:FreeEnergyProfile} tend to favor sampling
+near the two transition states separating different minima, since that portion
+of the reaction coordinate is lowest in energy.
 
 The resulting ensemble from the modified potential, shown in Eq.
 \ref{eq2:umbrella}, contains more snapshots around the areas that are

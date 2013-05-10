@@ -2,10 +2,12 @@
 \label{ch3}
 
 In this chapter, I will discuss my work with REMD simulations in which the state
-parameter---or the property exchanged between replicas---is the solution pH.
-This work is reprinted with permission from Ref.
-\cite{Swails_JChemTheoryComput_2012_v8_p4393}. Copyright
+parameter---the property exchanged between replicas---is the solution pH.  This
+work is reprinted with permission from
+\citeauthor*{Swails_JChemTheoryComput_2012_v8_p4393}, \emph{J. Chem. Theory
+Comput} \textbf{2012}, \emph{8} 4393--4404. Copyright
 \citeyear{Swails_JChemTheoryComput_2012_v8_p4393} American Chemical Society.
+\cite{Swails_JChemTheoryComput_2012_v8_p4393}
 
 \section{Constant pH and pK\sub{a} Calculations}
 
@@ -30,10 +32,9 @@ residue when free in solution. This may not be a valid assumption, however,
 because the protein or nucleic acid environment can modulate a residue's
 protonation state equilibrium. Second, a single protonation state may not
 accurately represent the true ensemble of states at the desired pH. If the pH
-is close in magnitude to the pK\sub{a} of a given residue, or if the system
-populates conformations in which the dominant protonation state changes, then
-the true ensemble is represented by conformations with different protonation
-states.
+is close to the pK\sub{a} of a given residue, or if the system populates
+conformations in which the dominant protonation state changes, then the true
+ensemble is represented by conformations with different protonation states.
 
 The first drawback can be addressed by using tools such as \emph{PROPKA}
 \cite{Olsson2011} and \emph{H++}, \cite{Myers_Proteins_2006_v63_p928} which
@@ -44,29 +45,29 @@ build the desired ensemble.
 
 While it may seem that both drawbacks can be addressed by simply running
 simulations with every possible set of protonation states, this approach quickly
-becomes unwieldy. Given $N$ titratable residues, there are $2^N$ distinct
-protonation states assuming each residue is either protonated or deprotonated.
-With only 10 titratable residues this amounts to 1024 distinct simulations!
-While most of these states may not be found in the given ensemble, there is no
-way to know which ones to exclude \emph{a priori}. It is important, then, to
-develop a method capable of directly probing protonation state equilibria in
-biological molecules.
+becomes unwieldy. Given $N$ titratable residues, there are at least $2^N$
+distinct protonation states assuming each residue is either protonated or
+deprotonated.  With only 10 titratable residues this amounts to a minimum of
+1024 distinct simulations!  While most of these states may not be found in the
+given ensemble, there is no way to know which ones to exclude \emph{a priori}.
+It is important, then, to develop a method capable of directly probing
+protonation state equilibria in biological molecules.
 
 In order to probe protonation state equilibria in a thermodynamically meaningful
 way, simulations must be run at constant pH. The first approaches for constant
 pH simulations used \emph{continuum electrostatics} methods to calculate the
 perturbing effect of the system environment on protonation state equilibria
-using an implicit solvent model (e.g., the Poisson-Boltzmann equation) on a
+using an implicit solvent model (\eg the Poisson-Boltzmann equation) on a
 single structure. \cite{Bashford_Biochemistry_1990_v29_p10219,
 Bashford_JMolBiol_1992_v224_p473, Antosiewicz_JMolBiol_1994_v238_p415} These
 methods, while sometimes useful for calculating pK\sub{a} values in biological
 systems, assume that the full protonation state equilibria can be characterized
 with a single structure. In particular, using a single structure neglects the
 response of the system relaxing to accommodate the new protonation state. While
-this has been addressed to some degree by treating the protein interior with a
-large dielectric constant, \cite{Antosiewicz_JMolBiol_1994_v238_p415} this
-approach assumes an unphysical homogeneity in the system's dielectric response
-to protonation state changes.
+the effects of system relaxation has been addressed to some degree by treating
+the protein interior with a large dielectric constant,
+\cite{Antosiewicz_JMolBiol_1994_v238_p415} this approach assumes an unphysical
+homogeneity in the system's dielectric response to protonation state changes.
 
 A more sophisticated approach to incorporating the system response involves
 simultaneous sampling of both protonation states and side-chain rotamers.
@@ -100,8 +101,8 @@ conformational sampling also improves predicted pK\sub{a}s with respect to
 experiment.  \cite{Williams_JChemTheoryComput_2010_v6_p560}
 \citeauthor{Webb_Proteins_2011_v79_p685} recently published a systematic study
 showing that the errors inherent to experimental measurements are often larger
-than those reported, which has important implications for the accuracy of
-theoretical predictions. \cite{Webb_Proteins_2011_v79_p685}
+than those reported, which has important implications for assessing the accuracy
+of theoretical predictions. \cite{Webb_Proteins_2011_v79_p685}
 
 \emph{Replica exchange molecular dynamics} (REMD) is a family of extended
 ensemble techniques that have been shown to dramatically improve sampling.
@@ -116,10 +117,10 @@ Pitera_ProcNatlAcadSci_2003_v100_p7587} and, more recently, pH
 \cite{Itoh_Proteins_2011_v79_p3420, Wallace_JChemTheoryComput_2011_v7_p2617} to
 sample from an expanded ensemble covering multiple states.
 
-In this study, we implemented, in the \emph{sander} module of the AMBER
-\cite{AMBER12} software package, the pH-REMD method described by
-\citeauthor{Itoh_Proteins_2011_v79_p3420} \cite{Itoh_Proteins_2011_v79_p3420}.
-We show how this method significantly improves sampling compared to CpHMD in hen
+In this study, I implemented the pH-REMD method described by
+\citeauthor{Itoh_Proteins_2011_v79_p3420} \cite{Itoh_Proteins_2011_v79_p3420} in
+the \emph{sander} module of the Amber \cite{AMBER12} software package. I show
+how this method significantly improves sampling compared to CpHMD in hen
 egg-white lysozyme (HEWL), a system commonly used as a benchmark for pK\sub{a}
 calculations. Titration curves generated using pH-REMD contain significantly
 less noise and converge more rapidly than CpHMD, suggesting pH-REMD is a
@@ -127,7 +128,7 @@ powerful tool for carrying out pK\sub{a} predictions.
 
 Our group has previously shown that temperature REMD simulations converge
 significantly faster with increasing exchange attempt frequency (EAF).
-\cite{Sindhikara2008,Sindhikara2010} Here, we show that increasing the EAF in
+\cite{Sindhikara2008,Sindhikara2010} Here, I show that increasing the EAF in
 pH-REMD simulations causes pH-dependent observable properties to converge faster
 as well.
 
@@ -176,7 +177,7 @@ introducing a pH-dependence in our sampling scheme.
 
 \subsection{CpHMD}
 
-We used the constant pH molecular dynamics (CpHMD) method developed by
+I used the constant pH molecular dynamics (CpHMD) method developed by
 \citeauthor{Mongan_JComputChem_2004_v25_p2038}
 \cite{Mongan_JComputChem_2004_v25_p2038} that employs Monte Carlo transitions
 between discrete protonation states at periodic intervals during a MD simulation
@@ -184,7 +185,7 @@ to probe protonation state equilibria. In this CpHMD implementation, both the
 dynamics and the MC protonation state sampling are performed in Generalized Born
 implicit solvent. After a predetermined number of steps, the MD is halted and a
 protonation state change is attempted by evaluating the energetic cost of that
-proposed change, calculated according to
+proposed change, calculated according to Eq. \ref{eq3:ProtChange}.
 \cite{Mongan_JComputChem_2004_v25_p2038}
 \begin{equation}
    \Delta G = k _ B T \left( pH - pK _ {a,ref} \right) \ln 10 + \Delta G _
@@ -233,7 +234,7 @@ Table
 Running a CpHMD simulation, we obtain an ensemble consisting of multiple
 protonation states properly weighted for the semi-grand canonical ensemble, the
 thermodynamic ensemble corresponding to constant temperature, volume (or
-pressure) and chemical potential of hydronium (i.e., constant pH).
+pressure) and chemical potential of hydronium (\ie constant pH).
 \cite{Baptista_JChemPhys_2002_v117_p4184} Because the simulation is assumed to
 be ergodic, the deprotonation fraction can be calculated by simply counting the
 fraction of ensemble members in which the residue is deprotonated. Multiple
@@ -254,7 +255,7 @@ simulation represents an expanded ensemble in which each replica samples
 conformations with a fixed pH and samples different pH values at a fixed
 conformation.
 
-In this study, we implemented the pH-REMD method introduced by
+In this study, I implemented the pH-REMD method introduced by
 \citeauthor{Itoh_Proteins_2011_v79_p3420} \cite{Itoh_Proteins_2011_v79_p3420} in
 the \emph{sander} module of Amber.  \cite{AMBER12} In pH-REMD, adjacent replicas
 in the pH ladder swap pH with the Monte Carlo exchange probability
@@ -274,18 +275,18 @@ proposed method only swaps the solution pH between replicas. For large systems
 with more than 3 -- 5 titratable residues, the proposed method of swapping
 solution pH between replicas achieves more efficient replica exchanges than the
 variant employing Hamiltonian exchange. For HEWL, specifically, the Hamiltonian
-REMD variant experienced an exchange success rate of <0.01\%, which is
+REMD variant experienced an exchange success rate of $<0.01\%$, which is
 effectively indistinguishable from CpHMD simulations.
 
 \section{Methods}
 
 \subsection{Starting Structure}
 
-We chose to study hen egg white lysozyme because it is well-characterized both
+I chose to study hen egg white lysozyme because it is well-characterized both
 experimentally \cite{Takahashi_Biopolymers_1992_v32_p897,
 Bartik_BiophysJ_1994_v66_p1180, Webb_Proteins_2011_v79_p685} and
 computationally. \cite{Mongan_JComputChem_2004_v25_p2038,
-Demchuk_JPhysChem_1996_v100_p17373, Wallace_JChemTheoryComput_2011_v7_p2617} We
+Demchuk_JPhysChem_1996_v100_p17373, Wallace_JChemTheoryComput_2011_v7_p2617} I
 chose the structure from the protein data bank (PDB) with the code 1AKI
 \cite{Artymiuk_ActaCrystB_1982_v38_p778} because it was the focus of Mongan's
 original study. \cite{Mongan_JComputChem_2004_v25_p2038}
@@ -306,7 +307,7 @@ described by \citeauthor{Onufriev_Proteins_2004_v55_p383}
 \emph{igb=2} for Amber programs) was used with the salt concentration, modeled
 as a Debye screening parameter, set to 0.1 M in every simulation.
 \cite{Mongan_JComputChem_2004_v25_p2038} Due to the long-range nature of the
-electrostatic forces, we always used an infinite cutoff for non-bonded
+electrostatic forces, I always used an infinite cutoff for non-bonded
 interactions.
 
 Each starting structure was minimized using 50 steps of steepest descent
@@ -314,7 +315,7 @@ followed by 950 steps of conjugate gradient with 10 kcal mol\super{-1}
 \AA\super{-2} restraints on the backbone atoms to relieve bad contacts. Then,
 the minimized structure was heated by varying the target temperature linearly
 from 10 K to 300 K for 667 ps, keeping weak restraints---1 kcal mol\super{-1}
-\AA\super{-2}--on the backbone. We used the Langevin thermostat with a
+\AA\super{-2}--on the backbone. I used the Langevin thermostat with a
 collision frequency of 5 ps\super{-1} to control the temperature. These
 simulations were performed using the \emph{pmemd} module of the Amber 12 program
 suite. \cite{AMBER12}
@@ -327,11 +328,11 @@ resulting structure was used to start 16 ns of CpHMD at pH values spanning 2 to
 7 with an interval of 0.5. Only the 10 acidic residues---the aspartates,
 glutamates, and histidines---were titrated because HEWL is catalytically active
 at low pH \cite{Vocadlo_Nature_2001_v412_p835} and 1AKI was solved in these
-conditions. We used a 2 fs time step and attempted protonation state changes
+conditions. I used a 2 fs time step and attempted protonation state changes
 every 5 steps. The Langevin thermostat with a collision frequency of 10
 ps\super{-1} was used to control the temperature, and simulations were begun
 with a different random seed to avoid synchronization artifacts.
-\cite{Sindhikara_JChemTheoryComput_2009_v5_p1624} We used the \emph{sander}
+\cite{Sindhikara_JChemTheoryComput_2009_v5_p1624} I used the \emph{sander}
 module of Amber 12 for each of these simulations.
 
 \subsection{Replica Exchange}
@@ -345,15 +346,15 @@ structures obtained after 1 ns of CpHMD simulation for each pH were used as the
 starting structure for the replica exchange simulations (the structure from
 CpHMD run at pH 7 was used for the replica run at pH 7.5 as well).
 
-We ran pH-REMD simulations with exchange attempt frequencies (EAFs) (i.e., the
+I ran pH-REMD simulations with exchange attempt frequencies (EAFs) (\ie the
 frequency with which replicas attempt to swap pH values) equal to 50
 ps\super{-1}, 10 ps\super{-1}, 5 ps\super{-1}, and 0.5 ps\super{-1} to assess
 the effect of EAF on the convergence of observable properties. This corresponds
 to attempting exchanges every 10, 50, 100, and 1000 steps, respectively. All
-pH-REMD simulations were run for 15 ns. We note here that the CpHMD simulations
+pH-REMD simulations were run for 15 ns. I note here that the CpHMD simulations
 are equivalent to a REMD simulation with an EAF equal to 0.
 
-We used an in-house, modified version of \emph{sander} in which we implemented
+I used an in-house, modified version of \emph{sander} in which I implemented
 pH-REMD for these simulations and wrote in-house scripts to extract pH-based
 titration data from the ensemble of replica-based files. The replica at pH 7.5
 was ignored in all pH-REMD analyses so the simulations could be compared fairly.
@@ -361,9 +362,9 @@ was ignored in all pH-REMD analyses so the simulations could be compared fairly.
 \section{Results and Discussion}
 
 CpHMD methods must sample both protonation states and conformation states to
-build a thermodynamically meaningful ensemble. Here we will discuss how well
+build a thermodynamically meaningful ensemble. Here I will discuss how well
 CpHMD, as implemented in Amber, \cite{Mongan_JComputChem_2004_v25_p2038} samples
-from the desired ensemble. We then analyze how pH-REMD affects protonation and
+from the desired ensemble. I then analyze how pH-REMD affects protonation and
 conformational state sampling compared to CpHMD, and how effective these tools
 are for pK\sub{a} prediction.
 
@@ -375,12 +376,12 @@ secondary and tertiary structure during the course of the simulation.
 
 \citeauthor{Mongan_JComputChem_2004_v25_p2038}
 \cite{Mongan_JComputChem_2004_v25_p2038} showed that temperature and energy
-fluctuations greater than those obtained with standard MD (i.e., MD simulations
+fluctuations greater than those obtained with standard MD (\ie MD simulations
 with static protonation states) were minimal during the course of a 1 ns
 simulation. Most of the energy fluctuations arise from the intrinsic response of
 the force field to the new charge state.
 
-To analyze structural stability, we plotted the root mean squared deviation
+To analyze structural stability, I plotted the root mean squared deviation
 (RMSD) of every $\alpha$-carbon in the protein with respect to the minimized
 crystal structure vs. time. The results from CpHMD and pH-REMD simulations are
 shown in Fig. \ref{fig3:RMSD} for the lowest pH, 2; the highest pH, 7; and an
@@ -433,16 +434,16 @@ spent in a deprotonated state.
     Residue & pK\sub{a} & \textit{n} & pK\sub{a} & \textit{n} &  
     pK\sub{a} & \textit{n} & Expt. pK\sub{a} \\
     \hline
-    GLU 7 & 3.62 & 1.16 & 3.60 & 0.88 &  3.84 & 0.96 & $2.6 \pm 0.2$ \\
-    HIS 15 & 5.96 & 1.05 & 5.74 & 1.09 &  5.90 & 0.97 & $5.5 \pm 0.2$ \\
-    ASP 18 & 2.26 & 1.11 & 2.01 & 0.94 &  2.01 & 0.89 & $2.8 \pm 0.3$ \\
-    GLU 35 & 5.67 & 3.82 & 5.44 & 1.16 &  4.98 & 0.98 & $6.1 \pm 0.4$ \\
-    ASP 48 & 1.22 & 0.43 & 1.11 & 0.71 &  1.99 & 0.83 & $1.4 \pm 0.2$ \\
-    ASP 52 & 2.69 & 1.16 & 2.37 & 0.96 &  2.30 & 0.75 & $3.6 \pm 0.3$ \\
-    ASP 66 & -18.13 & 0.11 & -3.17 & 0.49 & 1.53 & 1.19 & $1.2 \pm 0.2$ \\
-    ASP 87 & 2.52 & 0.81 & 2.61 & 0.81 & 2.66 & 0.91 & $2.2 \pm 0.1$ \\
-    ASP 101 & 3.69 & 2.10 & 3.66 & 1.00 & 3.57 & 0.87 & $4.5 \pm 0.1$ \\
-    ASP 119 & 2.26 & 0.98 & 2.73 & 1.04 & 2.43 & 0.96 & $3.5 \pm 0.3$ \\
+    GLU 7 & 3.62 & 1.16 & 3.60 & 0.88 &  3.84 & 0.96 & 2.6 $\pm$ 0.2 \\
+    HIS 15 & 5.96 & 1.05 & 5.74 & 1.09 &  5.90 & 0.97 & 5.5 $\pm$ 0.2 \\
+    ASP 18 & 2.26 & 1.11 & 2.01 & 0.94 &  2.01 & 0.89 & 2.8 $\pm$ 0.3 \\
+    GLU 35 & 5.67 & 3.82 & 5.44 & 1.16 &  4.98 & 0.98 & 6.1 $\pm$ 0.4 \\
+    ASP 48 & 1.22 & 0.43 & 1.11 & 0.71 &  1.99 & 0.83 & 1.4 $\pm$ 0.2 \\
+    ASP 52 & 2.69 & 1.16 & 2.37 & 0.96 &  2.30 & 0.75 & 3.6 $\pm$ 0.3 \\
+    ASP 66 & -18.13 & 0.11 & -3.17 & 0.49 & 1.53 & 1.19 & 1.2 $\pm$ 0.2 \\
+    ASP 87 & 2.52 & 0.81 & 2.61 & 0.81 & 2.66 & 0.91 & 2.2 $\pm$ 0.1 \\
+    ASP 101 & 3.69 & 2.10 & 3.66 & 1.00 & 3.57 & 0.87 & 4.5 $\pm$ 0.1 \\
+    ASP 119 & 2.26 & 0.98 & 2.73 & 1.04 & 2.43 & 0.96 & 3.5 $\pm$ 0.3 \\
     \hline
 \textbf{RMSE} & \multicolumn{2}{|c|}{\textbf{6.15 (0.74)}} & 
                 \multicolumn{2}{|c|}{\textbf{1.56 (0.76)}} & 
@@ -460,9 +461,9 @@ non-Henderson-Hasselbalch (non-HH) behavior, or that protonation space is poorly
 sampled at some pH values, depending on how well Eq. \ref{eq3:hill} fits the
 data. If Eq. \ref{eq3:hill} fits the data poorly, then poor protonation state
 sampling is at least partially responsible for the deviation of the Hill
-coefficient from 1. Only the CpHMD simulations show several residues whose Hill
-coefficient deviates substantially from 1, showing that pH-REMD improves
-sampling from the desired ensemble.
+coefficient from 1. Because only the CpHMD simulations show several residues
+whose Hill coefficient deviates substantially from 1, we conclude that pH-REMD
+improves sampling from the desired ensemble.
 
 \subsection{Enhancing Protonation State Sampling with pH-REMD}
 
@@ -471,12 +472,11 @@ ensemble \cite{Sugita_ChemPhysLett_1999_v314_p141,
 Chodera_JChemPhys_2011_v135_p194110} as long as replicas traverse the
 state-space ladder regularly.  If replica exchange attempts always fail, the
 simulation does not benefit from those attempts.  In our pH-REMD simulations,
-replicas with neighboring pH values (i.e., replicas with solution pHs separated
-by 0.5 pH units) succeeded between 40\% to 98\% of all exchanges attempted
-between adjacent replicas, displaying very efficient traversal of the pH-space
-replica ladder. Here we will discuss the extent to which pH-REMD, with different
-exchange attempt frequencies (EAFs), improves protonation state sampling
-compared to CpHMD.
+exchange attempts between replicas with neighboring pH values (\ie replicas with
+solution pHs separated by 0.5 pH units) succeeded between 40\% to 98\% of the
+time, displaying very efficient traversal of the pH-space replica ladder. Here I
+will discuss the extent to which pH-REMD, with different exchange attempt
+frequencies (EAFs), improves protonation state sampling compared to CpHMD.
 
 \begin{figure}
  \includegraphics[width=6.5in, height=4.06in]{Comparison_good_curves.png}
@@ -486,10 +486,10 @@ compared to CpHMD.
  \label{fig3:GoodTitr}
 \end{figure}
 
-We show sample titration curves for simulations with no exchange attempts and
+I show sample titration curves for simulations with no exchange attempts and
 simulations in which replica exchanges were attempted with a frequency of 50
 ps\super{-1}.  Residues for which `good' titration curves are obtained with
-CpHMD are shown in Fig. \ref{fig3:GoodTitr}.  We characterize `good` titration
+CpHMD are shown in Fig. \ref{fig3:GoodTitr}.  I characterize `good` titration
 curves by small deviations of each point from the fitted titration curve and
 Hill coefficients between 0.5 and 1.5. Residues that show poor titration curves
 for CpHMD---characterized by large deviations of points from the fitted
@@ -590,7 +590,7 @@ EAF is increased, and the Hill coefficient improves from 0.11 to 1.19.
 
 \section{Exchange Attempt Frequency and Protonation State Sampling}
 
-To analyze the effect EAF has on pK\sub{a} convergence, we divided each
+To analyze the effect EAF has on pK\sub{a} convergence, I divided each
 simulation into sections of 0.25 ns and calculated the standard deviations of
 the pK\sub{a} and Hill coefficient, as well as the mean Hill coefficient, by
 fitting Eq. \ref{eq3:hill} to the data obtained from each pH.  The results are
@@ -631,7 +631,7 @@ summarized in Table \ref{tbl3:pkastats}.
 
 The  average fluctuation in pK\sub{a} systematically decreases as EAF increases,
 in large part due to the improvement of residues that titrate poorly, namely Asp
-48 and Asp 66.  The large standard deviation of these two residues is evidence
+48 and Asp 66. The large standard deviation of these two residues is evidence
 that the protonation state sampling does not converge on the 0.25 ns intervals
 that were used to generate the statistics. However, increasing the EAF leads to
 a systematic decrease in the fluctuations of the calculated pK\sub{a} for Asp 48
@@ -658,8 +658,8 @@ titrating residues.
 
 A final metric for analyzing protonation state sampling of a particular residue
 is to count the number of times the protonation state changes over a specified
-period of time.  We call these protonation state changes \emph{transitions}, and
-we only consider a transition to have occurred if the number of protons on the
+period of time.  I call these protonation state changes \emph{transitions}, and
+I only consider a transition to have occurred if the number of protons on the
 titratable side-chain changed from one snapshot to the next in a given ensemble.
 In particular, a tautomeric change, such as a proton changing from one oxygen in
 a carboxylate to the other oxygen, is not counted. Fig. \ref{fig3:transitions}
@@ -698,7 +698,7 @@ individual residues often accompany a successful exchange of replicas.
 
 Because conformations and protonation states are coupled, enhanced
 conformational sampling from pH-REMD naturally accompanies enhanced protonation
-state sampling. In well-designed pH-REMD simulations (i.e., pH-REMD simulations
+state sampling. In well-designed pH-REMD simulations (\ie pH-REMD simulations
 in which efficient mixing occurs in pH-space), each replica contributes
 structures to the ensemble at each pH, which serves to increase the number of
 conformations visited at each pH.
@@ -724,11 +724,11 @@ in each simulation as EAF increases to 10 ps\super{-1} (there is no noticeable
 difference between the 10 ps\super{-1} and 50 ps\super{-1} EAF).
 
 Because each simulation is subjected to the same set of external constraints
-(e.g., temperature, pH, solvation model, etc.), each generated ensemble should
+(\eg temperature, pH, solvation model, etc.), each generated ensemble should
 represent a subset of the theoretically complete ensemble under these external
 constraints.  Because these wider RMSD distribution reflects sampling of more
 conformations further from the starting structure, it is almost certain that
-these wider distributions at high EAF are thermodynamically `better' (i.e., the
+these wider distributions at high EAF are thermodynamically `better' (\ie the
 ensembles approximate the theoretically complete ensembles better) than their
 narrower counterparts in the CpHMD and 5 ps\super{-1} EAF simulations.  The
 original RMSD data, plotted in Fig. \ref{fig3:RMSD}, also suggests that pH-REMD
@@ -737,7 +737,7 @@ transitions between conformations with different RMSDs.
 
 In addition to sampling more RMSD space than CpHMD simulations, the pH-REMD
 simulations also converge to their final RMSD distributions much more rapidly.
-To quantify this measure, we used the Kullback-Leibler divergence
+To quantify this measure, I used the Kullback-Leibler divergence
 \cite{Hamacher2007, McClendon_JChemTheoryComput_2012_v8_p2115} ($D_{KL}$).  The
 Kullback-Leibler divergence, calculated via Eq. \ref{eq3:k-l}, quantifies the
 similarity between two distinct probability distributions $P(i)$ and $Q(i)$.
@@ -787,7 +787,7 @@ general, however, pH-REMD simulations with high EAFs sample more RMSD space more
 efficiently than CpHMD and simulations with low EAFs.
 
 To probe the nature of the conformational flexibility of HEWL at different EAFs,
-we calculated the average atomic fluctuations for each residue from the average
+I calculated the average atomic fluctuations for each residue from the average
 structure. These fluctuations provide insight into the flexible regions of the
 protein, giving a more fine-grained, structural analysis than RMSD does.  The
 results, shown in Fig. \ref{fig3:fluxes}, show that the same parts of HEWL are
@@ -818,7 +818,7 @@ pH 2 (Fig. \ref{fig3:fluxes}), contains the problematic titratable residue Asp
 protonates at low pH in the pH-REMD simulations but not in the CpHMD simulation
 where this loop is substantially less flexible.
 
-To probe the pH-dependence of HEWL dynamics further, we plot the distributions
+To probe the pH-dependence of HEWL dynamics further, I plot the distributions
 of the distance between the carboxylate carbons of the catalytic residues Asp 52
 and Glu 35 at each pH.  Because Asp 52 and GLU 35 are the catalytic residues in
 HEWL, this behavior may have important implications in the HEWL catalytic
@@ -867,7 +867,7 @@ point, however, the interaction is weak, causing the Glu 35 titration to display
 nearly ideal Henderson-Hasselbalch behavior.
 
 To better illustrate the pH-dependence of the Glu 35 -- Asp 52 interaction
-depicted in Fig. \ref{fig3:cat_dist}, (at 50 ps\super{-1} EAF) we integrated
+depicted in Fig. \ref{fig3:cat_dist}, (at 50 ps\super{-1} EAF) I integrated
 each of the distributions from 0 \mbox{\normalfont \AA} to 5 \mbox{\normalfont
 \AA} and plotted the result against pH, shown in Fig. \ref{fig3:cat_dist_int}.
 
@@ -886,7 +886,7 @@ computational expense and theoretical rigor.  As
 \citeauthor{Mongan_JComputChem_2004_v25_p2038} demonstrated in their work, the
 CpHMD method implemented in Amber is only marginally more expensive than
 traditional MD with constant protonation states.
-\cite{Mongan_JComputChem_2004_v25_p2038}  Here, we will discuss the performance
+\cite{Mongan_JComputChem_2004_v25_p2038}  Here, I will discuss the performance
 implications of increasing the EAF of pH-REMD simulations.
 
 The computational cost of the pH-REMD simulations is the sum of the cost of the
@@ -943,7 +943,7 @@ respectively).
 
 \section{Conclusion}
 
-In this study, we have shown that pH-REMD effectively enhances sampling from the
+In this study, I have shown that pH-REMD effectively enhances sampling from the
 semi-grand canonical ensemble compared to CpHMD in the case of hen egg-white
 lysozyme.  The titration curves generated from pH-REMD simulations are
 considerably less noisy than the analogous titration curves generated from CpHMD
@@ -955,11 +955,11 @@ In some cases, pH-REMD can effectively cross potential energy barriers that trap
 residues in CpHMD simulations.  In the case of the Asp 66 residue in HEWL, CpHMD
 simulations were unable to obtain noticeable protonation fractions even at a pH
 as low as 2 when started from the 1AKI crystal structure.  Utilizing pH-REMD
-simulations with a rapid EAF, we obtained a titration curve with a Hill
+simulations with a rapid EAF, I obtained a titration curve with a Hill
 coefficient close to 1 and a calculated pK\sub{a} that compares well to
 experiment.
 
-We have demonstrated that increasing the EAF improves sampling and convergence
+I have demonstrated that increasing the EAF improves sampling and convergence
 of several observables in this study.  Asp 66 titrates more efficiently with a
 high EAF due to enhanced the mobility of flexible regions of the protein.
 Furthermore, analysis of the distance between the catalytic residues Asp 52 and
@@ -972,7 +972,7 @@ Replica exchange methodologies can be implemented efficiently to reduce the cost
 of each exchange attempt.  In pH-REMD, the exchange success probability,
 governed by Eq. \ref{eq3:ExchSucc}, involves only trivial mathematics so the
 cost of evaluating Eq. \ref{eq3:ExchSucc} is negligible.  For efficient REMD
-implementations, like the one presented in this work, we recommend setting the
+implementations, like the one presented in this work, I recommend setting the
 EAF to at least 10 ps\super{-1}, although some improvement is still seen with
 higher EAFs.
 
@@ -991,11 +991,4 @@ simplicity of the exchange probability equation (Eq. \ref{eq3:ExchSucc}), the
 exchange success rate can be calculated between any two replicas over the course
 of the pH-REMD simulation.  The calculated success rates show a non-negligible
 probability of accepting exchange attempts between replicas up to 2 pH units
-away from each other (i.e., separated by 3 replicas).
-
-In future work, we plan to implement Gibbs' sampling techniques
-\cite{Chodera_JChemPhys_2011_v135_p194110} into the REMD exchange attempt
-process in Amber to improve the efficiency of pH-REMD.  We will also extend the
-CpHMD and pH-REMD methods presented here to simulations in explicit solvent,
-which has proven effective in continuous protonation state models.
-\cite{Wallace_JChemTheoryComput_2011_v7_p2617}
+away from each other (\ie separated by 3 replicas).

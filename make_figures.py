@@ -9,7 +9,6 @@ from matplotlib import pyplot as plt
 from matplotlib import patches
 from matplotlib.lines import Line2D
 import numpy as np
-from scipy.stats.kde import gaussian_kde
 
 def _evaluate(x, func):
    result = np.ndarray(x.shape)
@@ -114,8 +113,6 @@ def hydrogen():
               -1.0706404, -1.0637259, -1.0572607, -1.0512547, -1.0457057,
               -1.0406020, -1.0359419, -1.0278471, -1.0243742, -1.0])
    xdata2 = np.arange(0, 10, 0.1)
-   x1 = xdata[7:20]
-   y1 = ydata[7:20] - min(ydata)
    # Convert to kcal/mol
    ydata = ydata * HAR_TO_KCAL
 
@@ -335,7 +332,6 @@ def cutoff_effects():
    # Define the font dictionaries
    titlefont = {'fontsize' : 25, 'family' : 'sans-serif'}
    axisfont = {'fontsize' : 20, 'family' : 'sans-serif'}
-   legendfont = {'fontsize' : 18, 'family' : 'sans-serif'}
 
    # Plot everything
    trunce.plot(xd, _evaluate(xd,no_cutoff), 'k-', lw=3, label='No Cutoff')
@@ -509,8 +505,8 @@ def softcore():
    RMIN = 3.816
    EPS = 0.1094
    SIG = RMIN / 2 ** (1/6)
-   ACOEF = EPS * RMIN ** 12
-   BCOEF = 2.0 * EPS * RMIN ** 6
+#  ACOEF = EPS * RMIN ** 12
+#  BCOEF = 2.0 * EPS * RMIN ** 6
 
    def vdw(x, alpha, lam):
       return 4*EPS*(1-lam)*(1/(alpha*lam + (x/SIG)**6)**2 - 
@@ -539,7 +535,7 @@ def softcore():
 
 def hardcore():
    """ Create figure showing hard cores of disappearing atoms """
-   fig = plt.figure(8, figsize=(8,5))
+   fig = plt.figure(9, figsize=(8,5))
 
    ax = fig.add_subplot(111)
    # Set up axes
@@ -554,8 +550,8 @@ def hardcore():
    RMIN = 3.816
    EPS = 0.1094
    SIG = RMIN / 2 ** (1/6)
-   ACOEF = EPS * RMIN ** 12
-   BCOEF = 2.0 * EPS * RMIN ** 6
+#  ACOEF = EPS * RMIN ** 12
+#  BCOEF = 2.0 * EPS * RMIN ** 6
 
    def vdw(x, lam):
       xos6 = (x/SIG)**6
@@ -584,7 +580,73 @@ def hardcore():
    fig.savefig('HardCore.ps')
 #  plt.show()
 
-   
+def umbrella():
+   """ Creates the umbrella sampling PMF example """
+   fig = plt.figure(10, figsize=(8,5))
+
+   ax = fig.add_subplot(111)
+
+   # Set up axes
+   ax.set_xlim((0,8))
+   ax.set_ylim((0,10))
+
+   ax.set_xlabel('Reaction Coordinate', family='sans-serif',
+                 fontdict={'fontsize' : 16})
+   ax.set_ylabel(r'Energy ($k_B T$)', family='sans-serif',
+                 fontdict={'fontsize' : 16})
+   ax.grid(lw=1)
+
+   def shift(func):
+      SHIFT = -2
+      def new_func(x):
+         return func(x-SHIFT)
+      return new_func
+
+   @shift
+   def pmf(x): return 3*(np.cos(1.5*x)+1)
+
+   def bias(k, x, center):
+      return 0.5*k*(x-center)*(x-center) + pmf(center)
+
+   def biased(k, x, center):
+      return pmf(x) + 0.5*k*(x-center)*(x-center)
+
+   xdata = np.arange(0,8,0.01)
+
+   ftp = 4 / 3 * np.pi - 2# four-thirds pi - 2
+   K = 5
+   pl1, = ax.plot(xdata, _evaluate(xdata, pmf), 'k-', lw=3)
+   pl2, = ax.plot(xdata, _evaluate(xdata, lambda x: bias(K, x, 6.3)), 'r-.',
+                   lw=1)
+   ydata = _evaluate(xdata, lambda x: biased(K, x, 6.3))
+   min1 = ydata.min()
+   ydata -= min1
+   pl3, = ax.plot(xdata, ydata, 'r--', lw=2)
+   pl4, = ax.plot(xdata, _evaluate(xdata, lambda x: bias(K, x, ftp)), 'b-.',
+                   lw=1)
+   ydata = _evaluate(xdata, lambda x: biased(K, x, ftp))
+   min2 = ydata.min()
+   ydata -= min2
+   pl5, = ax.plot(xdata, ydata, 'b--', lw=2)
+
+   # Create the annotations
+   ax.annotate('Unbiased\nPMF', xy=(1.2, pmf(1.2)), xytext=(0.2,6.1),
+           xycoords='data', textcoords='data', arrowprops=dict(arrowstyle='->'))
+   ax.annotate('Umbrella 1', xy=(2.6, bias(K, 2.6, ftp)), xytext=(2.01,8.2),
+           xycoords='data', textcoords='data', arrowprops=dict(arrowstyle='->'))
+   ax.annotate('Biased\nPMF 1', xy=(2.2, biased(K, 2.2, ftp)-min2),
+           xytext=(2.2,2.2), xycoords='data', textcoords='data',
+           arrowprops=dict(arrowstyle='->'))
+   ax.annotate('Umbrella 2', xy=(6.9, bias(K, 6.9, 6.3)), xytext=(6.01,8.2),
+           xycoords='data', textcoords='data', arrowprops=dict(arrowstyle='->'))
+   ax.annotate('Biased\nPMF 2', xy=(6.5, biased(K, 6.5, 6.3)-min1),
+           xytext=(6.2,2.2), xycoords='data', textcoords='data',
+           arrowprops=dict(arrowstyle='->'))
+
+#  plt.show()
+   fig.tight_layout()
+   fig.savefig('FreeEnergyProfile.ps')
+
 if __name__ == '__main__':
    """ Determine which plots to make """
    parser = ArgumentParser()
@@ -616,6 +678,9 @@ if __name__ == '__main__':
    group.add_argument('--soft-core', dest='softcore', default=False,
                       action='store_true', help='''Create the figure showing
                       what soft cores are.''')
+   group.add_argument('--umbrella', dest='umbrella', default=False,
+                      action='store_true', help='''Create the figure showing the
+                      effect of umbrellas for umbrella sampling''')
    
    opt = parser.parse_args()
 
@@ -637,3 +702,5 @@ if __name__ == '__main__':
       hardcore()
    if opt.softcore:
       softcore()
+   if opt.umbrella:
+      umbrella()
