@@ -332,15 +332,15 @@ from a Markov chain of states needs an additional property---reversibility.
 A reversible Markov chain needs to satisfy the additional condition of
 \emph{detailed balance}, a relationship shown in Eq. \ref{eq1:DetailedBalance}.
 \begin{equation}
-   p_i \pi_{i \rightarrow j} = p_j \pi_{i \rightarrow j}
+   P_i \pi_{i \rightarrow j} = P_j \pi_{i \rightarrow j}
    \label{eq1:DetailedBalance}
 \end{equation}
-where $p_i$ is the probability of being in state $i$ and $\pi_{i \rightarrow j}$
+where $P_i$ is the probability of being in state $i$ and $\pi_{i \rightarrow j}$
 is the probability of accepting the proposed change of going to state $j$ from
 state $i$ (called the \emph{transition probability}). The detailed balance
 condition in a Markov chain asserts an equilibrium between all states in the
 chain. Eq. \ref{eq1:DetailedBalance} is nothing more than a common equilibrium
-expression encountered in general chemistry where $p_i$ is the `concentration'
+expression encountered in general chemistry where $P_i$ is the `concentration'
 of state $i$ in the Markov chain and the transition probability is the `rate' of
 changing from state $i$ to state $j$.
 

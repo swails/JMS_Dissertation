@@ -72,36 +72,36 @@ which a protonation state change is attempted have a reasonable probability of
 succeeding when the solution pH is set close to the intrinsic pK\sub{a} of the
 titratable group. When explicit solvent molecules are present, however, the
 solvent orientation around any solvent-exposed, titratable residue will oppose
-any protonation state changes. On average, the solvent distribution tends to
-resist protonation state changes by imposing a barrier on the order of 100
-kcal/mol as estimated by measurements in our lab and in others',
+every proposed protonation state change. On average, the solvent distribution
+tends to resist protonation state changes by imposing a barrier on the order of
+100 kcal/mol as estimated by measurements in our lab and in others',
 \cite{Wallace_JChemTheoryComput_2011_v7_p2617} making titration with discrete
 protonation states difficult directly in explicit solvent.
 
-In this study, we present a new method of performing CpHMD simulations in
+In this study, I present a new method of performing CpHMD simulations in
 explicit solvent using discrete protonation states.  This method is similar 
 in some regards to that proposed by
 \citeauthor{Baptista_JChemPhys_2002_v117_p4184},
-\cite{Baptista_JChemPhys_2002_v117_p4184} and we evaluate its performance on
+\cite{Baptista_JChemPhys_2002_v117_p4184} and I evaluate its performance on
 the model compounds, a pentapeptide, and two proteins: Ribonuclease A (RNase A)
 and the hen egg white lysozyme (HEWL). To enhance the sampling capabilities of
-this new CpHMD method, we use replica exchange in the pH-dimension (pH-REMD),
+this new CpHMD method, I used replica exchange in the pH-dimension (pH-REMD),
 whose theory and performance were discussed previously in the context of
 implicit solvent calculations.  \cite{Itoh_Proteins_2011_v79_p3420,
-Swails_JChemTheoryComput_2012_v8_p4393} This paper is organized as follows: We
+Swails_JChemTheoryComput_2012_v8_p4393} This paper is organized as follows: I
 will first describe the method and its implementation in the Theory and Methods
-section, followed by a description of the calculations we performed in the
-Calculation Details section. Afterwards, we will evaluate its performance as
+section, followed by a description of the calculations I performed in the
+Calculation Details section. Afterwards, I will evaluate its performance as
 well as sensitivity to the method's tunable parameters in the Results and
 Discussion section.
 
 \section{Theory and Methods}
 
-In this section, we will discuss the details of our proposed method and
+In this section, I will discuss the details of our proposed method and
 highlight how it differs from the approach used by
 \citeauthor{Baptista_JChemPhys_2002_v117_p4184}
 \cite{Baptista_JChemPhys_2002_v117_p4184} The theoretical foundation of
-our CpHMD method is described in detail, as well as the pH-REMD method we used
+our CpHMD method is described in detail, as well as the pH-REMD method I used
 in our simulations.
 
 \subsection{Conformational and Protonation State Sampling}
@@ -134,7 +134,9 @@ probabilities. In Eq. \ref{eq4:conditional_probability}, $\rho(q, p |
 MC protonation state changes.
 
 \begin{equation}
-   \rho(q, p, \textbf{n}) = \rho(q, p | \textbf{n}) \rho(\textbf{n} | q, p)
+   \int\int\int \rho(q, p, \textbf{n}) dq\;dp\;d\textbf{n} = 
+      \int\int\rho(q, p | \textbf{n}) dq\;dp \int \rho(\textbf{n} | q, p)
+      d\textbf{n}
    \label{eq4:conditional_probability}
 \end{equation}
 
@@ -162,7 +164,7 @@ calculation associated with each attempted protonation state change.
 
 Contrary to the stochastic titration method that calculated solvation free
 energies using the PB equation to evaluate protonation state changes,
-\cite{Baptista_JChemPhys_2002_v117_p4184} we chose to use the GB implicit
+\cite{Baptista_JChemPhys_2002_v117_p4184} I chose to use the GB implicit
 solvent model for three main reasons. First, \emph{sander} has numerous GB
 models readily available, \cite{Hawkins_ChemPhysLett_1995_v246_p122,
 Hawkins_JPhysChem_1996_v100_p19824, Onufriev_Proteins_2004_v55_p383,
@@ -195,7 +197,7 @@ non-structural ions) are stripped, the potential is switched to an available GB
 model, and a set of \emph{N} protonation state changes are attempted where
 \emph{N} is the number of titratable residues. While in principle the MD can
 be stopped randomly with a predetermined probability at any step, in this
-iteration of our proposed method we run MD for a set time interval, $\tau_{MD}$,
+iteration of our proposed method MD is run for a set time interval, $\tau_{MD}$,
 similar to the stochastic titration method.
 \cite{Baptista_JChemPhys_2002_v117_p4184}
 
@@ -230,7 +232,7 @@ manual.  \cite{Mongan_JComputChem_2004_v25_p2038}
 If any of the protonation state change attempts were accepted, the solute is
 frozen while MD is performed on the solvent (and any ions) to relax the solvent
 distribution around the new protonation states.  The length of this relaxation
-is a tunable parameter of the method, which we will call $\tau_{rlx}$. After the
+is a tunable parameter of the method, which I will call $\tau_{rlx}$. After the
 relaxation is complete, the velocities of the solute atoms are restored to
 their values prior to the relaxation and the standard dynamics is continued.
 
@@ -248,25 +250,16 @@ their values prior to the relaxation and the standard dynamics is continued.
 \subsection{pH-based Replica Exchange}
 
 The underlying theory behind replica exchange in pH-space with MD run in
-explicit solvent is unchanged from the version we implemented in implicit
-solvent earlier. \cite{Swails_JChemTheoryComput_2012_v8_p4393,
-Itoh_Proteins_2011_v79_p3420} Replicas are ordered by their solution pH
-parameter, and adjacent replicas attempt to exchange their pH periodically
-throughout the MD simulations.
+explicit solvent is unchanged from the version I implemented in implicit
+solvent, as described in Ch. \ref{ch3}.
+\cite{Swails_JChemTheoryComput_2012_v8_p4393, Itoh_Proteins_2011_v79_p3420}
+Replicas are ordered by their solution pH parameter, and adjacent replicas
+attempt to exchange their pH periodically throughout the MD simulations.
 
 The probability of accepting these replica exchange attempts, given by
-Eq. \ref{eq4:phrem_acceptance}, depends only on the difference in the number of
+Eq. \ref{eq3:ExchSucc}, depends only on the difference in the number of
 titrating protons present in each replica and their respective difference in pH.
-\cite{Swails_JChemTheoryComput_2012_v8_p4393}
-\begin{equation}
-   P_{i \rightarrow j} = \min \left \lbrace 1, \exp \left [ \ln 10 (N_i - N_j)
-   (pH_i - pH_j) \right ] \right \rbrace
-   \label{eq4:phrem_acceptance}
-\end{equation}
-where $N_i$ is the total number of titratable protons `present' in state $i$.
-
-Because the probability of accepting replica exchange attempts depends only on
-the number of titratable protons that are present in the system, the number of
+\cite{Swails_JChemTheoryComput_2012_v8_p4393} As a result, the number of
 replicas necessary to obtain efficient mixing in pH-space does not increase as
 explicit solvent is added. This, coupled with the improved sampling found with
 implicit solvent simulations, \cite{Swails_JChemTheoryComput_2012_v8_p4393}
@@ -274,7 +267,7 @@ makes pH-REMD an effective tool for explicit solvent CpHMD.
 
 \section{Calculation Details}
 
-To evaluate the performance of the proposed method, we applied it to the amino
+To evaluate the performance of the proposed method, I applied it to the amino
 acid model compounds, a small pentapeptide (ACFCA), and two proteins commonly
 used in pK\sub{a} calculation studies---ribonuclease A (RNase A) and the hen
 egg-white lysozyme (HEWL).
@@ -310,7 +303,7 @@ compounds were then simulated, free of restraints, for 2 ns at constant
 temperature and pressure.
 
 Each model compound system was simulated at constant pH and volume for 2 ns,
-setting $\tau_{rlx} = 200 fs$. Each system was simulated with pH-REMD using six
+setting $\tau_{rlx} = 200\,fs$. Each system was simulated with pH-REMD using six
 replicas with the solution pH set to $pK_a \pm 0.1$, $pK_a \pm 0.2$, and $pK_a
 \pm 1.2$. To evaluate the effect of the solvent relaxation time, the cysteine
 and aspartate model compounds were run with $\tau_{rlx}$ set to 10 fs, 40 fs,
@@ -325,13 +318,13 @@ changes is given in Table \ref{tbl4:refenes}.
 \begin{table}
    \caption{Model compound pK\sub{a} values and reference energies. Because only
    differences in reference energies are used in the MC calculation, one state
-   is arbitrarily assigned a reference energy of 0---the deprotonated states of
-   AS4, GL4, and CYS and the double-protonated state of HIP---the listed
-   reference energies are calculated with respect to the arbitrary zero value.
-   $pK _ {a} ^ {calc}$ are pK\sub{a}s calculated with the proposed method using
-   the GB reference energy ($\Delta G _ {ref} ^ {GB}$). Adjusted reference
-   energies for explicit solvent CpHMD are labeled as $\Delta G _ {ref} ^ *$.
-   All energies are in \emph{kcal/mol}}
+   is arbitrarily assigned a reference energy of 0 (the deprotonated states of
+   AS4 and GL4, the protonated state of CYS, and the double-protonated state of
+   HIP). The listed reference energies are calculated with respect to the
+   arbitrary zero value.  $pK _ {a} ^ {calc}$ are pK\sub{a}s calculated with the
+   proposed method using the GB reference energy ($\Delta G _ {ref} ^ {GB}$).
+   Adjusted reference energies for explicit solvent CpHMD are labeled as $\Delta
+   G _ {ref} ^ *$. All energies are in \emph{kcal/mol}}
 
    \begin{tabular}{ccccc}
       Residue & Reference pK\sub{a} & $\Delta G _ {ref} ^ {GB}$ &
@@ -349,7 +342,7 @@ changes is given in Table \ref{tbl4:refenes}.
 
 \subsection{ACFCA}
 
-\label{sub:ACFCA}
+\label{sec4:ACFCA}
 
 A pentapeptide with the sequence \emph{Ala-Cys-Phe-Cys-Ala} (ACFCA) was solvated
 with a 15 \text{\AA} buffer of TIP3P molecules around the solute in a truncated
@@ -362,13 +355,13 @@ constant pressure.  The resulting structure was then simulated at 300 K at
 constant temperature and pressure to stabilize the system density and
 equilibrate the solvent distribution around the small peptide.
 
-The resulting structure was then used in simulations at six different solution
-pH values---7.1, 8.1, 8.3, 8.7, 8.9, and 9.9. These pH values were chosen
-because the pK\sub{a} of the cysteine model compound is 8.5, so the two
-cysteines of ACFCA were expected to titrate in this pH range.  To demonstrate
-the effect that pH-REMD had on the titration of ACFCA, two sets of simulations
-were run---CpHMD with no exchanges and pH-REMD---with each replica being run for
-2 ns.
+Simulations at six different pH values---7.1, 8.1, 8.3, 8.7, 8.9, and 9.9---were
+performed beginning from the resulting `equilibrated' struture.  These pH values
+were chosen because the pK\sub{a} of the cysteine model compound is 8.5, so the
+two cysteines of ACFCA were expected to titrate in this pH range.  To
+demonstrate the effect that pH-REMD had on the titration of ACFCA, two sets of
+simulations were run---CpHMD with no exchanges and pH-REMD---with each replica
+being run for 2 ns.
 
 \subsection{Proteins: HEWL and RNase A}
 
@@ -392,7 +385,7 @@ All disulfide bonds were added manually in \emph{tleap} and each structure was
 solvated with a 10 \text{\AA} TIP3P water buffer surrounding the protein in a
 truncated octahedron. To test the effect of ions in the explicit solvent
 titrations, a second set of systems was set up for each starting structure by
-adding several ions randomly distributed around the unit cell. We added 14
+adding several ions randomly distributed around the unit cell. I added 14
 chloride ions and 6 sodium ions to the RNase A starting structures, and 15
 chloride ions and 6 sodium ions to the HEWL starting structures, which
 neutralized all systems in their initial protonation states.  The added
@@ -439,7 +432,7 @@ Long-range electrostatic interactions were treated with the particle-mesh Ewald
 method \cite{Darden_JChemPhys_1993_v98_p10089,
 Essmann_JChemPhys_1995_v103_p8577} using a direct-space and van der Waals cutoff
 of 8 \text{\AA}. Defaults were used for the remaining Ewald parameters. The GB
-model proposed by \citeauthor{Onufriev_Proteins_2004_v55_p383}, indicated by the
+model proposed by \citeauthor{Onufriev_Proteins_2004_v55_p383}, specified by the
 parameter \emph{igb=2} in \emph{sander}, \cite{Onufriev_Proteins_2004_v55_p383}
 was used to evaluate the protonation state change attempts to be consistent with
 the original implementation in implicit solvent.
@@ -447,10 +440,10 @@ the original implementation in implicit solvent.
 
 \section{Results and Discussion}
 
-Here we will analyze the performance of our proposed CpHMD and pH-REMD methods
-as well as ways to optimize its overall performance. We will start by discussing
+Here I will analyze the performance of our proposed CpHMD and pH-REMD methods
+as well as ways to optimize its overall performance. I will start by discussing
 the behavior of the model compounds when the size of the unit cell and the
-length of the relaxation dynamics ($\tau _ {rlx}$) is varied.  We will follow
+length of the relaxation dynamics ($\tau _ {rlx}$) is varied. I will follow
 this discussion with a similar analysis on a slightly larger
 system---ACFCA---before discussing the application of our proposed method to
 real proteins.
@@ -458,8 +451,8 @@ real proteins.
 \subsection{Box Size Effects}
 
 To study the effect that the unit cell size has on titrations in our proposed
-method, we prepared three systems of the aspartate model compound with different
-TIP3P solvent buffers surrounding it. We prepared systems with a 10 \text{\AA},
+method, I prepared three systems of the aspartate model compound with different
+TIP3P solvent buffers surrounding it. I prepared systems with a 10 \text{\AA},
 15 \text{\AA}, and 20 \text{\AA} TIP3P solvent buffer around the model
 aspartate.
 
@@ -469,10 +462,10 @@ arise due to alterations of the structural ensembles induced by artifacts from
 the box size. The calculated pK\sub{a}s of the three systems were $4.02 \pm
 0.07$, $4.05 \pm 0.08$, and $4.12 \pm 0.07$ for the 10 \text{\AA}, 15
 \text{\AA}, and 20 \text{\AA} solvent buffer systems, respectively. To estimate
-the uncertainties we divided each simulation into 100 ps chunks and took the
+the uncertainties I divided each simulation into 100 ps chunks and took the
 standard deviation of the set of 20 pK\sub{a}s calculated from those segments.
 
-To further demonstrate the insensitivity of box size to pH-REMD titrations, we
+To further demonstrate the insensitivity of box size to pH-REMD titrations, I
 plotted the solvent radial distribution functions (RDFs) around the center of
 mass of the carboxylate functional group in Fig. \ref{fig4:ref_rdf}. The
 insensitivity of the pK\sub{a} and solvent structure with respect to the model
@@ -519,7 +512,7 @@ autocorrelation function of that energy in Fig. \ref{fig4:ntrelax_and_autocorr}
 to clearly demonstrate the `appropriate' value of $\tau _ {rlx}$ for this model
 system.
 
-We chose the cysteine model compound for this test for two reasons. First, the
+I chose the cysteine model compound for this test for two reasons. First, the
 model compounds are fully solvent-exposed due to their small size, which results
 in a worst-case scenario in terms of the number of water molecules that must be
 reorganized during the relaxation dynamics. The optimum $\tau _ {rlx}$ value
@@ -544,8 +537,8 @@ The relaxation energies plotted in Fig. \ref{fig4:ntrelax_and_autocorr} begin to
 stabilize after 4 to 6 ps of relaxation dynamics, and are largely uncorrelated
 within that same time scale. However, because 4 ps of MD---corresponding to
 \mbox{2 000} steps of dynamics with a 2 fs time step---adds dramatically to the
-cost of CpHMD simulations in explicit solvent, we will analyze the approximation
-of using a significantly smaller value for $\tau _ {rlx}$.
+cost of CpHMD simulations in explicit solvent, I explored the approximation of
+using a significantly smaller value for $\tau _ {rlx}$.
 
 Both the relaxation energies and autocorrelations drop very sharply at the start
 of the relaxation dynamics, so the majority of the benefit gained by relaxing
@@ -556,13 +549,13 @@ the protonated state drops from -7197 kcal/mol to -7377 kcal/mol during the
 first 200 fs. The average energy of the final 10 ns of that trajectory is -7490
 kcal/mol. Likewise, the energies from the other relaxation dynamics drops from
 -7267 kcal/mol to -7465 kcal/mol over the first 200 fs, finally settling into an
-average of -7552 kcal/mol over the final 10 ns. In both cases, the first 200 fs
-of relaxation dynamics resulted in 70\% of the total relaxation energy in
-calculations. The correlation of the relaxation energy decays similarly, so the
-assumption that the relaxed solvent distribution is uncorrelated from its
-starting point is a reasonable approximation.
+average of -7552 kcal/mol over the final 10 ns. In both cases, 70\% of the total
+relaxation energy was realized during the first 200 fs of relaxation dynamics.
+The correlation of the relaxation energy decays similarly, so the assumption
+that the relaxed solvent distribution is uncorrelated from its starting point is
+a reasonable approximation.
 
-To validate the use of a shorter $\tau _ {rlx}$, we titrated the aspartate model
+To validate the use of a shorter $\tau _ {rlx}$, I titrated the aspartate model
 compound using pH-REMD with five different values for $\tau _ {rlx}$---10 fs, 40
 fs, 100 fs, 200 fs, and 2 ps. The calculated pK\sub{a} for each simulation was
 4.10, 4.08, 4.07, 4.10, and 4.05, respectively for the listed relaxation times.
@@ -580,7 +573,7 @@ dependence of the solvent distribution on the value of $\tau _ {rlx}$.
 
 \subsection{ACFCA: CpHMD vs. pH-REMD}
 
-The small peptide chain ACFCA, described in \ref{sub:ACFCA}, was chosen as a
+The small peptide chain ACFCA, described in Sec. \ref{sec4:ACFCA}, was chosen as a
 test due to its small size and predictable titration behavior. The simplicity of
 the system makes it an ideal test---its small size mitigates the conformational
 sampling problem, and the simple titrating behavior of cysteine further
@@ -591,28 +584,29 @@ on the imidazole, cysteine has only one protonated and one deprotonated state,
 presenting fewer degrees of freedom that must be exhaustively sampled.
 
 Each cysteine is in a slightly different micro-environment due to the different
-charges of the N- and C-termini. Due to its proximity to the N-terminus, Cys-2
-is expected to experience a negative pK\sub{a} shift with respect to the model
-compound due to the electrostatic pressure of the positively-charged terminus.
-Cys-4, on the other hand, is expected to experience a pK\sub{a} shift in the
-opposite direction due to the electrostatic pressure of the negatively-charged
-C-terminus.
+charges of the N- and C-termini. Because Cys 2 is typically closer to the
+N-terminus, it is expected to experience a negative pK\sub{a} shift with respect
+to the model compound due to the electrostatic pressure of the
+positively-charged terminus.  Cys 4, on the other hand, is expected to
+experience a pK\sub{a} shift in the opposite direction due to the electrostatic
+pressure of the negatively-charged C-terminus.
 
-We ran simulations at pH 7.1, 8.1, 8.3, 8.7, 8.9, and 9.9 to sufficiently
+I ran simulations at pH 7.1, 8.1, 8.3, 8.7, 8.9, and 9.9 to sufficiently
 characterize the titration behavior of both cysteine residues around their
 pK\sub{a}s. One set of replicas was run with pH-REMD while the other set was run
 using CpHMD (i.e., without attempting exchanges between the replicas). The
 titration curves for both sets of simulations, shown in
 Fig. \ref{fig4:acfca_titration_curves}, demonstrate the importance of using
-pH-REMD in constant pH simulations in explicit solvent. As expected, the pH-REMD
-simulations revealed pK\sub{a} shifts of -0.2 pK units for Cys 2 and +0.9 pK
-units for Cys 4 with respect to the model Cys compound to 8.2 and 9.4,
-respectively. When run in implicit solvent, the two cysteine residues have
-almost identical pK\sub{a}s---8.1 and 9.4, respectively.
+pH-REMD in constant pH simulations in explicit solvent. The pK\sub{a} of Cys 2
+and Cys 4 were 8.2 and 9.4, respectively. As expected, these pK\sub{a}s
+represent shifts of -0.2 pK units for Cys 2 and +0.9 pK units for Cys 4 with
+respect to the model Cys compound.  When run in implicit solvent, the two
+cysteine residues have almost identical pK\sub{a}s---8.1 and 9.4, for Cys 2 and
+Cys 4, respectively.
 
 \begin{figure}
    \includegraphics[width=6.5in]{ACFCA_Titration_Curves.eps}
-   \caption{Titration curves of Cys-2 and Cys-4 in the \emph{ACFCA}
+   \caption{Titration curves of Cys 2 and Cys 4 in the \emph{ACFCA}
             pentapeptide. Results from CpHMD (no replica exchange attempts) and
             pH-REMD are shown in the plots on the left and right, respectively.}
    \label{fig4:acfca_titration_curves}
@@ -621,11 +615,12 @@ almost identical pK\sub{a}s---8.1 and 9.4, respectively.
 Even for a simple system such as ACFCA, using pH-REMD on top of standard CpHMD
 simulations results in a drastic improvement in titration curve fit---a result
 of improved protonation state sampling. The residual sum of squares (RSS), a
-quantity that measures how well an equation fits a data set, shows drastic
-improvement using pH-REMD. The RSS for Cys-2 and Cys-4 using CpHMD was $9 \times
-10 ^ {-2}$ and $7 \times 10 ^ {-3}$, respectively. For the pH-REMD simulations,
-on the other hand, the RSS was reduced by several orders of magnitude to $7
-\times 10 ^ {-5}$ and $9 \times 10 ^ {-6}$ for Cys-2 and Cys-4, respectively.
+quantity that measures how well an equation fits a data set whose equation is
+shown in \ref{eq3:fit_quality}, shows drastic improvement using pH-REMD. The RSS
+for Cys 2 and Cys 4 using CpHMD was $9 \times 10 ^ {-2}$ and $7 \times 10 ^
+{-3}$, respectively. For the pH-REMD simulations, on the other hand, the RSS was
+reduced by several orders of magnitude to $7 \times 10 ^ {-5}$ and $9 \times 10
+^ {-6}$ for Cys 2 and Cys 4, respectively.
 
 \subsection{Hen Egg White Lysozyme}
 
@@ -685,16 +680,16 @@ conformational sampling attainable with implicit solvent simulations. Dynamical
 events occur much slower in explicit solvent simulations due to the friction and
 viscosity of the solvent.
 
-The difference in conformation sampling ability of the proposed method and the
-original, implicit solvent-based method is pronounced enough that a simple
+The difference in the conformational sampling ability of the proposed method and
+the original, implicit solvent-based method is pronounced enough that a simple
 comparison of the root mean squared deviation (RMSD) is a sufficient
-illustration. The RMSD of the trajectories in the current study
-(Fig. \ref{fig4:hewl_rmsd}) is 2 to 3 times smaller than the RMSD in our
-previous study \cite{Swails_JChemTheoryComput_2012_v8_p4393}, despite the extra
-4 ns of production MD performed for each replica in explicit solvent.
-Furthermore, the dynamics displays none of the regions of flexibility noted in
-implicit solvent that were correlated with the improved titration of aspartate
-66. \cite{Swails_JChemTheoryComput_2012_v8_p4393}
+illustration. The RMSD of the trajectories in the current study (Fig.
+\ref{fig4:hewl_rmsd}) is 2 to 3 times smaller than the RMSDs shown in Fig.
+\ref{fig3:RMSD_bin} from Ch. \ref{ch3}, despite the extra 4 ns of production MD
+performed for each replica in explicit solvent. Furthermore, the dynamics
+displays none of the regions of flexibility noted in implicit solvent that were
+correlated with the improved titration of aspartate 66.
+\cite{Swails_JChemTheoryComput_2012_v8_p4393}
 
 \begin{figure}
    \includegraphics[width=6.5in]{1AKI_RMSDs.eps}
@@ -714,7 +709,7 @@ neutralizing plasma for such systems, the lack of counterions in the unit cell
 may lead to unusual behavior between any of the 30 charged residues in the
 system.
 
-Therefore, we added 21 ions---15 chloride and 6 sodium---to add ionic strength
+Therefore, I added 21 ions---15 chloride and 6 sodium---to add ionic strength
 and to provide the ions necessary to neutralize the initial unit cell. Like the
 effects of the unit cell size and $\tau _ {rlx}$ value, ions will only affect
 the calculated pK\sub{a}s by modifying the sampled conformations.
@@ -728,12 +723,12 @@ of changes to the microenvironment around the relevant titratable residues
 significant enough to effect a noticeable change to the titrating behavior.
 
 The residue that experienced the largest pK\sub{a} shift as a result of the
-added ions was Asp 66. As we observed in our previous work, Asp 66 is surrounded
+added ions was Asp 66. As I observed in our previous work, Asp 66 is surrounded
 by proton donors, such as the Arg 68 and the hydroxyl groups of Thr 69 and Ser
 60. \cite{Swails_JChemTheoryComput_2012_v8_p4393} The arginine residue, carrying
 a net positive charge, is the strongest driving force favoring the deprotonated
 state. To compare how Arg 68 may affect Asp 66 differently when ions are
-present, we show in Fig. \ref{fig4:hewl_asparg_dist} that the distribution of
+present, I show in Fig. \ref{fig4:hewl_asparg_dist} that the distribution of
 Asp 66--Arg 68 distances is shifted to larger values when ions are present.
 Because Arg 68 can occasionally interact with chloride ions in the bulk solvent
 when they are present instead of Asp 66, Asp 66 is more likely to accept
@@ -799,8 +794,8 @@ important to include in the proposed method.
 
 Like HEWL, RNase A is a common benchmark for constant pH studies due to its
 large number of titrating residues. Furthermore, the currently proposed
-mechanism requires one catalytic histidine to be proton donor (general acid) and
-another to be a proton acceptor (general base)---His 119 and His 12,
+mechanism requires one catalytic histidine to be a proton donor (general acid)
+and another to be a proton acceptor (general base)---His 119 and His 12,
 respectively. Because a specific combination of protonation states are necessary
 for catalysis, the proposed method is a useful tool for probing the
 pH-dependence of RNase A.
@@ -859,14 +854,14 @@ donors. The His 48 residue, on the other hand, interacts closely with numerous
 backbone carbonyl atoms in a configuration that resists deprotonating either
 N$^\delta$ or N$^\epsilon$ in the 1KF5 starting structure.
 
-Like with the HEWL simulations, we ran a second set of 20 ns simulations in
-which we added 14 chloride and 6 sodium ions to generate a net ion concentration
+Like with the HEWL simulations, I ran a second set of 20 ns simulations in
+which I added 14 chloride and 6 sodium ions to generate a net ion concentration
 around 0.18 M. More chloride was added because the net charge of the initial
 protonation states was +8 electrons. The predicted pK\sub{a}s for the
 simulations with explicit counterions resulted in marked improvement in most
 titratable residues that proved problematic in the simulations without the ions,
 following the trend seen in the HEWL calculations. The full summary of
-calculated pK\sub{a} is shown in Table \ref{tbl4:rnase_a_ions_pkas}.
+calculated pK\sub{a}s is shown in Table \ref{tbl4:rnase_a_ions_pkas}.
 \begin{table}
    \caption{Calculated pK\sub{a}s for RNase A simulations run with explicit
             counterions present. All calculated pK\sub{a}s are included in the
@@ -901,39 +896,41 @@ calculated pK\sub{a} is shown in Table \ref{tbl4:rnase_a_ions_pkas}.
 
 \section{Conclusion}
 
-We have extended the constant pH molecular dynamics method developed by
+I have extended the constant pH molecular dynamics method developed by
 \citeauthor{Mongan_JComputChem_2004_v25_p2038}
 \cite{Mongan_JComputChem_2004_v25_p2038} so that the dynamics can be run in
-explicit solvent. We tested a wide range of parameters in our proposed method
+explicit solvent. I tested a wide range of parameters in our proposed method
 for their effect on the conformational and protonation state sampling of small
 test systems. Because these test systems are small and their titratable sites
 are completely solvent-exposed, they likely represent the highest level of
 sensitivity to these various parameters.
 
-In particular, we found that the box size of the unit cell had no discernible
+In particular, I found that the box size of the unit cell had no discernible
 effect on the titration behavior of the aspartate model compound, given cell
-sizes that ranged from 20 \text{\AA} in diameter---one of the smallest sizes
-permissible in sander---to 40 \text{\AA} in diameter.
+sizes that ranged from 20 \AA in diameter---one of the smallest sizes
+permissible when using the minimum image convention with an 8 \AA{} cutoff---to
+40 \AA{} in diameter.
 
 Another key aspect of the current method is the necessity to relax the solvent
 around any new protonation state selected by the MC moves carried out in GB. By
 analyzing the decay of the potential energy in the solvent relaxation dynamics,
-we determined that 4 ps of MD was sufficient to stabilize the energy of the
+I determined that 4 ps of MD was sufficient to stabilize the energy of the
 solvent distributions and generate relaxed solvent conformations that are
 uncorrelated from the initial arrangements. However, given the expense of such a
-long relaxation period, we investigated using fewer relaxation steps to increase
+long relaxation period, I investigated using fewer relaxation steps to increase
 the simulation efficiency and found shorter times---down to 0.2 ps---had no
 measurable effect on the calculated pK\sub{a} and very little effect on the
 solvent distribution around the model cysteine compound.
 
 Further tests on a small pentapeptide test system with two titratable sites
 (ACFCA) showed the importance of using pH-REMD over conventional CpHMD with the
-proposed method. While we showed that the enhanced protonation state sampling of
-pH-REMD results in smoother titration curves for complex proteins in implicit
-solvent, \cite{Swails_JChemTheoryComput_2012_v8_p4393} even the simplest systems
-in explicit solvent require pH-REMD to obtain a smooth titration curve.
+proposed method. While I showed in Ch. \ref{ch3} that the enhanced protonation
+state sampling of pH-REMD results in smoother titration curves for complex
+proteins in implicit solvent, \cite{Swails_JChemTheoryComput_2012_v8_p4393} even
+the simplest systems in explicit solvent require pH-REMD to obtain a smooth
+titration curve.
 
-We tested the proposed method on two protein systems, hen egg white lysozyme
+I tested the proposed method on two protein systems, hen egg white lysozyme
 (HEWL) and ribonuclease A (RNase A). While calculated pK\sub{a}s were in good
 agreement with experiment for numerous titratable residues, others appeared
 stuck in conformational traps resistant to changing their protonation states for
@@ -954,7 +951,7 @@ simulations, it is therefore not surprising that the most problematic residues
 were those whose experimental pK\sub{a}s were several pK units lower than their
 model compounds.
 
-When we added explicit ions to the simulation cell, the calculated pK\sub{a}s of
+When I added explicit ions to the simulation cell, the calculated pK\sub{a}s of
 the most problematic residues shifted toward their experimental values---in some
 cases by more than 1 full pK\sub{a} unit---despite the limited sampling of
 global conformational changes on the 20 ns timescale.  Therefore, while it is
@@ -968,7 +965,7 @@ results. \cite{Williams_JChemTheoryComput_2010_v6_p560}
 To summarize, our proposed extension to Amber's CpHMD method allows dynamics to
 be carried out at constant pH even for systems that cannot yield sensible
 results when treated with an implicit solvent model, such as DNA and ribozymes.
-As an example, we tested GB simulations of the hepatitis delta virus (HDV)
+As an example, I tested GB simulations of the hepatitis delta virus (HDV)
 ribozyme---where nucleobases are thought to act as general acids and bases---and
 even after careful preparation, the secondary and tertiary structures began
 breaking down almost immediately and had completely fallen apart within 5 ns.
@@ -981,7 +978,7 @@ from the energy difference between the two charge states in the biomolecule.
 Many of the errors inherent to GB should cancel after the second difference is
 taken so that sensible results may be extracted from these simulations.
 
-In future work we will explore the use of enhanced sampling techniques in
+In future work I will explore the use of enhanced sampling techniques in
 conjunction with pH-REMD in an attempt to improve the efficiency of the
 conformational sampling in explicit solvent, as well as apply our method to
 systems requiring an explicit solvent representation, such as HDV.
