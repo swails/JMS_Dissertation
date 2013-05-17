@@ -137,7 +137,7 @@ simulations is fundamentally different from those in T-REMD, Eq.
 H-REMD simulations. The proper exchange probability for H-REMD simulations,
 generalized for running replicas at different temperatures, is derived in Eq.
 \ref{eq5:HExchProb}. Eq. \ref{eq5:HExchProbNotemp} is the special case of Eq.
-\ref{eq5:HExchProb} when the temperatures of exchanging replicas is the same.
+\ref{eq5:HExchProb} when the temperatures of exchanging replicas are the same.
 The easiest and most general way of implementing H-REMD is to swap coordinates
 between exchanging replicas. This approach, as implemented in Amber, can be used
 for umbrella sampling REMD, \cite{Babin_JChemPhys_2008_v128_p134101,
@@ -148,28 +148,159 @@ states. \cite{Meng_JChemTheoryComput_2011_v7_p2721} As a result, Eq.
 \ref{eq5:HExchProb} is derived subject exchanging coordinates only.
 
 \begin{align}
-   P_{i} \pi_{i \rightarrow j} & = P_{j} \pi_{j \rightarrow i} \nonumber \\
-   \frac {\exp \left[ -\beta_m H_m(\vec{x}_m) \right] \exp \left[ -\beta_n
-         H_n(\vec{x}_n) \right]} {Q_m Q_n} \pi_{i \rightarrow j} & = \frac {\exp
+   & P_{i} \pi_{i \rightarrow j} = P_{j} \pi_{j \rightarrow i} \nonumber \\
+   & \frac {\exp \left[ -\beta_m H_m(\vec{x}_m) \right] \exp \left[ -\beta_n
+         H_n(\vec{x}_n) \right]} {Q_m Q_n} \pi_{i \rightarrow j} = \frac {\exp
          \left[ -\beta_m H_m(\vec{x}_n) \right] \exp \left[ -\beta_n
          H_n(\vec{x}_m) \right]} {Q_n Q_m} \pi_{j \rightarrow i} \nonumber \\
-%  \exp \left[ -\beta_m E_m - \beta_n E_n \right] \pi_{i \rightarrow j} & =
-%        \exp \left[ -\beta_n E_m - \beta_m E_n \right] \pi_{j \rightarrow i}
-%        \nonumber \\
-%  \frac {\pi_{i \rightarrow j}} {\pi_{j \rightarrow i}} & = \frac {\exp \left[
-%        -\beta_n E_m - \beta_m E_n \right]} {\exp \left[ -\beta_m E_m - \beta_n
-%        E_n \right]} \nonumber \\
-%  \frac {\pi_{i \rightarrow j}} {\pi_{j \rightarrow i}} & = \exp \left[
-%        -\beta_n E_m - \beta_m E_n + \beta_m E_m + \beta_n E_n \right]
-%        \nonumber \\
-   \frac {\pi_{i \rightarrow j}} {\pi_{j \rightarrow i}} & = \min \left \lbrace
-         1, \exp \left[ (\beta_n - \beta_m) (E_n - E_m) \right] \right \rbrace
+   & \frac {\pi_{i \rightarrow j}} {\pi_{j \rightarrow i}} = \min \left \lbrace
+         1, \exp \left[ -\beta_m \left( H_m(\vec{x}_n) - H_m(\vec{x}_m) \right)
+         - \beta_n \left( H_n(\vec{x}_m) - H_m(\vec{x}_n) \right) \right] \right
+           \rbrace \label{eq5:HExchProb} \\
+   & \frac {\pi_{i \rightarrow j}} {\pi_{j \rightarrow i}} = \min \left \lbrace
+         1, \exp \left[ -\beta \left( H_m(\vec{x}_n) - H_m(\vec{x}_m) +
+         H_n(\vec{x}_m) - H_m(\vec{x}_n) \right) \right] \right \rbrace
+   \label{eq5:HExchProbNotemp}
 \end{align}
+
+Looking at Eqs. \ref{eq5:HExchProb} and \ref{eq5:HExchProbNotemp}, it is readily
+apparent that exchange attempts in H-REMD simulations are far more expensive
+than exchange attempts in T-REMD (Eq. \ref{eq5:TExchProb}) or pH-REMD (Eq.
+\ref{eq3:ExchSucc}) simulations. To calculate the probability of accepting an
+exchange in H-REMD simulations, each replica must calculate the potential energy
+of the coordinates of its exchange partner. T-REMD and pH-REMD exchange
+probabilities, on the other hand, are calculated via a single exponential of
+quantities known \emph{before} the exchange attempt occurs.
+
+When performing replica exchange on an umbrella coordinate, however, the
+exchange attempt can be modified to significantly reduce its cost. Since the
+underlying Hamiltonian is the same for each replica, the energy differences
+$H_m(\vec{x}_n) - H_m(\vec{x}_m)$ are equal to the difference in their umbrella
+potentials (Eq. \ref{eq2:umbrella}), which can be calculated very rapidly. This
+approach reduces the cost of the exchange attempts in two ways. First, the
+umbrella potentials can be swapped between adjacent replicas rather than the
+coordinates and momenta, thereby significantly reducing the communication
+overhead and eliminating the need to reconstruct a new pairlist immediately.
+Second, computing the potential due to an umbrella restraint requires a small
+number of geometric measurements, which is negligible compared to evaluating the
+energy of the entire system (including the restraint potential).
+
+Despite the apparently high cost of evaluating Eq. \ref{eq5:HExchProb},
+attempting exchanges every 100 MD steps incurs, at most, a 1\% performance hit
+due to performing one extra energy evaluation every 100 steps (each of which
+requires a full force evaluation for standard dynamics). Therefore, there has
+not been enough incentive for writing an optimized exchange routine specifically
+for umbrella sampling simulations in Amber. Such an exchange routine would be
+useful in future studies if Gibbs' sampling exchange attempts were implemented,
+\cite{Chodera_JChemPhys_2011_v135_p194110} or in situations where swapping only
+an umbrella potential simplifies calculating Eq. \ref{eq5:HExchProb}.
+
+\paragraph{Replica Exchange Free Energy Perturbation}
+
+Here I will refocus on free energy perturbation---Eq.  \ref{eq2:FEP}---and its
+relationship with the H-REMD exchange probability shown in Eq.
+\ref{eq5:HExchProbNotemp}. By comparing these two equations, we see that the
+energy differences required in Eq. \ref{eq2:FEP} are calculated every time the
+exchange probability is calculated in Eq. \ref{eq5:HExchProbNotemp}!  Therefore,
+the term $\left\langle\exp\left(-\beta(E_B-E_A))\right)\right\rangle$ can be
+accumulated in both the forward and reverse directions during the course of the
+H-REMD simulation. This approach of computing FEP-based energy differences
+between two states during a H-REMD simulation is referred to as \emph{Replica
+Exchange Free Energy Perturbation} (REFEP).
+\cite{Meng_JChemTheoryComput_2011_v7_p2721,
+Jiang_JChemTheoryComput_2010_v6_p2559}
 
 \section{Multi-Dimensional REMD}
 
+As the architecture of modern computers continues its push into massive
+parallelization, highly scalable techniques such as REMD become increasingly
+cost-efficient methods in the field of computational chemistry. While we have
+seen that REMD simulations, in general, enhance sampling by expanding our
+original ensemble though state space (\eg temperature space, Hamiltonian space,
+etc.), different variants of REMD bestow different advantages on the simulation.
+For instance, T-REMD enhances conformational sampling by flattening the free
+energy surface, pH-REMD enhances sampling by allowing simulations to dodge free
+energy barriers through pH-space, and H-REMD enhances conformational sampling by
+coupling different energy functions.
+
+As availability to large number of processing cores increases, it becomes
+feasible to combine multiple types of replica exchanges into a single,
+super-expanded ensemble. In this new, larger ensemble, replicas are defined by a
+series of state parameters, such as a specific temperature, Hamiltonian,
+umbrella potential, or solution pH. Exchange attempts between replicas must now
+take into account changes in multiple state parameters, which may lead to
+complex equations for the exchange probability. To simplify the exchange
+process, the replicas can be separated into different \emph{dimensions} in which
+only a single state variable changes along that dimension.
+
+By adopting this approach, the exchange routines described in previous chapters
+and sections can be reused in this new, multi-dimensional REMD method. To
+visualize which exchanges are performed, consider a 2-dimensional square matrix
+in which the rows and columns represent two different state parameters. In
+single rows or columns, only a single state parameter changes, so the exchange
+probability equations that have already been derived apply to these exchange
+attempts. Fig. \ref{fig5:MultiDREMD} displays the arrangement of replicas---and
+the allowed exchange attempts---in a simple diagram. While these ideas can be
+trivially extended to an arbitrary number of dimensions, the number of replicas
+required increases exponentially with each additional dimension.
+
+\begin{figure}
+   \includegraphics[height=6.5in, angle=90]{MultiDREMD.ps}
+   \caption{Schematic showing exchange attempts in multi-dimensional REMD
+            simulations. Exchange attempts are indicated by the colored arrows,
+            where red arrows indicate exchange attempts between the \emph{j}
+            state parameters and blue arrows indicate exchange attempts between
+            the \emph{i} state parameters}
+   \label{fig5:MultiDREMD}
+\end{figure}
+
 \section{Implementation}
 
-\subsection{GPU Acceleration}
+In this section, I will describe how REMD is implemented in Amber, with focus
+paid to how exchange attempts are carried out as well as the programmatic
+details of how information is traded between exchanging replicas.
+
+\subsection{Exchange Attempts}
+
+Specific details of how and when exchanges are attempted between replicas is
+very important to not only the efficiency of our overall simulations, but also
+the theoretical rigor of its correctness. As I have already mentioned, exchange
+attempts are restricted to a single pair of replicas in which only a single
+state parameter differs between them. The question of \emph{which} replicas
+attempt to exchange information also has a strong impact on how quickly
+observable properties converge. The easiest and most na\"ive approach is to
+choose a single partner and attempt an exchange. To maximize the likelihood that
+the exchange attempt is successful, exchanges are attempted between
+nearest-neighbors in the state parameter that is being swapped. Due to its
+simplicity, this is the approach that was implemented in Amber by
+\citeauthor{Cheng2005}. \cite{Cheng2005} Recent evidence suggests, however, that
+such an approach limits sampling in the state space coordinate.
+\cite{Chodera_JChemPhys_2011_v135_p194110} Sampling along the state space
+coordinate can be enhanced by employing ideas from \emph{Gibbs' sampling},
+\cite{Chodera_JChemPhys_2011_v135_p194110} or simply increasing the frequency
+of exchange attempts. \cite{Sindhikara2008, Sindhikara2010}
+
+Another important consideration in REMD simulations is \emph{when} to suspend
+the MD in each dimension and attempt to exchange information. Strict adherence
+to the condition of detailed balance and the principle of reversibility in the
+resulting chain of states requires these exchange attempts be done
+stochastically. \cite{Chodera_JChemPhys_2011_v135_p194110} However, while
+deterministic exchange attempts violate detailed balance, they satisfy the less
+restrictive condition of general balance, so the thermodynamical rigor of such
+an approach is preserved. \cite{Chodera_JChemPhys_2011_v135_p194110} Amber
+employs a deterministic, synchronous approach to deciding when exchange attempts
+should be performed by attempting exchanges between adjacent replicas every $n$
+steps, where $n$ is a tunable input parameter.
+
+Also important is the nature of the exchange itself. The two approaches
+currently used in Amber---exchanging state parameters or exchanging
+coordinates---are described below.
+
+\paragraph{Exchanging State Parameters}
+
+\paragraph{Exchanging Coordinates and Momenta}
 
 \subsection{MPI Communicator Topology}
+
+\section{GPU Acceleration}
+
