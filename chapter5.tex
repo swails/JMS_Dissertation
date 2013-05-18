@@ -3,7 +3,7 @@
 
 This chapter contains a description of my work implementing replica exchange
 molecular dynamics (REMD) in the \emph{pmemd} program of the Amber program
-suite. \cite{AMBER12}. The first sections describe the general theory of the
+suite. \cite{AMBER12} The first sections describe the general theory of the
 state exchanges supported by Amber, followed by details of their implementation.
 I then describe my design of multiple-dimension REMD in Amber and provide some
 sample studies performed using the code.
@@ -298,9 +298,119 @@ coordinates---are described below.
 
 \paragraph{Exchanging State Parameters}
 
+The most efficient way to carry out replica exchanges is to swap state
+parameters---an approach used in Amber for both T-REMD and pH-REMD. In this
+case, replicas typically differ by a term that modifies a potential energy
+function that is otherwise the same for each replica. In this instance,
+simulations are subject to a different thermodynamic constraint after exchanges
+are successful. Following successful exchanges, the position of each replica in
+the ordered list of state parameters changes. As a result, the nearest neighbors
+between whom exchanges are attempted changes after each exchange attempt.
+Prior to each exchange attempt, each replica must figure out where every replica
+resides in state space so they know how to carry out exchanges.
+
+When exchanging state parameters, replicas typically need to exchange a minimal
+amount of information---their state parameter and a related conjugate property.
+In the case of T-REMD, replicas exchange temperatures and potential energies,
+and individual replicas adopt different temperatures as a function of time. For
+pH-REMD, the solution pH and total number of `active' titratable protons are
+swapped between adjacent replicas.
+
+When an exchange attempt can be completed simply by swapping states, the
+resulting output files from the simulations follow the course of a single
+trajectory as it passes through both phase space and state space. As a result,
+the trajectory file must be modified so that the state parameter of each frame
+can be identified. This is necessary for reconstructing the sub-ensemble of
+interest (\eg the ensemble at 300 K, or pH 7). While this approach adds the
+complexity of the bookkeeping required to post-process the data, the
+communication required scales as $O(1)$ with system size, improving the
+scalability of these REMD simulations.
+\cite{Swails_JChemTheoryComput_2012_v8_p4393} Because the cost of exchange
+attempts in this family of REMD methods is negligible, there is no practical
+limit to the frequency with which replicas attempt to exchange, allowing us to
+take advantage of the faster convergence accessible via rapid exchange attempts
+\cite{Sindhikara2008, Sindhikara2010} or Gibbs' sampling.
+\cite{Chodera_JChemPhys_2011_v135_p194110}
+
 \paragraph{Exchanging Coordinates and Momenta}
 
-\subsection{MPI Communicator Topology}
+The alternative to swapping state parameters between replicas is to swap
+coordinates and their conjugate momenta, which is logically equivalent to
+swapping full potential energy functions. It is significantly simpler---and
+requires far less communication between exchanging replicas to be fully
+general---than swapping the full potential energy function between. It is for
+the added simplicity and reduced communication overhead that H-REMD is
+implemented in Amber by swapping coordinates and velocities (scaling the
+velocities if exchanging pairs have different temperatures).
+\cite{Meng_JChemTheoryComput_2011_v7_p2721}
 
-\section{GPU Acceleration}
+Adding to the computational expense, however, is the need to either recompute or
+exchange the full pairlist of each replica. Either choice is quite expensive
+since the pairlist is a very large array that requires evaluating all pairwise
+distances in the system to build. Unlike approaches that exchange state
+parameters, the cost of exchange attempts that require coordinate exchanges and
+extra energy evaluations (and multiple additional pairlist builds) imposes a
+very real upper limit on the practical efficiency of employing rapid exchange
+attempts or Gibbs' sampling ideas to these simulations.
 
+The most efficient way of performing REMD using umbrella potentials would be to
+swap the umbrella potentials---essentially a state parameter---and track a
+replica's trajectory through umbrella space.
+
+\subsection{Message Passing: Data Exchange in REMD Simulations}
+
+While REMD simulations can be carried out `in serial' by simulating chunks of
+each replica sequentially by a single process, such an approach defeats the
+purpose of proposing REMD simulations as a scalable protocol for enhanced
+sampling. REMD is most efficient when each replica can be simulated
+simultaneously using different processes, or \emph{threads}. The main simulation
+engines in Amber use the \emph{Message Passing Interface} (MPI) to enable
+distributed memory parallelization (\ie each working thread contains its own
+memory that is inaccessible by other threads). MPI---described in more detail in
+Appendix \ref{appendixC}---is ideally suited for large-scale parallelization
+since it allows workers to be spread across multiple processing cores that do
+not share a common memory bank. The most powerful supercomputers in the world
+that we typically use to carry out our simulations are usually so-called
+\emph{distributed} supercomputers since they are constructed from many
+individual computers with dedicated memory that are networked together.
+
+MPI enables parallelism by allowing groups of threads to exchange information by
+sending and receiving data through a series of predefined functions and
+subroutines (typically called an application programmer interface, or API).
+Data, or \emph{messages}, can be sent and received between two threads in an MPI
+program that are grouped together in the same \emph{communicator}. Because
+communicators provide a simple and efficient way of programmatically separating
+threads into different groups, we take advantage of this feature when organizing
+the workload in MPI programs. Intra-replica communication---which allows a
+single replica to be run using multiple processors---is handled by a dedicated
+replica communicator. The arbitrarily designated `first' thread---or
+\emph{master}---of all replicas are assigned to separate communicators for
+sending all data pertinent to carrying out replica exchange attempts.
+
+In typical REMD simulations involving only a single state parameter, the REMD
+communicator is simply a communicator that links all replica masters. In
+multi-dimensional REMD, however, exchanges are only permitted between replicas
+that differ in only one state parameter. Therefore, communicators are defined
+between only those replicas between which exchanges are permitted. Using Fig.
+\ref{fig5:MultiDREMD} as a guide, communicators are defined between the masters
+of the replicas in a single row or column. These communicators have to be set up
+and destroyed after each exchange attempt because successful exchange attempts
+in a dimension that implements state parameter swaps will change the REMD
+communicator that the replica belongs to in the other dimensions. This is
+illustrated in Fig. \ref{fig5:MultiDREMDExchg}.
+
+\begin{figure}
+   \includegraphics[height=6.5in, angle=90]{MultiDREMDExchg.ps}
+   \caption{Communicator arrangement in multi-dimensional REMD simulations at
+            multiple exchange steps following some successful state parameter
+            exchanges. The large numbers in the background are the (unchanging)
+            thread numbers of each replica. The blue and red numbers are the
+            indexes in the first and second state parameter tables,
+            respectively. Every cell with the same background color is a member
+            of the same REMD communicator.}
+   \label{fig5:MultiDREMDExchg}
+\end{figure}
+
+\section{Multi-Dimensional Umbrella REMD Study}
+
+\section{Multi-Dimensional REFEP Study on GPUs}
