@@ -1,11 +1,5 @@
-%If you have a single appendix, you need to change {\chapter*{APPENDIX: THIS IS THE FIRST APPENDIX}
-%to {\chapter*{APPENDIX: YOUR APPENDIX TITLE HERE} if you have two or more appendices
-%you need to change {\chapter{THIS IS THE FIRST APPENDIX}} to
-%{\chapter{YOUR APPENDIX TITLE HERE}}
-%
-%If you make these changes correctly Latex will complain bitterly about the additions to the TOC
-%but will make them correctly in a manner acceptable to the Editorial Office.
-
+% Conditional branch in the case where there is only one appendix (noa = 1) or
+% more than one
 \ifthenelse{\value{noa} = 1}
 %...................then
 {\chapter*{APPENDIX: THIS IS THE FIRST APPENDIX}
@@ -167,4 +161,106 @@ other integration schemes in standard practice.
 \subsection{Verlet Integrators}
 
 Among the most popular types of integrators in common use today are based on the
-\emph{Verlet} algorithms.
+\emph{Verlet} algorithms. The Verlet algorithm, developed in
+\citeyear{Verlet_PhysRev_1967_v159_p98} by
+\citeauthor{Verlet_PhysRev_1967_v159_p98}, utilizes a Taylor series expansion of
+the particle coordinates about time $t_0$. The key to the Verlet approach is to
+use both the forward and reverse time steps, as shown in Eqs.
+\ref{eqA:PositionExpansion}. \cite{Allen_Tildesley}
+
+\begin{align}
+   \vec{r}(t_0 + \delta t) = r(t_0) + \delta t \, \vec{v}(t_0) + \frac 1 2
+         \delta t^2 \, \vec{a}(t_0) + ... \nonumber \\
+   \vec{r}(t_0 - \delta t) = r(t_0) - \delta t \, \vec{v}(t_0) + \frac 1 2
+         \delta t^2 \, \vec{a}(t_0) - ...
+   \label{eqA:PositionExpansion}
+\end{align}
+
+Combining Eqs. \ref{eqA:PositionExpansion} gives
+\begin{equation}
+   \vec{r}(t_0 + \delta t) = 2 \vec{r}(t_0) + \delta t^2 \, \vec{a}(t_0) -
+         \vec{r}(t_0 - \delta t)
+   \label{eqA:Verlet}
+\end{equation}
+where the velocities have been eliminated from the expression and are therefore
+unnecessary when integrating the equations of motion. Furthermore, like the
+velocities, the $\delta t^3$ term also cancels, so the Verlet algorithm is not
+only time-reversible given its symmetry around $t_0$ but also accurate to fourth
+order in the time step. The velocities are still useful, however, to compute the
+total kinetic energy and related properties, such as the instantaneous
+temperature. When necessary, velocities can be approximated as the average
+velocity over the time period from $t_0-\delta t$ to $t_0+\delta t$.
+
+Performing MD using the Verlet algorithm requires storing the current positions,
+`old' positions at time $t_0-\delta t$, and the accelerations at time $t_0$---a
+modest cost given the accuracy of the integration scheme. However, the use of
+Eq. \ref{eqA:Verlet} introduces an issue of numerical precision, since
+$\vec{r}(t_0)$ and $\vec{r}(t_0 - \delta t)$ are potentially large values, while
+$\delta t^2 \, \vec{a}(t_0)$ is typically quite small since the time step is
+small. Since real numbers can be stored only to a limited precision, accuracy is
+potentially lost when a small number is added to a difference of large numbers.
+\cite{Allen_Tildesley} To address this issue and improve the way in which
+velocities are handled, the leap-frog and velocity Verlet methods are discussed
+below.
+
+\paragraph{Velocity Verlet}
+
+In \citeyear{Swope_JChemPhys_1982_v76_p637},
+\citeauthor{Swope_JChemPhys_1982_v76_p637} developed a variant of the Verlet
+algorithm that sidesteps the potential roundoff errors and naturally stores
+positions, velocities, and accelerations at the same time. A Taylor series
+expansion is again used to propagate the positions, but only the $t_0+\delta t$
+step is used, resulting in Eq. \ref{eqA:VelVerletPositions}.
+\begin{equation}
+   \vec{r}(t_0 + \delta t) = \vec{r}(t_0) + \delta t \, \vec{v}(t_0) + \frac 1 2
+         \delta t^2 \, \vec{a}(t_0)
+   \label{eqA:VelVerletPositions}
+\end{equation}
+The accelerations of the particles are computed from their positions at time
+$t_0 + \delta t$, and are used to compute the velocities. To increase the
+accuracy of the computed velocities, the velocity integration is divided into
+two half-timesteps, shown in Eqs. \ref{eqA:VelVerletVelocities}. In this case,
+the accuracy to $\delta t^4$ in the positions obtained by the Verlet algorithm
+is sacrificed for improved numerical precision for finite-precision computers
+and a more accurate treatment of system velocities.
+
+\begin{align}
+   \vec{v}\left(t_0 + \frac 1 2 \delta t\right) = \vec{v}(t_0) + \frac 1 2
+         \delta t \, \vec{a}(t_0) \nonumber \\
+   \vec{v}(t_0 + \delta t) = \vec{v}\left(t_0 + \frac 1 2 \delta t\right) +
+         \frac 1 2 \delta t \, \vec{a}(t_0 + \delta t) \nonumber \\
+   \vec{v}(t_0 + \delta t) = \vec{v}(t) + \frac 1 2 \delta t \left[ \vec{a}(t) +
+         \vec{a}(t + \delta t) \right]
+   \label{eqA:VelVerletVelocities}
+\end{align}
+
+The \emph{NAB} and \emph{mdgx} programs of the AmberTools 12 program suite (and
+earlier versions, where available), utilize the velocity Verlet algorithm for
+dynamics.
+
+\paragraph{Leap-frog}
+
+A common integrator used in MD simulations is the \emph{leap-frog} method,
+so-called because the computed velocities `leap' over the computed coordinates
+in a manner that will be explained shortly. The main dynamics engines in the
+Amber 12 program suite---pmemd and sander---use the leap-frog integrator.
+
+While similar to the velocity Verlet approach, the leap-frog algorithm computes
+positions and accelerations of particles at integral time steps, but
+computes velocities at half-integral time steps according to Eqs.
+\ref{eqA:LeapFrog}.
+
+\begin{align}
+   \vec{r}(t_0 + \delta t) = \vec{r}(t_0) + \delta t \, \vec{v}\left(t_0 + \frac
+         1 2 \delta t \right) \nonumber \\
+   \vec{v}\left(t_0 \frac 1 2 \delta t) = \vec{v}\left(t_0 - \frac 1 2 \delta t
+         \right) + \delta t \, \vec{a}(t_0)
+   \label{eqA:LeapFrog}
+\end{align}
+
+If the velocities are required at time $t_0$, they can be estimated as the
+average velocities between times $t_0 - 1/2\delta t$ and $t_0 + 1/2 \delta t$,
+which is significantly more accurate than the approximation in Verlet's original
+algorithm. Although like the velocity Verlet algorithm, leap-frog integration
+sacrifices the 4th-order accuracy in integrated positions to alleviate the
+aforementioned precision and velocity issues. \cite{Allen_Tildesley}

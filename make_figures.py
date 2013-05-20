@@ -647,6 +647,46 @@ def umbrella():
    fig.tight_layout()
    fig.savefig('FreeEnergyProfile.ps')
 
+def enedist():
+   from remd import TempRemLog
+
+   remlog = TempRemLog('rem1.log')
+
+   # Add the figure, plot, and label the axes
+   fontdict = dict(family='sans-serif', size=20)
+   fig = plt.figure(11, figsize=(8,5))
+   ax = fig.add_subplot(111)
+   ax.grid(lw=1)
+   ax.set_xlabel('Potential Energy (kcal mol$^{-1}$)', fontdict=fontdict)
+   ax.set_ylabel('Probability', fontdict=fontdict)
+
+   # Get the data and sort it by temperature
+   energies = np.zeros((len(remlog.reps),len(remlog.reps[0].old_temp)))
+   tempdict = {}
+   for i, val in enumerate(remlog.values): tempdict[val] = i
+
+   # Fill the energy tables
+   for i in range(energies.shape[1]):
+      for rep in remlog.reps:
+         energies[tempdict[rep.old_temp[i]], i] = rep.potene[i]
+
+   # Now set up and plot the histograms
+   plots = [None for i in remlog.reps]
+   titles = ['' for i in remlog.reps]
+   lts = ['b-', 'r-', 'g-', 'k', 'b--', 'r--', 'g--', 'k--']
+   for temp in remlog.values:
+      i = tempdict[temp]
+      # Get the histograms
+      h, e = np.histogram(energies[i], density=True, bins=60)
+      plots[i], = ax.plot(e[:-1], h, lts[i], lw=2,)
+      titles[i] = '%.0f K' % temp
+
+   # Make the legend
+   ax.legend(plots, titles, loc=1, ncol=2)
+   fig.tight_layout()
+   
+   fig.savefig('TempOverlap.ps')
+
 if __name__ == '__main__':
    """ Determine which plots to make """
    parser = ArgumentParser()
@@ -681,6 +721,10 @@ if __name__ == '__main__':
    group.add_argument('--umbrella', dest='umbrella', default=False,
                       action='store_true', help='''Create the figure showing the
                       effect of umbrellas for umbrella sampling''')
+   group = parser.add_argument_group('Chapter 5 Figures')
+   group.add_argument('--energy-distributions', dest='enedist', default=False,
+                      action='store_true', help='''Create the figure of energy
+                      distributions for each temperature.''')
    
    opt = parser.parse_args()
 
@@ -704,3 +748,5 @@ if __name__ == '__main__':
       softcore()
    if opt.umbrella:
       umbrella()
+   if opt.enedist:
+      enedist()
