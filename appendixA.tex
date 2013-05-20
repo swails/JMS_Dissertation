@@ -18,35 +18,153 @@
 %...................
 \label{appendixA}
 
-Lorem ipsum dolor sit amet, consectetuer adipiscing elit. Maecenas
-eget magna. Aenean et lorem. Ut dignissim neque at nisi. In hac
-habitasse platea dictumst. In porta ornare eros. Nunc eu ante. In
-non est vehicula tellus cursus suscipit. Proin sed libero. Sed risus
-enim, eleifend in, pellentesque ac, nonummy quis, nulla. Phasellus
-imperdiet libero nec massa. Ut sapien libero, adipiscing eu,
-volutpat porttitor, ultricies eget, nisi. Sed odio. Suspendisse
-potenti. Duis dolor augue, viverra id, porta in, dignissim id, nisl.
-Vivamus blandit cursus eros. Maecenas sit amet urna sit amet orci
-nonummy pharetra.
+\section{Lagrangian and Hamiltonian Formulations}
 
-Praesent cursus nibh et mauris. In aliquam felis sit amet ligula.
-Nulla faucibus nisl eget nisl. Aliquam tincidunt. Mauris eget elit
-sed massa luctus posuere. Pellentesque suscipit. In odio urna,
-semper ut, convallis ut, porta et, nibh. Nulla sodales metus nec
-velit posuere gravida. Cras tristique. Etiam urna risus, accumsan
-ut, placerat sed, iaculis id, est.
+The \emph{Lagrangian} and \emph{Hamiltonian} formulations of classical
+mechanics---shown in Eqs. \ref{eqA:Lagrangian} and \ref{eqA:Hamiltonian},
+respectively---offer a more convenient formalism than the more popularly known
+equations derived by Newton. \cite{CorbenClassicalMechanics} While Newton's
+equations apply in three-dimensional Cartesian space, they are not generally
+applicable to other coordinate systems (\eg polar and spherical-polar
+coordinates) that may be a more natural way to express certain problems. For
+instance, polar coordinates more naturally describe the mechanics of orbiting
+bodies than standard Euclidean space.
 
-Nullam mi. Pellentesque habitant morbi tristique senectus et netus
-et malesuada fames ac turpis egestas. Duis vitae metus in massa
-hendrerit rhoncus. Fusce tortor justo, laoreet eu, facilisis at,
-gravida et, felis. Donec imperdiet mollis erat. Integer tempus nulla
-ac lorem. Fusce porttitor. Aenean quis arcu. Morbi consectetuer, leo
-eu mollis elementum, urna massa malesuada risus, euismod tempor
-lorem elit ut mauris. Cras elit orci, facilisis ac, mattis iaculis,
-cursus ac, augue. Donec eget nisl. Pellentesque fermentum sodales
-nibh. Vivamus non risus. Donec est libero, tincidunt sit amet,
-pretium vitae, blandit sed, tellus. Nunc diam risus, interdum sed,
-laoreet quis, varius ac, turpis. In et purus eget nibh vehicula
-rhoncus. Aenean et neque. Praesent nisl nisi, tempus quis, nonummy
-ac, auctor a, neque. Suspendisse et metus. Suspendisse non metus eu
-mauris auctor sagittis.
+\paragraph{Lagrangian Equation}
+
+The Lagrangian function, $L = K - V$, where $K$ is the kinetic energy and $V$ is
+the potential energy, satisfies the Lagrangian equation (Eq.
+\ref{eqA:Lagrangian}) for $m$ generalized coordinates ($q_m$). The advantage of
+Eq. \ref{eqA:Lagrangian} is that it is derived without any assumption of a
+specific coordinate system for $q_m$. Generalized velocities are the first
+time-derivative of the generalized coordinates, $\dot q_m$. These generalized
+velocities are used to define the kinetic energy in the familiar form $K = 1/2
+\dot q_m ^ 2$.
+
+Another advantage to the Lagrangian formulation of classical mechanics is that
+the equations are still valid when subject to constraints on the dynamics of the
+system (as long as there are fewer constraints than particles).
+\cite{CorbenClassicalMechanics} This property is crucial for carrying out
+constrained dynamics, such as those simulations employing the commonly-used
+SHAKE, \cite{Ryckaert_JComputPhys_1977_v23_p327} RATTLE, \cite{Andersen1983} or
+SETTLE \cite{Miyamoto_JComputChem_1992_v13_p952} algorithms, to name a few.
+
+\begin{equation}
+   \frac d {dt} \frac {\partial L} {\partial \dot q_m} - \frac {\partial L}
+         {\partial q_m} = 0
+   \label{eqA:Lagrangian}
+\end{equation}
+where $L$ is the Lagrangian function mentioned above, $q_m$ are the generalized
+coordinates of every particle in the system, and $\dot q_m$ are the set of
+corresponding generalized velocities. When applying Eq. \ref{eqA:Lagrangian} to
+a system in the standard Cartesian coordinates without constraints, the familiar
+form of Newton's equations are recovered. \cite{CorbenClassicalMechanics}
+
+\paragraph{Hamiltonian Equation}
+
+The Hamiltonian formulation of classical mechanics builds on the strengths of
+the Lagrangian formulation and provides a deeper insight into the physical
+behavior of classical systems. Unlike the Lagrangian, the Hamiltonian is defined
+as the total energy of the system: $H = K + V$. The Lagrangian of the system,
+$L = K - V$, plays an important part in Hamilton's formulation. The degrees of
+freedom in Hamilton's equation (Eq. \ref{eqA:Hamiltonian}) are the generalized
+coordinates $q_m$ as defined in the Lagrangian, and their conjugate momenta,
+$p_m$. The generalized coordinates and momenta are said to be canonically
+conjugate because they obey the relationship given in Eq. \ref{eqA:Hamiltonian}.
+\cite{CorbenClassicalMechanics}
+
+\begin{align}
+   q_m & = \frac {\partial H} {\partial p_m} \nonumber \\
+   p_m & = - \frac {\partial H} {\partial q_m}
+   \label{eqA:Hamiltonian}
+\end{align}
+
+Now that a convenient formulation of the laws of classical dynamics are known, I
+will shift the discussion toward techniques by which these equations are used to
+integrate these second-order differential equations in typical molecular
+dynamics simulations.
+
+\section{Numerical Integration by Finite Difference Methods}
+
+The equations of motion are second-order differential equations with respect to
+the particle coordinates, since the force is proportional to the second
+time-derivative (\ie the acceleration) of those particles. Due to the typical
+size and complexity of the systems and their potentials studied in computational
+chemistry, MD simulations require numerical integration of the second-order
+differential equations of motion. In this section, I will describe two common
+approaches to iteratively integrating Eqs. \ref{eqA:Lagrangian} and
+\ref{eqA:Hamiltonian}---so-called \emph{predictor-corrector} methods and the
+Verlet family of integrators.
+
+\subsection{Predictor-corrector}
+
+The predictor-corrector integrators are based on a simple Taylor-series
+expansion of the coordinates. Knowing that the velocity and acceleration are the
+first- and second-time derivatives of the particle positions, respectively, the
+Taylor expansions of each of these quantities are given below.
+\begin{align}
+   \vec{r}_p (t_0 + \delta t) & = \vec{r}(t_0) + \delta t \, \vec{v}(t_0) +
+         \delta t^2 \, \frac 1 2 \vec{a}(t_0) + \delta t^3 \, \frac 1 6 \frac
+         {d^3\vec{r}(t)} {dt^3} + ... \nonumber \\
+   \vec{v}_p (t_0 + \delta t) & = \vec{v}(t_0) + \delta t \, a(t) + \frac 1 2 
+         \delta t^2 \, \frac {d^3\vec{r}(t)} {dt^3} + ...
+   \label{eqA:Predictor} \\
+   \vec{a}_p (t_0 + \delta t) & = \vec{a}(t_0) + \delta t \, \frac
+         {d^3\vec{r}(t)} {dt^3} + ... \nonumber
+\end{align}
+where the subscript $p$ emphasizes that these are the \emph{predicted}
+quantities of the positions, velocities, and accelerations at time $t_0 + \delta
+t$ based on the known values at time $t_0$.
+
+It is convenient to truncate the Taylor series in Eqs. \ref{eqA:Predictor} after
+the acceleration term since the acceleration at time $t_0$ can be easily
+calculated from the gradient of the potential energy function. Higher order
+terms are difficult to compute, and contribute a significantly smaller amount as
+the time step, $\delta t$, decreases. However, by truncating the Taylor
+expansion we used an approximation that will introduce systematic error of our
+predicted values calculated by Eqs. \ref{eqA:Predictor} compared to their
+\emph{true} values. There is a way of approximating the magnitude of the
+deviation of the predicted values from Eqs. \ref{eqA:Predictor}, however, that
+will allow a correction to be applied to the integrated values.
+
+As a reminder, the gradient of the potential was used to calculate the
+forces---and therefore the acceleration---on each particle when making the
+initial integration step from $t_0$. The acceleration may be calculated again
+using the gradient of the potential at the predicted conformations:
+\begin{equation}
+   \bigtriangledown V\left[\vec{r}_p(t_0 + \delta t)\right] = m \vec{a}^{\prime}
+   \label{eqA:ErrorCorrection}
+\end{equation}
+Since systematic error has been introduced by truncating the expansion in Eqs.
+\ref{eqA:Predictor}, $\vec{a}^{\prime}$ from Eq. \ref{eqA:ErrorCorrection} and
+$\vec{a}_p(t_0 + \delta t)$ from Eq. \ref{eqA:Predictor} will differ. The
+magnitude of this difference can be used to correct the predicted values
+according to Eqs. \ref{eqA:Corrector}.
+
+\begin{align}
+   \vec{r}_c(t + \delta t) & = \vec{r}_p(t + \delta t) + c_0 \Delta \vec{a}(t +
+         \delta t) \nonumber \\
+   \vec{v}_c(t + \delta t) & = \vec{v}_p(t + \delta t) + c_1 \Delta \vec{a}(t +
+         \delta t)
+   \label{eqA:Corrector} \\
+   \vec{a}_c(t + \delta t) & = \vec{a}_p(t + \delta t) + c_2 \Delta \vec{a}(t +
+         \delta t) \nonumber
+\end{align}
+where the subscripts indicate the relationship between the \emph{c}orrected and
+\emph{p}redicted quantities, and the coefficients $c_0$, $c_1$, and $c_2$ are
+parametrized to maximize performance, \cite{Gear1966, Gear1971} and have the
+appropriate units to satisfy each equation. \cite{Allen_Tildesley} The corrector
+process can be iterated until the desired level of agreement between the
+predicted and corrected values is reached.
+
+While the predictor-corrector algorithm allows long time steps to be taken by
+fixing the resulting systematic error, the corrector step requires a full force
+evaluation of the system at a set of coordinates, which is the most
+time-consuming portion of the calculation. As a result, the corrector step is
+computationally demanding, and predictor-corrector methods have been replaced by
+other integration schemes in standard practice.
+
+\subsection{Verlet Integrators}
+
+Among the most popular types of integrators in common use today are based on the
+\emph{Verlet} algorithms.
