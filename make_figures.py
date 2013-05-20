@@ -650,7 +650,7 @@ def umbrella():
 def enedist():
    from remd import TempRemLog
 
-   remlog = TempRemLog('rem1.log')
+   remlog = TempRemLog('remlog.dat')
 
    # Add the figure, plot, and label the axes
    fontdict = dict(family='sans-serif', size=20)
