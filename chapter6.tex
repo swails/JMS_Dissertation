@@ -16,6 +16,9 @@ Portions of this section are reprinted with permission from
 Energy Calculations,'' \emph{J. Chem. Theory Comput.}, \textbf{8} (9), pp
 3314--3321. \cite{MMPBSApy}
 
+\emph{MMPBSA.py} is a script designed to automate the procedure of performing
+end-state free energy calculations, as described in Sec. \ref{sec1:MMPBSA}.
+
 \subsection{Motivation}
 
 End-state free energy methods---briefly described in Sec.
@@ -298,3 +301,96 @@ ability to adjust all parameters, not just the variables described in the
 functionality without directly altering the source code. Finally, QM/MM-GBSA and
 MM/3D-RISM calculations are only available through the \emph{MMPBSA.py}
 implementation.
+
+\section{ParmEd}
+
+ParmEd---short for \emph{Parm}top \emph{Ed}itor---is a program that allows
+researchers to easily manipulate and extract information from Amber
+parameter-topology (prmtop) files. The prmtop is a compact ASCII (\ie pure text)
+file whose format was optimized for extensibility and Fortran-style parsing. The
+data structures stored in this file are similar to the data structures used
+inside the Amber codes that perform MM simulations, making them impossible to
+extract information from simply by reading its contents. The full structure and
+specification of the prmtop is presented in Appendix \ref{appendixB}.
+
+\subsection{Motivation}
+
+The prmtop files are very complex objects, and there is very little `locality' in
+these files. That is, determining which bonds exist and how strong their force
+constants are is not as simple as looking for the sections labeled with
+\tt{BOND} in the prmtop. Prior to writing ParmEd, there were no programs
+released with Amber or AmberTools capable of modifying the topology file in a
+general way. Changing simple atomic properties---such as the partial charge or
+the set of intrinsic radii used for implicit solvent models---required the user
+to modify their original input files to \emph{tleap} and recreate a topology
+file from their original structure, or in some cases even modify \emph{tleap}
+directly! Because many input files for \emph{tleap} are shared among all users
+and original input files help document one's protocol, modifying these files
+frequently is dangerous.
+
+The tedious and error-prone nature of this process is a deterrent for testing
+some new hypotheses and methods that require small changes to the topology file.
+For instance, parameterizing a new GB model by using different intrinsic radii
+to define the dielectric boundary requires either modifying the topology file by
+hand---a dangerous and tedious process---or learning and modifying the
+\emph{tleap} source code and rebuilding the program all in the process of
+refining a set of parameters. With ParmEd, users and method developers can
+rapidly prototype a new method in a reliable way. A primary goal of ParmEd is to
+enable safe, rapid prototyping of new methods that require straight-forward
+changes to the prmtop file.
+
+A second motivator for creating ParmEd was to provide a unified platform for
+disseminating prmtop modifications that may be required for a particular method.
+The traditional approach when a method required a prmtop modification was for
+the developer that released the new code to develop a stand-alone tool in their
+programming language of choice to be released alongside Amber. These tools often
+parsed and modified topology files in a minimalistic fashion, and are not used
+or tested frequently. Such an approach quickly becomes unsustainable as the
+authors of these tools leave the developer community (\eg through graduation or
+retirement). With ParmEd, I sought to create a simple platform to unify prmtop
+modifying programs within Amber in an attempt to ease the burden of support and
+simplify the user experience. Therefore, ParmEd should be intuitive to use for
+experienced Amber users, and written in a way that the code can be easily
+understood by other developers.
+
+\subsubsection{Implementation and Capabilities}
+
+I wrote ParmEd as a set of two Python scripts built on top of a common library
+of functionality. The first, \emph{parmed.py}, is a command-line tool that
+strongly resembles the popular trajectory analysis programs \emph{ptraj} and
+\emph{cpptraj} in its use. The second, \emph{xparmed.py}, is a graphical user
+interface built on the Tcl/Tk toolkit through the \emph{Tkinter} Python
+bindings. The GUI, shown in Fig. \ref{fig6:xparmed}, is meant to be a very
+simple, point-and-click interface for prmtop modification, while
+\emph{parmed.py} is ideal for scripting purposes.
+
+\begin{figure}
+   \includegraphics[width=6.5, height=5.91]{xparmed.png}
+   \caption{Screenshot of the \emph{xparmed.py} GUI window, labeled with the
+            available Actions and a message log.}
+   \label{fig6:xparmed}
+\end{figure}
+
+The individual capabilities of ParmEd, called Actions, are all subclassed from a
+common \emph{Action} base class. Each Action interprets its own list of
+arguments and implements its own, unique functionality. To expand the utility of
+the ParmEd code, users can incorporate individual ParmEd Actions into their own
+Python script through an Application Programmer Interface (API) documented in
+the AmberTools manual. This allows users to avoid the need to learn the
+inner-workings of the prmtop file and re-implement existing code in the cases
+where ParmEd does not handle all of the users' needs.
+
+In the following sections, I will outline some of the Actions and functionality
+I consider to be particularly helpful or particularly challenging to implement
+through other programs.
+
+\subsubsection{van der Waals Modifications}
+
+\subsubsection{Changing Atomic Properties}
+
+\subsubsection{Setting up for H-REMD Simulations}
+
+\subsubsection{Changing Parameters}
+
+\subsubsection{Manipulating Atomic Order}
+
