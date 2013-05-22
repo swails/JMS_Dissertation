@@ -12,7 +12,7 @@ of programs. The three I will describe in this chapter are \emph{MMPBSA.py},
 \section{MMPBSA.py}
 
 Portions of this section are reprinted with permission from
-\citeauthor{MMPBSApy}, ``MMPBSA.py: An Efficient Program for End-State Free
+\citeauthor*{MMPBSApy}, ``MMPBSA.py: An Efficient Program for End-State Free
 Energy Calculations,'' \emph{J. Chem. Theory Comput.}, \textbf{8} (9), pp
 3314--3321. \cite{MMPBSApy}
 
@@ -28,6 +28,273 @@ significant effort applied to improving the approximations used in end-state
 methods, and in some cases it has even approached predictive accuracy.
 \cite{Genheden2009, Mikulskis2012}
 
-By 2008, there was a set of perl scripts written to perform MM-PBSA and MM-GBSA
-calculations that were written in 2002 for release with Amber 7 and had not been
-changed since 2003.
+By 2008, there was a set of perl scripts capable of automating MM-PBSA and
+MM-GBSA calculations that were written in 2002 for release with Amber 7 and had
+not been changed since 2003. These scripts will be collectively referred to as
+\emph{mm\_pbsa.pl} from now on. Due to its age, \emph{mm\_pbsa.pl} was
+compatible only with the low-precision, inefficient ASCII trajectory format,
+and offered only a limited set of the available implicit solvent models and
+their options that had been developed over the decade that followed its initial
+release. Furthermore, the input for \emph{mm\_pbsa.pl} was very different from
+the typical input that most other Amber programs expected, from how input files
+were specified to how user options were provided. Finally, \emph{mm\_pbsa.pl}
+was only capable of running in serial, despite the fact that end-state analyses
+themselves could be trivially parallelized by computing binding free energies
+for individual frames simultaneously.
+
+The goal of this project was to revitalize this set of helpful scripts that had
+fallen out of support and had grown outdated. We wanted to bring the input style
+in line with the rest of the Amber programs---for example, atom selections
+should be input via the Amber mask syntax, and groups of related variables
+should be specified in Fortran-style namelists. Furthermore, we wanted to
+provide the user with access to new input variables and solvent models. Given
+the magnitude of the changes required, the recent emergence of Python in the
+field of computational chemistry, \cite{Sanner1999, Cock2009,
+Michaud-Agrawal2011, MMPBSApy} and the undocumented, monolithic state of
+\emph{mm\_pbsa.pl}, we decided to build a new script to perform end-state free
+energy calculations in Python---\emph{MMPBSA.py}. \cite{MMPBSApy}
+
+\subsection{Capabilities}
+
+In this section, I will briefly outline some of the various types of
+calculations that \emph{MMPBSA.py} is capable of performing.
+
+\subsubsection{Stability and Binding Free Energy Calculations}
+
+End-state calculations are frequently used for two types of
+analyses---calculating the relative stability of multiple conformations of a
+system and calculating the binding free energy in a non-covalently bound,
+receptor-ligand complex, \cite{Homeyer2012} whose thermodynamic cycles were
+shown in Ch. \ref{ch2}, Fig. \ref{fig2:MMPBSA}. Stability calculations compare
+the free energies of multiple conformations to determine their relative
+stability. If we consider the process of a biomolecule changing conformations
+from state A to state B, then the free energy associated with that
+conformational change is simply the difference in the free energies of states A
+and B. Similarly, the non-covalent binding free energies can be computed as the
+difference in free energies of the bound and free states of the two species in
+solution.
+
+The free energy changes in solution can be decomposed according to
+\begin{equation}
+   \Delta G_{solvated} = E_{gas} + \Delta G_{solvation} - T \Delta S_{solute}
+   \label{eq6:GSolv}
+\end{equation}
+where $\Delta G_{solvation}$ represents a true free energy, since the solvent
+degrees of freedom have been averaged by using an implicit solvent model. The
+free energy of solvation in \ref{eq6:GSolv} can be further decomposed into a sum
+of polar and non-polar contributions in most implicit solvent models. Among the
+solvent models available for end-state calculations in \emph{MMPBSA.py} are the
+previously mentioned PB and GB implicit solvent models as well as the
+3-dimensional reference interaction site model (3D-RISM). \cite{Genheden2010}
+
+The energies described in Eq. \ref{eq6:GSolv} are single point energies of the
+system. However, in practice, end-state calculations estimate these energies
+according to ensemble averages taken from a simulation. Expressing Eq.
+\ref{eq6:GSolv} in terms of an average over a simulated ensemble yields Eq.
+\ref{eq6:GSolvAvg}.
+
+\begin{align}
+   \Delta G_{solvated} & \approx \left \langle E_{gas} \right \rangle + \left
+         \langle \Delta G_{solvation} \right \rangle - T \left \langle
+         S_{solute} \right \rangle \nonumber \\
+   & = \frac 1 N \left \lbrace \sum_{i=1}^N \left[E_{i,gas} + \Delta
+         G_{i,solvation} \right] - T\sum_{i=1}^N S_{i,solute} \right \rbrace
+   \label{eq6:GSolvAvg}
+\end{align}
+where $i$ is the index of a particular frame and $N$ is the total number of
+analyzed frames.
+
+There are two approaches to generating the necessary ensembles for the bound and
+unbound state of binding energy calculations---all ensembles can be extracted
+from a single MD or MC trajectory of the bound complex, or trajectories can be
+generated for each state using separate simulations. \cite{Wang2006} These
+approaches are called the \emph{single trajectory protocol} (STP) and the
+\emph{multiple trajectory protocol} (MTP), respectively, and each approach has
+distinct advantages and disadvantages.
+
+STP is less computationally expensive than MTP, because only a single trajectory
+is required to generate all three ensembles. Furthermore, the internal potential
+terms (e.g., bonds, angles, and torsions) cancel exactly in the STP, because
+the conformations in the bound and unbound ensembles are the same, leading to
+lower fluctuations and easier convergence in the binding free energy. The STP is
+appropriate if the receptor and ligand ensembles are comparable in the bound and
+unbound states. However, the conformations populating the unbound ensembles
+typically adopt strained configurations when extracted from the bound state
+ensemble, thereby over-stabilizing the binding, compared to the MTP.
+
+\subsubsection{Free Energy Decomposition}
+
+Amber \cite{AMBER12} provides several schemes to decompose calculated free
+energies into specific residue contributions using either the GB or PB implicit
+solvent models, \cite{Metz2012} following the work of \citeauthor{Gohlke2003}
+\cite{Gohlke2003} Interactions can be decomposed for each residue by including
+only those interaction in which one of the residue's atoms is involved---a
+scheme called \emph{per-residue} decomposition. Alternatively, interactions can
+be decomposed by specific residue pairs by including only those interactions in
+which one atom from each of the analyzed residues is participating---a scheme
+called \emph{pairwise} decomposition. These decomposition schemes can provide
+useful insights into important interactions in free energy calculations.
+\cite{Gohlke2003}
+
+However, it is important to note that solvation free energies using GB and PB
+are not strictly pairwise decomposable, since the dielectric boundary defined
+between the protein and the bulk solvent is inherently nonlocal and depends on
+the arrangement of all atoms in space. Thus, care must be taken when
+interpreting free energy decomposition results.
+
+An alternative way of decomposing free energies is to introduce specific
+mutations in the protein sequence and analyze how binding free energies or
+stabilities are affected. \cite{Massova2000} Alanine scanning, which is a
+technique in which an amino acid in the system is mutated to alanine, can
+highlight the importance of the electrostatic and steric nature of the original
+side chain. \cite{Massova1999} Assuming that the mutation will have a negligible
+effect on protein conformation, we can incorporate the mutation directly into
+each member of the original ensemble. This avoids the need to perform an
+additional MD or MC simulation to generate an ensemble for the mutant.
+
+\subsubsection{Entropy Calculations}
+
+The implicit solvent models used to calculate relative stability and binding
+free energies in end-state calculations often neglect some contributions to the
+solute entropy. If we assume that biological systems obey a rigid rotor model,
+we can calculate the translational and rotational entropies using standard
+statistical mechanical formulae, \cite{McQuarrie_Book_StatMech_1973} and we can
+approximate the vibrational entropy contribution using one of two methods.
+First, the vibrational frequencies of normal modes can be calculated at various
+local minima of the potential energy surface.
+\cite{McQuarrie_Book_StatMech_1973} Alternatively, the eigenvalues of the
+mass-weighted covariance matrix constructed from every member of the ensemble
+can be approximated as frequencies of global, orthogonal motions---a technique
+called the \emph{quasi-harmonic} approximation.
+\cite{Brooks_JComputChem_1995_v16_p1522} Using either the normal mode or
+quasi-harmonic approximations, we can sum the vibrational entropies of each mode
+calculated from standard formulae. \cite{McQuarrie_Book_StatMech_1973}
+
+Typically, normal mode calculations are computationally demanding for large
+systems, because they require minimizing every frame, building the Hessian
+matrix, and diagonalizing it to obtain the vibrational frequencies
+(eigenvalues). Because of the Hessian diagonalization, normal-mode calculations
+scale as roughly $(3N)^3$, where N is the number of atoms in the system. While the
+quasi-harmonic approach is less computationally expensive, a large number of
+frames, or members of the ensemble, are typically needed to extrapolate the
+asymptotic limit of the total entropy for each ensemble, which increases the
+computational cost of the original simulation. \cite{Wang2001}
+
+\subsection{General Workflow}
+
+\emph{MMPBSA.py} is a program written in Python and \emph{nab}
+\cite{Macke_BookChap_MolModNucAcid_2000_p379} that streamlines the procedure of
+preparing and calculating free energies for an ensemble generated by MD or MC
+simulations whose general workflow is shown in Fig. \ref{fig6:MMPBSA_Workflow}.
+The process of calculating binding free energies can be a tedious procedure that
+\emph{MMPBSA.py} aims to shorten and simplify.
+
+Python is a useful programming language for performing tasks that are not
+numerically intensive, and because it is available on virtually every platform,
+Python programs are highly portable. Nucleic Acid Builder (\emph{nab}),
+\cite{Macke_BookChap_MolModNucAcid_2000_p379} which is a molecule-based
+programming language included with AmberTools, contains functionality pertinent
+to building, manipulating and performing energy calculations on biological
+systems, such as proteins and nucleic acids.
+
+\begin{figure}
+   \includegraphics[height=6in, width=4.24in]{MMPBSA_Workflow.png}
+   \caption{General workflow for performing end-state calculations with
+            \emph{MMPBSA.py}. LEaP is a program in Amber used to create topology
+            files for dynamics. The workflow shown in step 3 is the series of
+            steps that \emph{MMPBSA.py} automates. ``Dry'' topologies and
+            ensembles are systems without explicit solvent that are subsequently
+            treated using an implicit solvent model. ``External programs''
+            refers to the executables that perform the energy calculations (\eg
+            \emph{sander}).}
+   \label{fig6:MMPBSA_Workflow}
+\end{figure}
+
+End-state calculations often require multiple \emph{topology files} (described
+later) that contain the parameters corresponding to the force field. Simulations
+are typically run using explicit solvent with any of the electrostatics methods
+described in Ch. \ref{ch2}, which would require both solvated and unsolvated
+topology files to use with \emph{MMPBSA.py}. It is necessary that all topology
+files have a consistent set of parameters, especially for binding free energy
+calculations. Therefore, \emph{MMPBSA.py} checks the input topology files prior
+to binding free energy calculations to prevent erroneous results due to
+inconsistencies that may not be immediately obvious (\eg different particle
+counts, partial charges for the same atoms, etc.). I wrote the Python utility
+\emph{ante-MMPBSA.py} (also released alongside \emph{MMPBSA.py}), which allows a
+user to easily create topology files with a consistent set of parameters,
+including changing the intrinsic implicit solvent radius set to fit the desired
+solvent model.
+
+The use of \emph{MMPBSA.py} is similar to that of Amber's MD engines
+\emph{sander} and \emph{pmemd}. The command-line flags common to both
+\emph{MMPBSA.py} and the MD engines are identical, and input files are separated
+with similar, Fortran-style namelists, indicated with an ampersand (&) prefix.
+
+The \emph{MMPBSA.py} input file contains a &general namelist for variables that
+control general behavior. For example, variables that control the subset of
+frames analyzed (startframe, endframe, and interval) and the amount of
+information printed in the output file (verbose) are specified here. An example
+of this section is shown below:
+\begin{verbatim}
+General MMPBSA.py input file
+&general
+   startframe=1, endframe=100, interval=2,
+   keep_files=0, verbose=1, strip_mask=:WAT:Cl-:Na+,
+/
+\end{verbatim}
+
+\subsection{Running in Parallel}
+
+\emph{MMPBSA.py} is implemented in parallel, so users with access to multiple
+processors can speed up their calculations. \emph{MMPBSA.py.MPI} is the parallel
+implementation of \emph{MMPBSA.py} that uses MPI (described in Appendix
+\ref{appendixC}) for Python (\emph{mpi4py}). Since energy calculations for each
+frame are independent, the calculation can be trivially parallelized, given
+enough available processors. \emph{MMPBSA.py.MPI} divides frames evenly across
+all processors, which allows calculations using many frames to scale better than
+if \emph{MMPBSA.py} invoked parallel executables to calculate free energies.
+However, perfect scaling is not attained, because certain setups tasks and file
+input/output can only be done with a single processor. Fig.
+\ref{fig6:MMPBSA_Scaling} demonstrates scaling for a sample MM-PBSA and MM-GBSA
+calculation.
+
+\begin{figure}
+   \includegraphics[width=6.5in]{MMPBSA_Scaling.eps}
+   \caption{\emph{MMPBSA.py} scaling comparison for MM-PBSA and MM-GBSA
+            calculations on 200 frames of a 5910-atom complex. Times shown are
+            the times required for the calculation to finish. Note that MM-GBSA
+            calculations are $\sim$5 times faster than MM-PBSA calculations. All
+            calculations were performed on NICS Keeneland (2 Intel Westmere
+            6-core CPUs per node, QDR infiniband interconnect).}
+   \label{fig6:MMPBSA_Scaling}
+\end{figure}
+
+\subsection{Differences to \emph{mm\_pbsa.pl}}
+
+Both \emph{MMPBSA.py} and \emph{mm\_pbsa.pl} allow users to perform free energy
+calculations using the STP and MTP, although \emph{MMPBSA.py} offers more
+flexibility when using the MTP. Both programs have the ability to use different
+PB and GB models contained within Amber and estimate entropic contributions.
+Finally, \emph{MMPBSA.py} and \emph{mm\_pbsa.pl} can run free energy
+calculations in parallel, although only \emph{MMPBSA.py} can run on distributed
+memory systems (\ie on multiple nodes connected over a network).
+
+Despite their obvious similarities, there are many differences that exist in
+their accessibility, implementation, and capabilities. \emph{MMPBSA.py} is
+available free of charge alongside AmberTools, while an Amber license is
+necessary to obtain \emph{mm\_pbsa.pl}. The usage of \emph{MMPBSA.py} is
+intended to resemble Amber’s MD engines for ease of the user, while
+\emph{mm\_pbsa.pl}’s input file and usage has its own syntax. Only
+\emph{MMPBSA.py} has an intuitive mechanism for guessing the ligand and receptor
+masks of a complex based on the topology files provided and analyzes topology
+files for parameter consistency. Furthermore, only \emph{MMPBSA.py} can
+calculate entropic contributions to the free energy using the quasi-harmonic
+approximation. An interface to external PB solvers such as Delphi, MEAD, and
+UHBD is available with \emph{mm\_pbsa.pl} only, although both can use the
+\emph{apbs} program to solve the PB equation. \emph{MMPBSA.py} allows users to
+provide their own input files for external programs, which gives users the
+ability to adjust all parameters, not just the variables described in the
+\emph{MMPBSA.py} manual; in comparison, \emph{mm\_pbsa.pl} has no similar
+functionality without directly altering the source code. Finally, QM/MM-GBSA and
+MM/3D-RISM calculations are only available through the \emph{MMPBSA.py}
+implementation.
