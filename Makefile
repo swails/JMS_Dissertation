@@ -13,8 +13,6 @@ veryclean: clean
 	/bin/rm -f *.bbl $(PAPER).pdf $(PAPER).bib
 
 nobib:
-	@for f in DEFS/*; do ln -s $$f; done
-	@for f in STYS/*; do ln -s $$f; done
 	-yes s | pdflatex $(PAPER).tex
 	-yes s | pdflatex $(PAPER).tex
 	-dvipdfmx $(PAPER).dvi
