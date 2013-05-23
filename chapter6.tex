@@ -1,13 +1,13 @@
 \chapter{FLEXIBLE TOOLS FOR AMBER SIMULATIONS}
 \label{ch6}
 
-In this chapter, I will describe the motivation behind creating several tools
-to aid users in carrying out biomolecular simulations with the Amber programming
+In this chapter, I will describe the motivation behind creating two tools to aid
+users in carrying out biomolecular simulations with the Amber programming
 package as well as some details regarding their functionality and
-implementation. During the course of my graduate studies, I wrote several tools
-to aid in my work---some of which I polished and released with the Amber suite
-of programs. The three I will describe in this chapter are \emph{MMPBSA.py},
-\cite{MMPBSApy} \emph{ParmEd}, and \emph{update\_amber}.
+implementation. During the course of my graduate studies, I wrote several
+scripts and programs to aid in my work---several of which I polished and released
+with the Amber suite of programs. The two I will describe in this chapter are
+\emph{MMPBSA.py} \cite{MMPBSApy} and \emph{ParmEd}.
 
 \section{MMPBSA.py}
 
@@ -318,7 +318,7 @@ specification of the prmtop is presented in Appendix \ref{appendixB}.
 The prmtop files are very complex objects, and there is very little `locality' in
 these files. That is, determining which bonds exist and how strong their force
 constants are is not as simple as looking for the sections labeled with
-\tt{BOND} in the prmtop. Prior to writing ParmEd, there were no programs
+{\tt BOND} in the prmtop. Prior to writing ParmEd, there were no programs
 released with Amber or AmberTools capable of modifying the topology file in a
 general way. Changing simple atomic properties---such as the partial charge or
 the set of intrinsic radii used for implicit solvent models---required the user
@@ -362,10 +362,12 @@ strongly resembles the popular trajectory analysis programs \emph{ptraj} and
 interface built on the Tcl/Tk toolkit through the \emph{Tkinter} Python
 bindings. The GUI, shown in Fig. \ref{fig6:xparmed}, is meant to be a very
 simple, point-and-click interface for prmtop modification, while
-\emph{parmed.py} is ideal for scripting purposes.
+\emph{parmed.py} is ideal for scripting purposes. To further simplify the use of
+ParmEd to those familiar with other Amber programs, the ubiquitous Amber mask
+syntax is used to specify all necessary atom selections.
 
 \begin{figure}
-   \includegraphics[width=6.5, height=5.91]{xparmed.png}
+   \includegraphics[width=6.5in, height=5.91in]{xparmed.png}
    \caption{Screenshot of the \emph{xparmed.py} GUI window, labeled with the
             available Actions and a message log.}
    \label{fig6:xparmed}
@@ -384,13 +386,93 @@ In the following sections, I will outline some of the Actions and functionality
 I consider to be particularly helpful or particularly challenging to implement
 through other programs.
 
-\subsubsection{van der Waals Modifications}
+\subsubsection{Lennard-Jones Parameter Modifications}
+
+I will briefly describe here how the radius ($r_i$) and well depth
+($\varepsilon_i$) assigned to each atom type $i$ in the parameter files defining
+each atom type is translated into a set of parameters used to compute the LJ
+potential in the Amber force field. Specifically, between pairs $i$ and $j$, the
+well depth $\varepsilon_{i,j}$ is the geometric average and the radius $r_{i,j}$
+is the arithmetic average
+\begin{align}
+   \varepsilon_{i,j} & = \sqrt{\varepsilon_i \varepsilon_j} \nonumber \\
+   R_{min,i,j} = R_{min,i} + R_{min,j}
+   \label{eq6:CombiningRules}
+\end{align}
+
+These combined radii and depths are then combined into A-coefficients and
+B-coefficients using the equations
+\begin{align}
+   ACOEF_{i,j} = \varepsilon_{i,j}r_{i,j}^{-12} \nonumber \\
+   BCOEF_{i,j} = 2 \varepsilon_{i,j}r_{i,j}^{-6}
+   \label{eq6:LJ}
+\end{align}
+
+Eqs. \ref{eq6:CombiningRules} and \ref{eq6:LJ} are evaluated in \emph{tleap},
+and $\varepsilon_i$ and $r_i$ are provided as input in the parameter files.
+Because there are more ACOEF and BCOEF parameters than there are input
+parameters, the way \emph{tleap} handles LJ parameters restricts some
+flexibility in the force field. The A and B coefficients can be thought of as a
+matrix of pairwise combined terms---defined in Eq. \ref{eq6:LJ}---in which only
+the diagonal terms are specified. The interactions between each pair of atom
+types cannot be set independently like they can in the CHARMM program via the
+\emph{NBFIX} keyword, for instance.
+
+I will make a detour here to discuss how \emph{tleap} compresses the number of
+LJ parameters written to the topology file. Since the LJ potential is composed
+of pairwise terms, there must be a term for every pair of atoms in the
+system---a number that becomes astronomically large for large numbers of
+particles. To avoid printing out on the order of $N^2$ terms in both coefficient
+matrices (where $N$ is the total number of atoms), \emph{tleap} assigns each
+atom to a particular atom type index that it shares with every other atom in the
+system that has the same set of starting LJ parameters $\varepsilon_i$ and
+$r_i$. Therefore, each A- and B-coefficient printed in the topology file may be
+used for numerous other atom pairs in the force and energy evaluations.
+
+I implemented a number of Actions in ParmEd that allow users to query and adjust
+LJ parameters in a way that is currently impossible with any other program. The
+{\tt printLJTypes} Action in ParmEd takes an atom selection and prints out every
+other atom that has been assigned to the same LJ atom type. The
+\emph{changeLJPair} Action allows users to adjust individual, off-diagonal
+elements of the A- and B-coefficient matrices for any pair of atoms. The
+{\tt addLJType} command provides further flexibility by allowing the user to
+treat a subset of atoms as a different LJ atom type so any off-diagonal changes
+affect only the desired atoms.
 
 \subsubsection{Changing Atomic Properties}
 
+Another Action implemented in ParmEd---the {\tt change} Action---allows users to
+change one of the following atomic properties: the partial charge, atomic mass,
+implicit solvent radius, implicit solvent screening factor, atom name, atom type
+name, atom type index, or the atomic number. Changing any of these properties
+without using ParmEd requires the user to modify a number of files, including
+standard residue libraries, force field databases, and the original starting
+structure before running those files through \emph{tleap}. Even then, care must
+be taken to ensure that the prmtop was changed the desired way.
+
+This functionality allows rapid prototyping for tasks such as parameterizing new
+charge or implicit solvent radius sets. Alternatives are currently tedious and
+error-prone.
+
 \subsubsection{Setting up for H-REMD Simulations}
+
+The H-REMD implementation in Amber---described in Ch. \ref{ch5}---is capable of
+performing alchemical REFEP calculations provided that the alchemical pathway
+can be characterized by different topology files with the same atoms. When an
+atom disappears---like in a pK\sub{a} calculation when a proton vanishes---a
+dummy atom is required in the end state in which that atom is `missing.' The
+{\tt interpolate} Action is provided to create a series of prmtops whose charge
+and LJ parameters are linearly interpolated between two prmtops. Alternative
+approaches are, again, time consuming and error-prone.
 
 \subsubsection{Changing Parameters}
 
-\subsubsection{Manipulating Atomic Order}
-
+Perhaps one of the strongest features of ParmEd is its ability to change
+individual bonded parameters---\ie bonds, angles, and torsions. The
+{\tt setBond} and {\tt setAngle} commands can be used to either add or modify a
+bond or angle parameter, respectively. The {\tt addDihedral} and
+{\tt deleteDihedral} commands can be used to create, remove, and even change
+individual torsion parameters. This control over the torsion parameters is
+particularly useful when attempting to fit new torsion parameters to improve
+force fields. \cite{Hornak_Proteins_2006_v65_p712,
+Perez_BiophysJ_2007_v92_p3817, Lindorff-Larsen_Proteins_2010_v78_p1950}
