@@ -80,7 +80,7 @@ protonation states difficult directly in explicit solvent.
 
 In this study, I present a new method of performing CpHMD simulations in
 explicit solvent using discrete protonation states.  This method is similar 
-in some regards to that proposed by
+in some respects to that proposed by
 \citeauthor{Baptista_JChemPhys_2002_v117_p4184},
 \cite{Baptista_JChemPhys_2002_v117_p4184} and I evaluate its performance on
 the model compounds, a pentapeptide, and two proteins: Ribonuclease A (RNase A)
@@ -141,8 +141,8 @@ MC protonation state changes.
 \end{equation}
 
 In explicit solvent, $\rho(\textbf{n} | q, p)$ is difficult to sample directly,
-since the solvent orientation is relaxed with respect to the current protonation
-state vector. Following the arguments of
+since the solvent orientation is set according to the current protonation state
+vector. Following the arguments of
 \citeauthor{Baptista_JChemPhys_2002_v117_p4184}, the system coordinates (and
 momenta) can be separated into solute and solvent degrees of freedom. 
 \cite{Baptista_JChemPhys_2002_v117_p4184} The protonation state sampling is then
@@ -154,13 +154,12 @@ performed according to the conditional probability
 \end{equation}
 where $q_{solvent}$ and $p_{solvent}$ are relaxed solvent
 distributions of positions and momenta around the protonation state vector,
-\textbf{n}. \cite{Baptista_JChemPhys_2002_v117_p4184} The energy differences
-resulting from the relaxed solvent distributions around the different
-protonation states are quantities that implicit solvent models strive to
-reproduce. Therefore, the distribution function $\rho^\prime$ in Eq.
-\ref{eq4:solv_sep_prob} can be approximated using continuum models, such as the
-PB or GB equations, thereby avoiding the otherwise costly solvent relaxation
-calculation associated with each attempted protonation state change.
+\textbf{n}. \cite{Baptista_JChemPhys_2002_v117_p4184} Implicit solvent models
+account for solvent reorganization instantantly, so the distribution function
+$\rho^\prime$ in Eq.  \ref{eq4:solv_sep_prob} can be approximated using
+continuum models, such as the PB or GB equations, thereby avoiding the otherwise
+costly solvent relaxation calculation associated with each attempted protonation
+state change.
 
 Contrary to the stochastic titration method that calculated solvation free
 energies using the PB equation to evaluate protonation state changes,
@@ -177,9 +176,10 @@ previous studies using the method, have been promising.
 Williams_JChemTheoryComput_2010_v6_p560, Swails_JChemTheoryComput_2012_v8_p4393}
 Furthermore, GB was shown to be effective when used in a hybrid solvent method
 with continuous protonation states
-\cite{Wallace_JChemTheoryComput_2011_v7_p2617} and is computationally cheaper
-than PB, and its calculation is more easily split up among many processors,
-allowing longer simulations to be performed in the same amount of time.
+\cite{Wallace_JChemTheoryComput_2011_v7_p2617} and is less computationally
+expensive than PB, and its calculation is more easily split up among many
+processors, allowing longer simulations to be performed in the same amount of
+time.
 
 \subsection{Explicit Solvent CpHMD Workflow}
 
@@ -218,7 +218,9 @@ proposed change will involve changes to the protonation state of both neighbors.
 Two titratable residues are considered `neighbors' if their two titrating
 hydrogen atoms are within 2 \text{\AA} from each other. If either residue has
 more than one titrating proton, the two residues are neighbors if the minimum
-distance between any pair of titrating hydrogens meets the cutoff.
+distance between any pair of titrating hydrogens meets the cutoff. Like the
+single-residue change attempts, if this protonation state change attempt fails,
+the system remains in its original protonation states for both residues.
 
 Including multi-site protonation state jumps is important for systems that have
 closely-interacting titratable residues. Without these multi-site moves,
@@ -232,7 +234,8 @@ manual.  \cite{Mongan_JComputChem_2004_v25_p2038}
 If any of the protonation state change attempts were accepted, the solute is
 frozen while MD is performed on the solvent (and any ions) to relax the solvent
 distribution around the new protonation states.  The length of this relaxation
-is a tunable parameter of the method, which I will call $\tau_{rlx}$. After the
+is a tunable parameter of the method, which I will call $\tau_{rlx}$. When the
+relaxation time is infinitely long, this process becomes exact. After the
 relaxation is complete, the velocities of the solute atoms are restored to
 their values prior to the relaxation and the standard dynamics is continued.
 
