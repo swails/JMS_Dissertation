@@ -1,0 +1,140 @@
+\chapter{Message Passing Interface}
+\label{appendixB}
+
+In this appendix, I will briefly describe the Message Passing Interface (MPI)
+model that is frequently used to parallelize programs in the field of
+computational chemistry. The MPI is used extensively in the field of
+computational chemistry to enable large-scale parallelism on modern
+supercomputer architecture.
+
+The discussion here will begin with an overview of parallel programming, then
+begin to focus on some of the standard features of the MPI that are used
+frequently in Amber, both in the code I contributed and the existing code base.
+\citeauthor{Pachecho1997} authored a particularly useful text for learning MPI
+programming. \cite{Pachecho1997}
+
+\section{Parallel Computing}
+
+\subsection{Data Models}
+
+Generally speaking, programs fall into one of two categories with regards to how
+handling and processing data is parallelized. The first approach refers to using
+multiple threads to run the same program or executable, each of work on a
+different set of data---an approach called Single Program Multiple Data (SPMD).
+The second approach refers to multiple threads each running \emph{different}
+programs on different sets of data---an approach called Multiple Program
+Multiple Data (MPMD).
+
+MPI supports both SPMD and MPMD data models, with support for MPMD being
+introduced with the adoption of the MPI-2 standard. With the exception of some
+specialized QM/MM functionality in \emph{sander}, MPI-enabled programs in Amber
+use the SPMD approach to parallelization, including all codes I contributed.
+
+\subsection{Memory Layout}
+
+In addition to the various approaches for parallelizing data processing,
+parallel programs fall into one of two broad families with respect to memory
+layout and access. An approach in which all processors share a common memory
+bank is called \emph{shared memory parallelization} (SMP). This is the approach
+used by the OpenMP API that is implemented by most standard C and Fortran
+compilers. The other approach, called \emph{distributed memory parallelization},
+defines separate memory buffers for each process, and each process can only
+modify its own memory buffer. The MPI implements the latter form of parallelism.
+
+Shared memory and distributed memory parallelism each offer different advantages
+and disadvantages with respect to each other. In SMP, one thread can access data
+that has previously been manipulated by a different process without requiring
+that the result be copied and passed between processes. In distributed systems,
+however, the lack of required shared memory means that not all processes need
+access to the same memory bank, allowing tasks to be distributed across
+different physical computers.
+
+The difference between distributed and shared memory parallelization can be
+visualized by considering a number of talented craftsmen constructing a complex
+machine in a mechanic shop. SMP is analogous to crowding multiple workers around
+a single workbench with a single set of tools or instruments. Each worker can
+perform a separate task toward completing the project at the same time other
+workers are performing their tasks. Furthermore, as soon as one worker finishes
+their task and returns the result to the workbench, the result is immediately
+accessible to every other worker at the table. Of course, the number of workers
+that can work at the table and the physical size of the total project is limited
+by the number of tools present at the workbench and the size of that table,
+respectively. By analogy, the number of tools can be thought of as the number of
+processing cores available, while the size of the table is analogous to the
+amount of available shared memory.
+
+Distributed memory parallelization schemes like MPI, on the other hand, are akin
+to providing each worker with their own workbench where they perform whatever
+tasks are assigned to them. When one worker's task requires the result of
+another's work, the required materials must be transported, or `communicated,'
+between the two workers. This inter-workbench communication introduces a latency
+that is not present in SMP. However, the size of the project is no longer
+limited by the size of the workbench, but rather by whether or not the
+individual \emph{pieces} can fit on any of the available workbenches. In this
+case, the room is a cluster of computers, and each table is a separate
+processing core available in that cluster. Since most modern supercomputers are
+composed of large numbers of smaller, interconnected computers, distributed
+memory programs must be used for large, scalable applications.
+
+Unsurprisingly, peak parallel performance leverages the capabilities of both
+distributed and shared memory parallelization to optimize load balancing across
+the available resources and to minimize communication requirements. On a typical
+computer cluster or supercomputer, there are a small number of cores on each
+individual machine---between 8 and 48 are currently commonplace---that are
+placed in a network connecting hundreds, thousands, or even tens of thousands of
+these machines. Using SMP within a single node as part of a larger, distributed
+application allows programs to take advantage of the strengths of both
+programming models. \cite{Lusk2008} Using the analogy above, this approach is
+equivalent to using multiple workers each around multiple workbenches, such that
+SMP takes place within a single workbench, and data and materials have to be
+`communicated' between different ones.
+
+\subsection{Thread Count}
+
+A \emph{process}, or \emph{thread}, is an instance of an instruction set by
+which a processing unit operates on data. Drawing again on our analogy, a thread
+is equivalent to a single worker at a single workbench. Some parallel
+programming APIs use a dynamic thread count, so that new threads are launched
+when they are needed and ended when they are not. The OpenMP API operates this
+way. This is akin to more workers being called to work on the complex,
+labor-intensive parts of the manufacturing and having them leave after that part
+of the task is finished. This way, a parallelization strategy is only necessary
+for particularly time-consuming parts of the computational process.
+
+The MPI approach, on the other hand, employs a static thread count set before
+the program is initially launched, and this number never changes. In this case,
+the workers are brought into the workroom and the room is then locked. Each
+worker is assigned a workbench and a set of instructions based on the identity they
+received when they entered the room and given a set of instructions they must
+follow.
+
+\section{The Mechanics of MPI}
+
+At its most basic level, MPI consists of a series of API calls that allow
+threads to communicate contents of their memory between each other so that they
+may coordinate efforts on a single task. While any parallel program may be
+constructed by simply allowing any two threads to send and receive data, MPI
+provides an extensive set of communication options to simplify creating
+efficient parallel programs.
+
+\subsection{Messages}
+
+\subsection{Communicators}
+
+\subsection{Communications}
+
+\subsubsection{Point-to-point}
+
+\subsubsection{Point-to-all}
+
+\subsubsection{All-to-all}
+
+\section{MPI in AMBER}
+
+\subsection{\emph{pmemd} and \emph{sander}}
+
+\subsection{Replica Exchange}
+
+\paragraph{Multi-dimensional REMD}
+
+\subsection{\emph{MMPBSA.py}}
