@@ -119,22 +119,134 @@ efficient parallel programs.
 
 \subsection{Messages}
 
+In MPI, data that is sent and received between threads is referred to as a
+\emph{message}, and the act of passing data between threads is called
+\emph{communication}. The following sections will describe how messages are
+passed via communication within MPI.
+
 \subsection{Communicators}
+
+A communicator is a grouping of threads within an MPI universe between which
+messages may be passed. All messages sent and received in an MPI program do so
+through a particular communicator. Each thread within a communicator is given a
+unique identity within that communicator, called its \emph{rank}, that is an
+integer value between 0 and \mbox{N - 1}, where N is the \emph{size} of the
+communicator (\ie the number of threads that define it). The ranks of the
+communicators can be used to assign different processors to different portions
+of total work.
+
+Communicators can be assigned and destroyed as desired within an MPI program,
+and are very useful tools for assigning a subset of the available threads to a
+particular task. There is one communicator, \emph{MPI\_COMM\_WORLD}, that is
+created when an MPI program is launched that links every thread.
 
 \subsection{Communications}
 
+Communicating data between threads is the heart of parallelizing a program using
+MPI. As mentioned above, a program may be fully parallelized using MPI by only
+defining simple send and receive calls between two threads. However, the optimal
+set of sends and receives depends strongly on where the threads are placed, the
+bandwidth and latency of the connection between them, and the pure number of
+such calls that are required for a particular task.
+
+To facilitate the creation of portable, efficient parallel programs, MPI
+provides an expansive set of functions to communicate data to abstract the
+complexity of optimizing communications. The following sections will briefly
+describe the three main families of communications as well as some
+representative examples within those families.
+
 \subsubsection{Point-to-point}
 
-\subsubsection{Point-to-all}
+The simplest set of communication involves exchanging data between two threads.
+These communications are the cheapest individual MPI communications to use,
+since they require communication between the minimum number of threads---two.
+Example functions in this family include \emph{MPI\_Send}, \emph{MPI\_Recv}, and
+\emph{MPI\_Sendrecv}. The first two allow data to be sent from one process to
+another, and the second explicitly receives sent data. Every send must have a
+corresponding receive call on the destination thread to complete the
+communication. The last function, \emph{MPI\_Sendrecv} combines a send and
+receive in the same function. The effect of these functions are shown in Fig.
+\ref{figC:PointToPoint}.
+
+\begin{figure}
+   \includegraphics[height=6.5in, angle=90]{PointToPoint.ps}
+   \caption{Schematic of different point-to-point communications. Threads and
+            data are shown as ovals and boxes, respectively, with arrows
+            indicating the lines of communication}
+   \label{figC:PointToPoint}
+\end{figure}
+
+\subsubsection{All-to-one and One-to-all}
+
+The next family of communication occurs between a specified \emph{root} thread
+and every other thread within a communicator. These functions involve more
+costly communication than the point-to-point communications described above
+since it requires at least as many messages be sent as there are threads in the
+communicator. However, specific MPI implementations can optimize these functions
+with respect to the na\"ive implementation, typically making them more efficient
+than alternatives implemented via a series of point-to-point communications.
+
+Examples in this family include \emph{MPI\_Bcast}, \emph{MPI\_Gather},
+\emph{MPI\_Scatter}, and \emph{MPI\_Reduce}. \emph{MPI\_Bcast} is a broadcast
+that sends data from the root thread to every other thread in a communicator.
+\emph{MPI\_Gather} collects data from all threads into an array on the root
+thread. \emph{MPI\_Scatter} operates similarly to \emph{MPI\_Bcast}, except that
+it divides the data sent by the root into equal-sized chunks that are sent out
+to every thread in the communicator (this is effectively the inverse of an
+\emph{MPI\_Gather} call). Finally, \emph{MPI\_Reduce} takes an array of data on
+each thread and combines them via some mathematical operation (\ie addition,
+subtraction, etc.) into the final result on the root thread. These functions are
+demonstrated diagrammatically in Fig. \ref{figC:AllToPoint}.
+
+\begin{figure}
+   \includegraphics[height=6.5in, angle=90]{AllToPoint.ps}
+   \caption{Schematic of different all-to-one and one-to-all communications.
+            Threads and data are shown as ovals and boxes, respectively, with
+            arrows indicating the lines of communication.}
+   \label{figC:AllToPoint}
+\end{figure}
 
 \subsubsection{All-to-all}
 
-\section{MPI in AMBER}
+The last family of communication involves transferring data from every thread in
+a communicator to every other thread. Examples include \emph{MPI\_Allgather},
+\emph{MPI\_Allreduce}, and \emph{MPI\_Alltoall}. These are the most expensive of
+all MPI communications since they involve the most amount of communication. As a
+result, they should be avoided whenever possible. However, due to the complexity
+of the required communication, these functions are the best candidates for
+performance optimization and tuning within an MPI implementation. As a result,
+when such communication is required, programs should \emph{not} attempt to
+implement their own, equivalent alternatives.
 
-\subsection{\emph{pmemd} and \emph{sander}}
+\emph{MPI\_Allgather} and \emph{MPI\_Allreduce} are logically equivalent to
+invoking an \emph{MPI\_Bcast} call from the root thread following either an
+\emph{MPI\_Gather} or \emph{MPI\_Reduce} call to that root. The
+\emph{MPI\_Alltoall} function behaves like an \emph{MPI\_Gather} to a root
+process followed by a \emph{MPI\_Scatter} from that root. The
+\emph{MPI\_Allgather} is the most expensive of the all-to-all communications
+given the increased amount of data that must be transmitted between threads.
+Fig. \ref{figC:AlltoAll} illustrates how these all-to-all communications work.
 
-\subsection{Replica Exchange}
+\begin{figure}
+   \includegraphics[height=6.5in, angle=90]{AllToAll.ps}
+   \caption{Schematic of different all-to-all communications. Threads and data
+            are shown as ovals and boxes, respectively, with arrows indicating
+            where data is transferred to and from.}
+   \label{figC:AllToAll}
+\end{figure}
 
-\paragraph{Multi-dimensional REMD}
+\subsection{Blocking vs. Non-blocking Communications}
 
-\subsection{\emph{MMPBSA.py}}
+In general, communications within MPI fall into one of two categories: so-called
+\emph{blocking} and \emph{non-blocking} communications. Blocking communications
+require the communication complete before the program can continue. Non-blocking
+communications, on the other hand, return instantaneously and allow the program
+to continue executing code while waiting for the communication to complete. All
+communications involving more than two threads---\ie one-to-all and
+all-to-all---are blocking.
+
+There is a special MPI function, \emph{MPI\_Barrier} whose sole purpose is to
+block all threads within a communicator from advancing past the barrier until
+each thread has reached it. Similarly, the \emph{MPI\_Wait} functions prevent a
+thread from continuing its computations until after the specified non-blocking
+communications complete.

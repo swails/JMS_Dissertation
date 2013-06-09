@@ -282,8 +282,17 @@ impossible using classical force fields. As a result, every physics-based CpHMD
 method uses the idea of a \emph{model compound} whose experimental pK\sub{a} is
 easy to measure with a high level of accuracy. An empirical parameter---the
 \emph{reference energy}---is then added so that CpHMD reproduces the
-experimental pK\sub{a}s of these compounds to `correct' for force fields'
-inability to compute absolute pK\sub{a}s.
+experimental pK\sub{a}s of these model compounds. In this way, CpHMD computes
+the pK\sub{a} \emph{shift} of a titratable residue in a biomolecule with respect
+to the isolated model compound in solution via the thermodynamic cycle shown in
+Fig. \ref{fig4:ThermoCycle}
+
+\begin{figure}
+   \includegraphics[height=6.5in, angle=90]{ThermoCycle.ps}
+   \caption{Thermodynamic cycle used to evaluate protonation state changes in
+            CpHMD simulations.}
+   \label{fig4:ThermoCycle}
+\end{figure}
 
 The model compounds have the sequence \emph{ACE-X-NME}, where \emph{ACE} is a
 neutral acetyl capping residue, \emph{X} is a titratable residue, and \emph{NME}
@@ -315,8 +324,18 @@ and aspartate model compounds were run with $\tau_{rlx}$ set to 10 fs, 40 fs,
 The results from these simulations were used to adjust the original reference
 energies to reproduce the correct model compound pK\sub{a}s in explicit solvent.
 This adjustment can be calculated directly from the pK\sub{a} shift relative to
-experiment when using the original reference energy. A summary of the required
-changes is given in Table \ref{tbl4:refenes}.
+experiment when using the original reference energy. To calculate the required
+adjustment, the reference energy is broken into two components---a TI-based
+component which is equal to the free energy difference between the two states
+and a pK\sub{a}-based component that offsets the energies of the protonation
+states to the necessary value required to obtain the correct pK\sub{a} for the
+model compound. This is shown in Eq. \ref{eq4:RefEnergyShift}. A summary of the
+required changes is given in Table \ref{tbl4:refenes}.
+
+\begin{equation}
+   \Delta G _ {ref} = \Delta G_{TI} + kT\,\ln 10\, \Delta N pK_{a, model}
+   \label{eq4:RefEnergyShift}
+\end{equation}
 
 \begin{table}
    \caption{Model compound pK\sub{a} values and reference energies. Because only
@@ -364,7 +383,8 @@ were chosen because the pK\sub{a} of the cysteine model compound is 8.5, so the
 two cysteines of ACFCA were expected to titrate in this pH range.  To
 demonstrate the effect that pH-REMD had on the titration of ACFCA, two sets of
 simulations were run---CpHMD with no exchanges and pH-REMD---with each replica
-being run for 2 ns.
+being run for 2 ns. The relaxation dynamics following successful exchange
+attempts were run for 100 fs.
 
 \subsection{Proteins: HEWL and RNase A}
 
@@ -408,8 +428,8 @@ from 1 to 8 to characterize the acidic-range titration behavior of the systems.
 
 \subsection{Simulation Details}
 
-All systems were parametrized using the Amber FF10 force field, which is
-equivalent to the Amber FF99SB force field for proteins.
+All systems were parametrized using the Amber ff10 force field, which is
+equivalent to the Amber ff99SB force field for proteins.
 \cite{Hornak_Proteins_2006_v65_p712} The \emph{tleap} program of the AmberTools
 12 program suite was used to build the model compound and ACFCA molecules, to
 add hydrogen atoms to RNase A and HEWL, and to solvate each system.
@@ -470,10 +490,11 @@ standard deviation of the set of 20 pK\sub{a}s calculated from those segments.
 
 To further demonstrate the insensitivity of box size to pH-REMD titrations, I
 plotted the solvent radial distribution functions (RDFs) around the center of
-mass of the carboxylate functional group in Fig. \ref{fig4:ref_rdf}. The
-insensitivity of the pK\sub{a} and solvent structure with respect to the model
-compound provides strong evidence that no undue care is necessary when choosing
-the size of the solvent buffer for these types of simulations.
+mass of the carboxylate functional group in three different solution pH
+environments, shown in Fig. \ref{fig4:ref_rdf}. The insensitivity of the
+pK\sub{a} and solvent structure with respect to the model compound provides
+strong evidence that no undue care is necessary when choosing the size of the
+solvent buffer for these types of simulations.
 
 \begin{figure}
    \includegraphics[width=6.5in]{model_AS4_RDF_box.eps}
@@ -537,8 +558,9 @@ states compared to aspartate, glutamate, and histidine.
 \end{figure}
 
 The relaxation energies plotted in Fig. \ref{fig4:ntrelax_and_autocorr} begin to
-stabilize after 4 to 6 ps of relaxation dynamics, and are largely uncorrelated
-within that same time scale. However, because 4 ps of MD---corresponding to
+stabilize after 4 to 6 ps of relaxation dynamics, and the autocorrelation
+function indicates that the relaxation energies are uncorrelated from the point
+of the protonation state change. However, because 4 ps of MD---corresponding to
 \mbox{2 000} steps of dynamics with a 2 fs time step---adds dramatically to the
 cost of CpHMD simulations in explicit solvent, I explored the approximation of
 using a significantly smaller value for $\tau _ {rlx}$.
@@ -554,17 +576,24 @@ kcal/mol. Likewise, the energies from the other relaxation dynamics drops from
 -7267 kcal/mol to -7465 kcal/mol over the first 200 fs, finally settling into an
 average of -7552 kcal/mol over the final 10 ns. In both cases, 70\% of the total
 relaxation energy was realized during the first 200 fs of relaxation dynamics.
-The correlation of the relaxation energy decays similarly, so the assumption
-that the relaxed solvent distribution is uncorrelated from its starting point is
-a reasonable approximation.
+The autocorrelation function of the relaxation energy decays similarly, so the
+assumption that the relaxed solvent distribution is uncorrelated from its
+starting point is a reasonable approximation.
 
 To validate the use of a shorter $\tau _ {rlx}$, I titrated the aspartate model
 compound using pH-REMD with five different values for $\tau _ {rlx}$---10 fs, 40
-fs, 100 fs, 200 fs, and 2 ps. The calculated pK\sub{a} for each simulation was
-4.10, 4.08, 4.07, 4.10, and 4.05, respectively for the listed relaxation times.
-Furthermore, comparing the solvent radial distribution functions of the
-different solvent relaxation times (Fig. \ref{fig4:ntrelax_rdfs}) shows little
-dependence of the solvent distribution on the value of $\tau _ {rlx}$.
+fs, 100 fs, 200 fs, and 2 ps. The calculated pK\sub{a}s were 4.08 $\pm$ 0.02,
+shown in Fig. \ref{fig4:pKaplot}.  Furthermore, comparing the solvent radial
+distribution functions of the different solvent relaxation times (Fig.
+\ref{fig4:ntrelax_rdfs}) shows little dependence of the solvent distribution on
+the value of $\tau _ {rlx}$.
+
+\begin{figure}
+   \includegraphics[width=4in]{pKaplot.ps}
+   \caption{Computed pK\sub{a}s for the Aspartate model compound using different
+            relaxation times ($\tau_{rlx}$).}
+   \label{fig4:pKaplot}
+\end{figure}
 
 \begin{figure}
    \includegraphics[width=6.5in]{ntrelax_radial_ph.eps}
@@ -589,7 +618,7 @@ presenting fewer degrees of freedom that must be exhaustively sampled.
 Each cysteine is in a slightly different micro-environment due to the different
 charges of the N- and C-termini. Because Cys 2 is typically closer to the
 N-terminus, it is expected to experience a negative pK\sub{a} shift with respect
-to the model compound due to the electrostatic pressure of the
+to the model compound due to the electrostatic influence of the
 positively-charged terminus.  Cys 4, on the other hand, is expected to
 experience a pK\sub{a} shift in the opposite direction due to the electrostatic
 pressure of the negatively-charged C-terminus.
@@ -603,9 +632,15 @@ Fig. \ref{fig4:acfca_titration_curves}, demonstrate the importance of using
 pH-REMD in constant pH simulations in explicit solvent. The pK\sub{a} of Cys 2
 and Cys 4 were 8.2 and 9.4, respectively. As expected, these pK\sub{a}s
 represent shifts of -0.2 pK units for Cys 2 and +0.9 pK units for Cys 4 with
-respect to the model Cys compound.  When run in implicit solvent, the two
-cysteine residues have almost identical pK\sub{a}s---8.1 and 9.4, for Cys 2 and
-Cys 4, respectively.
+respect to the model Cys compound. As a test, this compound was run using the
+original CpHMD implementation in implicit solvent
+\cite{Mongan_JComputChem_2004_v25_p2038} to ensure that we obtained the same
+results. Because the available phase space in simulations ACFCA is so small due
+to the small size of the molecule, the sampled ensembles in implicit and
+explicit solvent are expected to be very similar. When run in implicit solvent,
+the two cysteine residues have almost identical pK\sub{a}s to those obtained by
+the simulations in explicit solvent---8.1 and 9.4, for Cys 2 and Cys 4,
+respectively.
 
 \begin{figure}
    \includegraphics[width=6.5in]{ACFCA_Titration_Curves.eps}
@@ -681,7 +716,11 @@ treatment of aspartate residues 48, 52, 66, and 119. The disparity between the
 implicit and explicit solvent results probably stems from the enhanced
 conformational sampling attainable with implicit solvent simulations. Dynamical
 events occur much slower in explicit solvent simulations due to the friction and
-viscosity of the solvent.
+viscosity of the solvent. However, the conformations sampled in implicit solvent
+are frequently artifacts of the inaccuracies in the underlying solvent model
+\cite{Zhou_Proteins_2003_v53_p148, Geney_JChemTheoryComput_2006_v2_p115} that
+may hinder the performance of the CpHMD simulations.
+\cite{Machuqueiro_Proteins_2011_v79_p3437}
 
 The difference in the conformational sampling ability of the proposed method and
 the original, implicit solvent-based method is pronounced enough that a simple
@@ -709,13 +748,13 @@ When all aspartate and glutamate residues are deprotonated and the histidine is
 protonated at both the $\delta$ and $\epsilon$ positions, HEWL has a net charge
 of +9 electrons. Even though the PME implementation in Amber applies a net
 neutralizing plasma for such systems, the lack of counterions in the unit cell
-may lead to unusual behavior between any of the 30 charged residues in the
-system.
+may lead to unusual behavior by any of the 30 charged residues in the system.
 
 Therefore, I added 21 ions---15 chloride and 6 sodium---to add ionic strength
 and to provide the ions necessary to neutralize the initial unit cell. Like the
 effects of the unit cell size and $\tau _ {rlx}$ value, ions will only affect
-the calculated pK\sub{a}s by modifying the sampled conformations.
+the calculated pK\sub{a}s by modifying the sampled conformations since the
+protonation state changes are performed using implicit solvent.
 
 The predicted pK\sub{a}s, shown in Table \ref{tbl4:hewl_ions_pkas}, show a
 marked improvement for several residues whose calculated pK\sub{a} was too low
