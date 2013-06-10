@@ -48,11 +48,12 @@ SETTLE \cite{Miyamoto_JComputChem_1992_v13_p952} algorithms, to name a few.
          {\partial q_m} = 0
    \label{eqA:Lagrangian}
 \end{equation}
-where $L$ is the Lagrangian function mentioned above, $q_m$ are the generalized
-coordinates of every particle in the system, and $\dot q_m$ are the set of
-corresponding generalized velocities. When applying Eq. \ref{eqA:Lagrangian} to
-a system in the standard Cartesian coordinates without constraints, the familiar
-form of Newton's equations are recovered. \cite{CorbenClassicalMechanics}
+$L$ in Eq. \ref{eqA:Lagrangian} is the Lagrangian function mentioned above,
+$q_m$ are the generalized coordinates of every particle in the system, and $\dot
+q_m$ are the set of corresponding generalized velocities. When applying Eq.
+\ref{eqA:Lagrangian} to a system in the standard Cartesian coordinates without
+constraints, the familiar form of Newton's equations are recovered.
+\cite{CorbenClassicalMechanics}
 
 \paragraph{Hamiltonian Equation}
 
@@ -106,9 +107,9 @@ Taylor expansions of each of these quantities are given below.
    \vec{a}_p (t_0 + \delta t) & = \vec{a}(t_0) + \delta t \, \frac
          {d^3\vec{r}(t)} {dt^3} + ... \nonumber
 \end{align}
-where the subscript $p$ emphasizes that these are the \emph{predicted}
-quantities of the positions, velocities, and accelerations at time $t_0 + \delta
-t$ based on the known values at time $t_0$.
+The subscript $p$ in these equations emphasizes that these are the
+\emph{predicted} quantities of the positions, velocities, and accelerations at
+time $t_0 + \delta t$ based on the known values at time $t_0$.
 
 It is convenient to truncate the Taylor series in Eqs. \ref{eqA:Predictor} after
 the acceleration term since the acceleration at time $t_0$ can be easily
@@ -253,8 +254,8 @@ computes velocities at half-integral time steps according to Eqs.
 \begin{align}
    \vec{r}(t_0 + \delta t) = \vec{r}(t_0) + \delta t \, \vec{v}\left(t_0 + \frac
          1 2 \delta t \right) \nonumber \\
-   \vec{v}\left(t_0 \frac 1 2 \delta t) = \vec{v}\left(t_0 - \frac 1 2 \delta t
-         \right) + \delta t \, \vec{a}(t_0)
+   \vec{v}\left(t_0 + \frac 1 2 \delta t\right) = \vec{v}\left(t_0 - \frac 1 2
+         \delta t \right) + \delta t \, \vec{a}(t_0)
    \label{eqA:LeapFrog}
 \end{align}
 

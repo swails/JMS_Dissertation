@@ -5,23 +5,22 @@ This chapter contains a description of my work implementing replica exchange
 molecular dynamics (REMD) in the \emph{pmemd} program of the Amber program
 suite. \cite{AMBER12} The first sections describe the general theory of the
 state exchanges supported by Amber, followed by details of their implementation.
-I then describe my design of multiple-dimension REMD in Amber and provide some
-sample studies performed using the code.
+I'll then finish with a description of my design of multiple-dimension REMD in
+Amber that I implemented in both the \emph{sander} and \emph{pmemd} programs.
 
 \section{Temperature REMD}
 
 The most common variant of REMD simulations involves assigning replicas with
-different temperatures (T-REMD). \cite{Sugita_ChemPhysLett_1999_v314_p141} In
-typical T-REMD simulations, the Monte Carlo-based replica exchange attempts
-occur between a pair of replicas at different temperatures. The exchange success
-probability---calculated in a way that satisfies detailed balance to preserve
-valid thermodynamics---is solved for the proposed change of two replicas
-swapping temperatures, as shown in Eq. \ref{eq5:TExchProb}.  When $2N$ replicas
-are present, $N$ independent exchange attempts can be made simultaneously
-between different pairs of replicas. If no replica is involved in multiple
-exchange attempts, these moves can be evaluated independently. While this may
-not be the most efficient way to perform replica exchange attempts, it is the
-most common approach due to its simplicity and efficiency.
+different temperatures (T-REMD) \cite{Sugita_ChemPhysLett_1999_v314_p141}
+between which the Monte Carlo-based replica exchange attempts occur. The
+exchange success probability---calculated in a way that satisfies detailed
+balance to preserve valid thermodynamics---is solved for the proposed change of
+two replicas swapping temperatures, as shown in Eq. \ref{eq5:TExchProb}.  When
+$2N$ replicas are present, $N$ independent exchange attempts can be made
+simultaneously between different pairs of replicas. If no replica is involved in
+multiple exchange attempts, these moves can be evaluated independently. While
+this may not be the most efficient way to perform replica exchange attempts, it
+is the most common approach due to its simplicity and efficiency.
 
 To calculate the exchange probability in T-REMD exchange attempts, we start with
 the detailed balance equation (Eq. \ref{eq1:DetailedBalance}) in which replicas
@@ -73,9 +72,9 @@ replicas you should use as well as what temperatures those replicas should have.
 As the temperature of a system increases, the number of low-energy structures
 that are sampled during the simulation decreases. In fact, at infinite
 temperatures, MD is effectively equivalent to random sampling, whose
-consequences are illustrated in Fig. \ref{fig1:EthanMC}. The temperature ladder
-(\ie the selection of temperatures at which to run each replica) should be
-chosen so as to optimize the simulation efficiency. If the temperature
+consequences were illustrated in Fig. \ref{fig1:EthaneMC}. The temperature
+ladder (\ie the selection of temperatures at which to run each replica) should
+be chosen so as to optimize the simulation efficiency. If the temperature
 difference between adjacent replicas is too great, then the average potential
 energy difference between adjacent replicas will be large and the exchange
 probability in Eq. \ref{eq5:TExchProb} will be very small. As a result, the low
@@ -112,10 +111,10 @@ narrower its potential energy distribution becomes. Consequently, as the
 potential energy distributions narrow, replicas must be spaced closer and closer
 together to achieve sufficient mixing along the temperature-space parameter. For
 this reason, T-REMD simulations on systems that are explicitly solvated are
-rare. While some approaches, like the one by \citeauthor{Okur2006}, use a hybrid
-solvation scheme whereby exchange attempts are carried out in implicit solvent,
-the first two solvation layers are often represented poorly by implicit solvent,
-requiring their inclusion even in the hybrid approach. \cite{Okur2006}
+rare. While some approaches, like the one proposed by \citeauthor{Okur2006}, use
+a hybrid solvation scheme whereby exchange attempts are carried out in implicit
+solvent, the first two solvation layers are often represented poorly by implicit
+solvent, requiring their inclusion even in the hybrid approach. \cite{Okur2006}
 
 Furthermore, the snapshots generated at higher temperatures in the generalized
 ensemble are typically discarded from analyses for two reasons. First, we are
@@ -145,7 +144,7 @@ Sugita_JChemPhys_2000_v113_p6042} accelerated REMD with different boost
 parameters, \cite{Fajer_JComputChem_2009_v30_p1719,
 Arrar_JChemTheoryComput_2013_v9_p18} and alchemical changes between two end
 states. \cite{Meng_JChemTheoryComput_2011_v7_p2721} As a result, Eq.
-\ref{eq5:HExchProb} is derived subject exchanging coordinates only.
+\ref{eq5:HExchProb} is derived subject to exchanging only coordinates.
 
 \begin{align}
    & P_{i} \pi_{i \rightarrow j} = P_{j} \pi_{j \rightarrow i} \nonumber \\
@@ -223,7 +222,7 @@ energy surface, pH-REMD enhances sampling by allowing simulations to dodge free
 energy barriers through pH-space, and H-REMD enhances conformational sampling by
 coupling different energy functions.
 
-As availability to large number of processing cores increases, it becomes
+As availability to large numbers of processing cores increases, it becomes
 feasible to combine multiple types of replica exchanges into a single,
 super-expanded ensemble. In this new, larger ensemble, replicas are defined by a
 series of state parameters, such as a specific temperature, Hamiltonian,
@@ -338,10 +337,10 @@ The alternative to swapping state parameters between replicas is to swap
 coordinates and their conjugate momenta, which is logically equivalent to
 swapping full potential energy functions. It is significantly simpler---and
 requires far less communication between exchanging replicas to be fully
-general---than swapping the full potential energy function between. It is for
-the added simplicity and reduced communication overhead that H-REMD is
-implemented in Amber by swapping coordinates and velocities (scaling the
-velocities if exchanging pairs have different temperatures).
+general---than swapping the full potential energy function. It is for the added
+simplicity and reduced communication overhead that H-REMD is implemented in
+Amber by swapping coordinates and velocities (scaling the velocities if
+exchanging pairs have different temperatures).
 \cite{Meng_JChemTheoryComput_2011_v7_p2721}
 
 Adding to the computational expense, however, is the need to either recompute or
@@ -370,7 +369,7 @@ memory that is inaccessible by other threads). MPI---described in more detail in
 Appendix \ref{appendixC}---is ideally suited for large-scale parallelization
 since it allows workers to be spread across multiple processing cores that do
 not share a common memory bank. The most powerful supercomputers in the world
-that we typically use to carry out our simulations are usually so-called
+that we typically use to carry out our simulations are so-called
 \emph{distributed} supercomputers since they are constructed from many
 individual computers with dedicated memory that are networked together.
 
@@ -404,13 +403,9 @@ illustrated in Fig. \ref{fig5:MultiDREMDExchg}.
    \caption{Communicator arrangement in multi-dimensional REMD simulations at
             multiple exchange steps following some successful state parameter
             exchanges. The large numbers in the background are the (unchanging)
-            thread numbers of each replica. The blue and red numbers are the
-            indexes in the first and second state parameter tables,
-            respectively. Every cell with the same background color is a member
-            of the same REMD communicator.}
+            thread numbers in the communicator linking the `master' threads of
+            each replica. The blue and red numbers are the indexes in the first
+            and second state parameter tables, respectively. Every cell with the
+            same background color is a member of the same REMD communicator.}
    \label{fig5:MultiDREMDExchg}
 \end{figure}
-
-\section{Multi-Dimensional Umbrella REMD Study}
-
-\section{Multi-Dimensional REFEP Study on GPUs}

@@ -4,10 +4,10 @@
 All of the simulation models discussed in Chapter \ref{ch1} use an electrostatic
 equation dealing with charges interacting in a vacuum. However, biological
 chemistry occurs almost exclusively in an aqueous environment, necessitating the
-development of models capable of simulating an aqueous environment for these
-systems. In this chapter, I will describe the various methods by which solvent
-effects are introduced into simulation, followed by the ensemble sampling
-techniques that will be used for the principle studies in this dissertation.
+development of models capable of simulating these systems in solution.  In this
+chapter, I will describe the various methods by which solvent effects are
+introduced into simulation, followed by the ensemble sampling techniques that
+will be used for the principle studies in this dissertation.
 
 \section{Simulations in the Condensed Phase}
 
@@ -25,7 +25,7 @@ interactions in a system to account for the natural screening that a particular
 solvent provides. These approaches are called \emph{implicit solvent} methods
 because solvent effects are included in an average way without including the
 actual solvent atoms or molecules in the simulation. Simulations employing
-implicit solvent models result in smaller simulations in which comformational
+implicit solvent models result in smaller systems in which comformational
 sampling converges more rapidly because the solvent degrees of freedom are
 already included in a mean field way. However, individual solvent molecules
 often play a critical role in the structure and function of biological molecules
@@ -49,11 +49,11 @@ with these regions effectively.
 \subsubsection{Distance-dependent Dielectric}
 
 Among the earliest approaches to account for the different dielectric
-environments of a bimolecule interior and bulk solvent introduced a dielectric
-constant that changed as a function of the distance between two charged
-particles. As the separation between two particles increased, so too did the
-likelihood that they were separated by solvent, and so were subject to
-dielectric screening effects.
+environments of the interior of a bimolecule and bulk solvent introduced a
+dielectric constant that changed as a function of the distance between two
+charged particles. As the separation between two particles increased, so too did
+the likelihood that they were separated by solvent, and were therefore subject
+to dielectric screening effects.
 
 This approach is attractive in its simplicity---it adds little to the
 computational cost of the model while retaining the simple,
@@ -137,10 +137,11 @@ equation, is shown in Eq. \ref{eq2:PoissonBoltzmann}.
       \phi(\vec{r})} {k_B T} \right ) & = -4 \pi \rho (\vec{r})
    \label{eq2:PoissonBoltzmann}
 \end{align}
-where $q$ is the charge of the ions (both positive and negative ions are
-present), $\lambda(r)$ is a simple switching function that is 0 in
-solvent-excluded regions and 1 in solvent-accessible regions, and $\kappa^2$ is
-related to the ionic strength as
+
+In Eq. \ref{eq2:PoissonBoltzmann}, $q$ is the charge of the ions (both positive
+and negative ions are present), $\lambda(r)$ is a simple switching function that
+is 0 in solvent-excluded regions and 1 in solvent-accessible regions, and
+$\kappa^2$ is related to the ionic strength as
 \begin{equation*}
    \kappa ^ 2 = \frac {8 \pi q ^ 2 I} {\epsilon k_B T}
 \end{equation*}
@@ -199,14 +200,14 @@ Models employing implicit solvent via the PB equation have proven
 effective in many cases. \cite{Klapper_Proteins_1986_v1_p47,
 Gilson_JComputChem_1988_v9_p327, Baker_ProcNatlAcadSci_2001_v98_p10037,
 Nielsen_Proteins_2001_v43_p403} However, due to requirements of a fairly dense
-grid and the iterative, self-consistent solution of the PB equation, the
+grid and the iterative, self-consistent nature of solving the PB equation, the
 computational cost of this model is too high for many applications. Furthermore,
 the dielectric function is discontinuous at the boundaries of the
 solvent-excluded and solvent-accessible regions, making stable gradients (and
 therefore forces) difficult to calculate.
 \cite{Wang_ChemPhysLett_2009_v468_p112} Therefore, I will now consider a common
 approximation to the PB equation called the \emph{Generalized Born} model that
-seeks to provide an efficient, analytical alternative than solving the PB
+seeks to provide an efficient, analytical alternative to solving the PB
 equation.
 
 \subsubsection{Generalized Born}
@@ -224,10 +225,10 @@ shown below. \cite{Cramer_Book_EssentialsCompChem_2004}
          {\epsilon_{bulk}} \right) \frac {q ^ 2} r
    \label{eq2:Born}
 \end{equation}
-where $\epsilon_{vac}$ is the dielectric constant of a vacuum, which is unity.
-It is shown explicitly here to demonstrate that the dielectric constant of the
-solvent-excluded volume in the Poisson equation does not appear in the Born
-equation.
+In Eq. \ref{eq2:Born}, $\epsilon_{vac}$ is the dielectric constant of a vacuum,
+which is unity.  It is shown explicitly here to demonstrate that the dielectric
+constant of the solvent-excluded volume in the Poisson equation does not appear
+in the Born equation.
 
 If instead of being a perfect conducting sphere with a uniform charge
 distribution, the sphere had a perfect dipolar charge distribution, the free
@@ -313,9 +314,10 @@ The most common approach to computing the effective radius is called the
    I _ i = \int _ {\Omega_i} \frac {d^3r} {4 \pi r ^ 4}
    \label{eq2:CFA}
 \end{equation}
-where $I_i$ is the coulomb field integral for atom $i$ and $\Omega_i$ signifies
-the integral is over all space centered on atom $i$. The effective radius is
-then computed from this integral using Eq. \ref{eq2:reff}
+
+$I_i$ in Eq. \ref{eq2:CFA} is the coulomb field integral for atom $i$ and
+$\Omega_i$ signifies the integral is over all space centered on atom $i$. The
+effective radius is then computed from this integral using Eq. \ref{eq2:reff}.
 
 \begin{equation}
    \alpha _ {i} = \left( \rho _ i ^ {-1} - I _ i \right) ^ {-1}
@@ -359,9 +361,10 @@ degree of burial (as measured by the value of $I_i$ in Eq. \ref{eq2:CFA}),
 \citeauthor{Mongan_JChemTheoryComput_2007_v3_p156} adopted an approach based on
 geometry. By treating each atom and each solvent molecule as a sphere---a good
 approximation for a water molecule---the interstitial space between two solute
-atoms that is inaccessible to solvent (Fig. \ref{fig2:Interstitial}) can be
-quantified. Because this interstitial region resembles a neck, this model is
-referred to as GB\super{neck}. \cite{Mongan_JChemTheoryComput_2007_v3_p156}
+atoms that is inaccessible to solvent can be quantified. Because this
+interstitial region resembles a neck---as seen in Fig.
+\ref{fig2:Interstitial}---this model is referred to as GB\super{neck}.
+\cite{Mongan_JChemTheoryComput_2007_v3_p156}
 
 \begin{figure}
    \includegraphics[height=6.5in, angle=90, trim=1cm 0.5cm 1cm 0.5cm, clip=true]
@@ -386,10 +389,10 @@ cavitation step in which the solvent is excluded from a region of space equal to
 the solute's solvent excluded volume, and a charging step where the
 solvent-polarized charge distribution of the solute is inserted into that
 cavity. Because the free energy is a state function, this gedanken decomposition
-will yield an identical free energy to the true process that occurs in
-experiment---assuming of course that each process can be calculated exactly.
-The free energies of these two steps are referred to as the non-polar and polar
-solvation free energy, respectively.
+will yield an identical free energy to the true experimental free
+energy---assuming of course that each step can be calculated exactly.  The free
+energies of these two steps are referred to as the non-polar and polar solvation
+free energy, respectively.
 
 The Poisson-Boltzmann and Generalized Born equations shown in Eqs.
 \ref{eq2:PoissonBoltzmann} and \ref{eq2:GB} are used to compute the polar
@@ -473,10 +476,10 @@ convention is employed to simplify the problem, but also imposes a limit to the
 range of calculated interactions. Specifically, the non-bonded interactions do
 not extend beyond half the length of the shortest side of the unit cell.
 Employing the minimum image convention, the energy calculated for a system with
-PBC is the energy of a single unit cell in the field generated by all other
-periodic cells. The challenge is how to calculate the non-bonded interactions
-for every atom in the system. The common approaches employed in biomolecular
-simulation is explored in the next three sections.
+PBC is the energy of a single unit cell in the field generated by every periodic
+cell. The challenge is how to calculate the non-bonded interactions for every
+atom in the system. The common approaches employed in biomolecular simulation
+are explored in the next three sections.
 
 \begin{figure}
    \includegraphics[height=6.5in, angle=90, trim=0.7cm 3cm 0.7cm 3cm, clip=true]
@@ -521,9 +524,10 @@ Cheatham_JAmChemSoc_1995_v117_p4193, Feller_JPhysChem_1996_v100_p17011,
 Patra_BiophysJ_2003_v84_p3636} This effect is particularly pronounced for
 electrostatic interactions---a very long-range potential of the form $1/r$. As
 mentioned before, this function decays so slowly that $\sum_{i=1}^{\infty} 1/r =
-\infty$.  Two monovalent ions must be separated by $\sim332$ {\AA} before their
+\infty$.  Two monovalent ions must be separated by $\sim$332 {\AA} before their
 interaction energy drops to 1 kcal/mol. Such a cutoff would require a unit cell
-size at least 664 {\AA} on each edge containing $\sim 10^7$ water molecules.
+size at least 664 {\AA} on each edge containing $\sim$10\super{7} water
+molecules.
 
 Given the need to improve the behavior of the non-bonded potentials near the
 cutoff distance, two popular modifications to the simple cutoff approach were
@@ -609,10 +613,10 @@ technique, called the Ewald sum, utilizes a trick to cause the electrostatic
 interactions between particles to decay arbitrarily rapidly, allowing the
 interactions to be truncated at a distance where the interactions themselves are
 negligible. To do this, a Gaussian charge distribution is centered at each point
-charge whose integral is the same magnitude as the point charge around which it
-is centered, but with opposite sign (Fig. \ref{fig2:Ewald}). Given a width of
-the Gaussian distribution $\alpha$, the functional form of the neutralizing
-charge distribution is shown in Eq. \ref{eq2:NeutralizingDistribution}.
+charge with the opposite sign of the point charge, as shown in Fig.
+\ref{fig2:Ewald}. Given a width of the Gaussian distribution $\alpha$, the
+functional form of the neutralizing charge distribution is shown in Eq.
+\ref{eq2:NeutralizingDistribution}.
 
 \begin{equation}
    \rho_i(r) = \frac{q_i \alpha ^ 3} {\pi ^ {3/2}} \exp \left( -\alpha ^ 2 r^2
@@ -682,7 +686,7 @@ methods for simulating highly charged systems---such as DNA or RNA---became
 readily apparent. \cite{Miaskiewicz_JAmChemSoc_1993_v115_p1526,
 McConnell_JAmChemSoc_1994_v116_p4461} Properly accounting for long-range
 electrostatic effects using PME resulted in stable simulations of not only
-protein simulations, but also highly charged systems like DNA and RNA.
+proteins, but also highly charged systems like DNA and RNA.
 \cite{Cheatham_JAmChemSoc_1995_v117_p4193} Furthermore, by employing the FFT,
 PME allowed calculations to be done more rapidly by reducing the computational
 cost of the non-bonded interactions.
@@ -726,7 +730,7 @@ To combat both shortcomings mentioned for Ewald-based methods, many researchers
 have investigated alternatives to the PME treatment of long-range electrostatic
 interactions in bimolecular simulations.  One such method, the \emph{isotropic
 periodic sum} (IPS), assumes an isotropic distribution of particles by
-replicating the surrounding region---within a cutoff---around each particle
+replicating the surrounding region around each particle within a cutoff
 infinitely in all directions. \cite{Wu_JChemPhys_2005_v122_p044107} While this
 method necessitates using a larger cutoff to more fully characterize each
 particle's surroundings, it avoids needing a charge grid populated from every
@@ -766,7 +770,7 @@ states is known at an arbitrary energy ($\Omega(E)$), this number is so vast
 that it cannot be directly computed.
 
 Luckily, the partition functions of most thermodynamic ensembles---in particular
-that for the canonical ensemble (Eq. \ref{eq1:CanonicalPF}) are almost
+that for the canonical ensemble (Eq. \ref{eq1:CanonicalPF})---are almost
 entirely comprised of low-energy structures due to the exponential weighting in
 the Boltzmann factor. Despite this fortuitous simplification, no simulation is
 capable of truly exhaustive sampling for typical biomolecular simulations, and
@@ -791,9 +795,9 @@ thermal energy, $k_BT$. An example is shown as a black line in Fig.
 (reduced to $3N$-dimensional when the momentum integral is separated from the
 canonical partition function) is projected onto a 1-dimensional reaction
 coordinate. This reduced-dimension free energy surface, called a \emph{potential
-of mean force} (PMF) shows a free energy barrier of roughly $6\,k_BT$. In
-standard dynamics simulations, it would take a very long unbiased simulation to
-cross that barrier.
+of mean force} (PMF) shows a free energy barrier of roughly $6\,k_BT$ in Fig.
+\ref{fig2:FreeEnergyProfile}. In standard dynamics simulations, it would take a
+very long unbiased simulation to cross that barrier.
 
 \begin{figure}
    \includegraphics[width=6.5in]{FreeEnergyProfile.ps}
@@ -814,7 +818,7 @@ potentials shown in Fig. \ref{fig2:FreeEnergyProfile} tend to favor sampling
 near the two transition states separating different minima, since that portion
 of the reaction coordinate is lowest in energy.
 
-The resulting ensemble from the modified potential, shown in Eq.
+The resulting ensemble of the modified potential, shown in Eq.
 \ref{eq2:umbrella}, contains more snapshots around the areas that are
 traditionally sampled poorly by MD simulations of finite duration. However, all
 properties calculated based on these statistics refer to a fictitious system,
@@ -827,10 +831,10 @@ actually obeys the $H_{orig}$ Hamiltonian. \cite{Leach_Book_MolModel_2001}
    H_{bias}(\vec{x}) = H_{orig}(\vec{x}) + \frac 1 2 k_{umb}(f(\vec{x}) - s)^2
    \label{eq2:umbrella}
 \end{equation}
-where $H_{orig}$ is the original, unbiased Hamiltonian, $k_{umb}$ is the force
-constant on the harmonic umbrella potential, $f(\vec{x})$ is the reaction
-coordinate, and $s$ is the center of the umbrella potential along that reaction
-coordinate.
+$H_{orig}$ is the original, unbiased Hamiltonian in Eq. \ref{eq2:umbrella},
+$k_{umb}$ is the force constant on the harmonic umbrella potential, $f(\vec{x})$
+is the reaction coordinate, and $s$ is the center of the umbrella potential
+along that reaction coordinate.
 
 Since the exact shape of the biasing potential is known, and the sampling
 provides information about the shape of the total biased potential, we can use
@@ -998,16 +1002,16 @@ amount of time that the simulation is permitted to spend at each temperature
 must be carefully balanced to enhance sampling with enough simulation done at
 higher temperatures and maintain a desired level of resolution of the low
 temperature ensemble. This distribution is controlled by the $\eta$ parameter at
-each temperature (Eq. \ref{eq2:ExpandedEnsemble}), whose values are determined
-by running short simulations at each temperature to estimate the shape of phase
-space. \cite{Lyubartsev_JChemPhys_1992_v96_p1776}
+each temperature (Eq. \ref{eq2:ExpandedEnsemble}), whose optimal values are
+determined by running short simulations at each temperature to estimate the
+shape of phase space. \cite{Lyubartsev_JChemPhys_1992_v96_p1776}
 
 \subsection{Replica Exchange Molecular Dynamics}
 
 Replica exchange molecular dynamics (REMD) simulations are a special case of
 expanded ensemble simulations that are designed to be scalable to modern,
 parallel computers. In these simulations, a finite number of independent
-simulations (replicas) are run, each with a different state parameter (\eg
+simulations, or replicas are run, each with a different state parameter (\eg
 different temperatures). These replicas periodically attempt to exchange
 information between each other---either configurations or state parameters---in
 such a way that maintains the validity of the `subensemble' of each replica. A
@@ -1197,13 +1201,13 @@ candidate to replace the standard Lennard-Jones potential in vanishing atoms.
       \left( \frac {r_{i,j}} {\sigma_{i,j}} \right) ^ 6} \right)
    \label{eq2:SoftCore}
 \end{align}
-where the top equation corresponds to the functional form when one of the atoms
-vanishes when $\lambda = 0$ and the bottom equation corresponds to the case
-where one of the atoms vanishes when $\lambda = 1$. The denominators in Eq.
-\ref{eq2:SoftCore} do not contain a singularity when $r_{i,j} = 0$ when one of
-the atoms has vanished. The parameter $\alpha$ controls how `soft' the core of
-the vanishing atoms are, as shown in Fig. \ref{fig2:SoftCore}.
-\cite{Steinbrecher_JChemPhys_2007_v127_p214108}
+The top equation of Eq. \ref{eq2:SoftCore} corresponds to the functional form
+when one of the atoms vanishes when $\lambda = 0$ and the bottom equation
+corresponds to the case where one of the atoms vanishes when $\lambda = 1$. The
+denominators in Eq.  \ref{eq2:SoftCore} do not contain a singularity when
+$r_{i,j} = 0$ when one of the atoms has vanished. The parameter $\alpha$
+controls how `soft' the core of the vanishing atoms are, as shown in Fig.
+\ref{fig2:SoftCore}. \cite{Steinbrecher_JChemPhys_2007_v127_p214108}
 
 TI simulations using soft-core potentials for the Lennard Jones terms of
 vanishing atoms show significantly better convergence of free energies.
@@ -1296,7 +1300,8 @@ three states---the bound complex, unbound receptor, and unbound ligand.
       H_{solv, unbound} \right \rangle
    \label{eq2:MMPBSA}
 \end{equation}
-where the averages are taken of the ensembles of each system.
+The averages in Eq. \ref{eq2:MMPBSA} are taken from the ensembles of each
+system.
 
 \begin{figure}
    \includegraphics[height=6.5in, angle=90]{MMPBSA.ps}
@@ -1306,15 +1311,15 @@ where the averages are taken of the ensembles of each system.
    \label{fig2:MMPBSA}
 \end{figure}
 
-The principle cost of an MM-PBSA calculation is due to the initial simulations
-required to construct each ensemble. To reduce the cost of computing binding
-free energies with MM-PBSA, all three ensembles mentioned above can be extracted
-from a single simulation of the bound complex, a technique referred to as the
-\emph{single trajectory protocol}. \cite{MMPBSApy} This approach will always
-underestimate the binding free energy (predicting overly-stable binding), since
-the bound states of the receptor and ligand will always be less stable in the
-bound conformation than they are free in solution. However, when making the same
-approximation for a family of related receptors and ligands, the systematic
+The principle computational cost of an MM-PBSA calculation is due to the initial
+simulations required to construct each ensemble. To reduce the cost of computing
+binding free energies with MM-PBSA, all three ensembles mentioned above can be
+extracted from a single simulation of the bound complex, a technique referred to
+as the \emph{single trajectory protocol}. \cite{MMPBSApy} This approach will
+always underestimate the binding free energy (predicting overly-stable binding),
+since the bound states of the receptor and ligand will always be less stable in
+the bound conformation than they are free in solution. However, when making the
+same approximation for a family of related receptors and ligands, the systematic
 errors in each end-state calculation will be similar. Therefore, MM-PBSA methods
 can be useful for tasks like rank-ordering a handful of proposed inhibitors for
 a specific enzyme by calculating accurate relative binding free energies.
@@ -1344,8 +1349,8 @@ Solving for $\Delta G _ {A \rightarrow B}$ in Eq. \ref{eq2:Reorganization}
 yields the following expression for the free energy of the change from the
 ligand bound in environment $A$ to the ligand bound in environment $B$:
 \begin{equation}
-   \Delta G _ {A \rightarrow B} = \frac 1 2 \left( < \Delta V > _ A + < \Delta V
-               > _ B \right)
+   \Delta G _ {A \rightarrow B} = \frac 1 2 \left( \left \langle \Delta V
+      \right \rangle _ A + \left \langle \Delta V \right \rangle _ B \right)
    \label{eq2:ReorganizationFE}
 \end{equation}
 

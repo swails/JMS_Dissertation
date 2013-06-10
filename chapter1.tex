@@ -22,9 +22,9 @@ mechanics}. The limits of classical mechanics became apparent when considering
 the Rayleigh-Jeans formula for calculating the spectral emission of a radiating
 black body. The Rayleigh-Jeans law, given by Eq. \ref{eq1:RayleighJeans}, is
 completely derived using the laws of classical mechanics. By looking at Eq.
-\ref{eq1:RayleighJeans}, we clearly see that the emission spectrum diverges at
-high frequencies---a clear violation of the well-established law of conservation
-of energy.
+\ref{eq1:RayleighJeans}, we see that the emission spectrum diverges at high
+frequencies ($\nu$)---a clear violation of the well-established law of
+conservation of energy.
 \begin{equation}
    B_{\nu} (T)  = \frac{2 \nu^2 k T} {c^2}
    \label{eq1:RayleighJeans}
@@ -69,10 +69,10 @@ momentum operator) and a potential energy term.
    \right) \Psi(\vec{x})
    \label{eq1:SchrodingerEquation}
 \end{align}
-where $E$ is the total energy, $\hat{H}$ is the Hamiltonian operator, and
-$\Psi(\vec{x}, t)$ is the wavefunction---the central object of Schr\"odinger's
-equation containing all of the information and properties inherent to the
-system.
+In Eq. \ref{eq1:SchrodingerEquation}, $E$ is the total energy, $\hat{H}$ is the
+Hamiltonian operator, and $\Psi(\vec{x}, t)$ is the wavefunction---the central
+object of Schr\"odinger's equation containing all of the information and
+properties inherent to the system.
 
 Eq. \ref{eq1:SchrodingerEquation} is a special form of Schr\"odinger's
 equation corresponding to a stationary state (\ie the potential function is
@@ -122,11 +122,11 @@ chemical and molecular properties. \cite{Hehre_Ab_inito_MO_Theory_Book_1986}
 These calculations are becoming routine as more and more experimental studies
 employ some form of calculation to help interpret results or strengthen
 conclusions. Despite all their successes and the rapid increase of computational
-power over recent years, however, the computational demands of QM methods remain
-prohibitively high for systems with more than 100 -- 200 atoms. Furthermore for
-researchers interested in these large systems, calculations on a single
-arrangement of atomic nuclei becomes increasingly insufficient to quantify the
-behavior of those systems.
+power over recent years, however, the computational demands of QM methods often
+remain prohibitively high for systems with more than 100 -- 200 atoms.
+Furthermore for researchers interested in these large systems, calculations on a
+single arrangement of atomic nuclei becomes increasingly insufficient to
+quantify the behavior of those systems.
 
 For such applications, we turn our attention back to statistical mechanics with
 the aim of ultimately applying those principles to molecular mechanical
@@ -160,9 +160,9 @@ this ensemble average can be calculated according to Eq. \ref{eq1:EnsembleAvg}.
                       & = \sum_a P(a) A(a)
    \label{eq1:EnsembleAvg}
 \end{align}
-where $W(a)$ can be thought of as the number of states in the ensemble with the
-same value of the property of $A$. $P(a)$ is the normalized probability for that
-state, where $\sum_a W(a)$ is the normalization factor.
+$W(a)$ in Eq. \ref{eq1:EnsembleAvg} can be thought of as the number of states in
+the ensemble with the same value of $A$. $P(a)$ is the normalized probability
+for that state, where $\sum_a W(a)$ is the normalization factor.
 
 Given that there are on the order of $10^{23}$ particles in the typical system,
 the number of ensemble members from which the average is calculated appears at
@@ -207,8 +207,8 @@ functions of the common ensembles are shown below in Eqs.
 \end{align}
 where $\omega$ is the total number of states with a given energy and $\beta$ is
 $1 / k_BT$. According to the principle of equal \emph{a priori} probabilities,
-all states in the microcanonical ensemble are equally probable simply because
-there is no reason to assume otherwise.
+all states in the microcanonical ensemble are considered equally probable simply
+because there is no reason to assume otherwise.
 
 The logarithm of the partition function for each ensemble is directly
 proportional to the thermodynamic function that has the same set of `natural'
@@ -257,9 +257,10 @@ sections.
 One approach to approximating Eq. \ref{eq1:CanonicalPF}, called \emph{Monte
 Carlo} (MC) sampling, is to select new configurations of atomic positions at
 random in the molecular system, evaluate the energy of that structure, and add
-it to the sum of the partition function. This is equivalent to reorganizing the
-sum in Eq. \ref{eq1:CanonicalPF} to sum over individual states rather than
-energy levels. Eq. \ref{eq1:CanonicalPF} is then estimated as
+its contribution---weighted by the Boltzmann factor---to the sum of the
+partition function. This is equivalent to reorganizing the sum in Eq.
+\ref{eq1:CanonicalPF} to sum over individual states rather than energy levels.
+Eq. \ref{eq1:CanonicalPF} is then estimated as
 \begin{equation}
    Q(N, V, T) \approx \sum_{i=1}^{N_{samples}} \exp(-\beta E_i)
    \label{eq1:MonteCarloCanonicalPF}
@@ -268,7 +269,7 @@ energy levels. Eq. \ref{eq1:CanonicalPF} is then estimated as
 Because we assume no prior knowledge of phase space beforehand, using random
 configurations in MC sampling is critical to avoid introducing bias into the
 subsample. The MC approach to approximating the partition function proves to be
-highly inefficient, however, as most random atom configurations in a chemical
+highly inefficient, however, as most random atomic configurations in a chemical
 system correspond to species that are unphysical and contribute $\sim$0 to the
 partition function.
 
@@ -277,9 +278,8 @@ MC. A random configuration is generated by placing both carbon atoms and all six
 hydrogen atoms at a random point in space, evaluating the energy of that
 configuration using a QM calculation, and adding that term to the summation in
 Eq. \ref{eq1:MonteCarloCanonicalPF}. Figure \ref{fig1:EthaneMC} depicts two
-conformations of ethane with an equal probability of being chosen and added to
-the summation in Eq. \ref{eq1:MonteCarloCanonicalPF}. Of the two conformations,
-only one will have an energy low enough to contribute significantly to $Q(N, V,
+conformations of ethane with an equal probability of being chosen, only one of
+which will have an energy low enough to contribute significantly to $Q(N, V,
 T)$. It should be easy to see that there are far more unphysical arrangements of
 the atoms in ethane than chemically reasonable ones.
 
@@ -411,11 +411,11 @@ and barostats, respectively.
 
 The na\"ive approach to maintaining a constant temperature is to scale all
 velocities at each time step such that each point along the trajectory has the
-same temperature. \cite{Woodcock1971} For large systems, however, the
-perturbation on the system is too large. To address this problem,
-\citeauthor{Berendsen_JChemPhys_1984_v81_p3684} proposed a method in which the
-factor by which velocities are scaled is reduced so that thermalization occurs
-on a finite time scale (rather than instantaneously).
+same kinetic energy (and therefore temperature). \cite{Woodcock1971} For large
+systems, however, the resulting perturbation on the system is too large. To
+address this problem, \citeauthor{Berendsen_JChemPhys_1984_v81_p3684} proposed a
+method in which the factor by which velocities are scaled is reduced so that
+thermalization occurs on a finite time scale (rather than instantaneously).
 \cite{Berendsen_JChemPhys_1984_v81_p3684} Similar approaches exist for
 maintaining constant pressure. \cite{Berendsen_JChemPhys_1984_v81_p3684}
 Analogous to scaling the velocities to maintain a constant temperature, the
@@ -424,11 +424,11 @@ system volume is scaled to maintain a constant pressure.
 Another major challenge in MD simulations is choosing the integration time step.
 The time step must be chosen short enough to avoid accumulating integration
 errors, but long enough that slow structural changes may be sampled in a
-reasonable amount of time. While the slow motions with small frequencies are
-often the most interesting since they correspond with global conformational
-changes in macromolecules, the time step is dictated by the high frequency
-motions---see Fig. \ref{fig1:TimeStepDemo} for a graphical illustration
-clarifying this phenomena.
+reasonable amount of simulation time. While the slow motions with small
+frequencies are often the most interesting since they correspond with global
+conformational changes in macromolecules, the time step is dictated by the high
+frequency motions---see Fig. \ref{fig1:TimeStepDemo} for a graphical
+illustration clarifying this phenomena.
 
 \begin{figure}
    \includegraphics[width=6.5in]{TimeStepDemo.ps}
@@ -468,21 +468,21 @@ that the molecule can reasonably adopt at typical temperatures, and partition
 functions can be reasonably approximated using only a handful of different
 structures.
 
-As system sizes increase, however, it becomes increasingly difficult to use QM
-methods for two reasons. First, the computational demand for obtaining the
-energy of a single structure rapidly increases. Second, phase space becomes so
-massive that calculating the potential energy of a small number of snapshots is
-no longer a reasonable approximation to the partition function. For these
-reasons, we seek to develop a model with which we can efficiently calculate
-interatomic potentials in molecular systems without solving the electronic
-Schr\"odinger equation. This model will fit a functional form to the potential
-of the molecule, describing the interaction between every atom in the system.
-These functions typically have analytic derivatives that can be rapidly
-evaluated to facilitate their use in MD simulations. Because the analytic
-gradients of these potentials are the forces that act on the atomic centers,
-these molecular mechanical models are called \emph{force fields}. I will now
-discuss how these force fields are designed, with special attention payed to the
-\emph{AMBER} family of force fields.
+For larger systems, however, it becomes increasingly difficult to use QM methods
+for two reasons. First, the computational demand for obtaining the energy of a
+single structure rapidly increases. Second, phase space becomes so massive that
+calculating the potential energy of a small number of snapshots is no longer a
+reasonable approximation to the partition function. For these reasons, we seek
+to develop a model with which we can efficiently calculate interatomic
+potentials in molecular systems without solving the electronic Schr\"odinger
+equation. This model will fit a simple functional form to the potential of the
+molecule, describing the interaction between every atom in the system.  These
+functions typically have analytic derivatives that can be rapidly evaluated to
+facilitate their use in MD simulations. Because the analytic gradients of these
+potentials are the forces that act on the atomic centers, these molecular
+mechanical models are called \emph{force fields}. I will now discuss how these
+force fields are designed, with special attention paid to the \emph{AMBER}
+family of force fields.
 
 \subsection{Force Fields}
 
@@ -621,10 +621,10 @@ the non-bonded interactions I will discuss arise due to charge-charge
 interactions, typically referred to as \emph{electrostatic} interactions.
 
 Atoms treated in a force field are assigned partial charges that roughly
-correspond to atomic electronegativities, although each force field has a
-precise recipe for deriving partial atomic charges. A common strategy to assign
-partial charges is to fit to an electrostatic potential (ESP) calculated using a
-QM method. It is common practice to apply constraints to the fit to ensure that
+correspond to atom electronegativities, although each force field has a precise
+recipe for deriving partial atomic charges. A common strategy to assign partial
+charges is to fit to an electrostatic potential (ESP) calculated using a QM
+method. It is common practice to apply constraints to the fit to ensure that
 rotationally degenerate atoms (\eg the three hydrogen atoms in a freely rotating
 methyl group) have the same charge---a technique referred to as restrained
 electrostatic potential (RESP). \cite{Bayly_JPhysChem_1993_v97_p10269,
@@ -646,9 +646,10 @@ The electrostatic potential is calculated according to
    U (r_{i,j}) = k \frac {q_i q_j} {r_{i,j}}
    \label{eq1:ElectrostaticInteractions}
 \end{equation}
-where $k$ is the electrostatic constant, $q_i$ is the partial charge on atom
-$i$, and $r_{i,j}$ is the distance between atoms $i$ and $j$. One thing to note
-about Eq. \ref{eq1:ElectrostaticInteractions} is the long-ranged nature of the
+In Eq. \ref{eq1:ElectrostaticInteractions}, $k$ is the electrostatic constant,
+$q_i$ is the partial charge on atom $i$, and $r_{i,j}$ is the distance between
+atoms $i$ and $j$. One thing to note about Eq.
+\ref{eq1:ElectrostaticInteractions} is the long-ranged nature of the
 interaction. While the electrostatic energy of two charged particles falls to 0
 as the distance between them becomes infinite, $1 / i$ decays so slowly that
 $\sum _ {i=1}^{\infty} 1 / i = \infty$. Therefore, electrostatic interactions
@@ -700,7 +701,7 @@ are equivalent if
 Due to its computational efficiency, the third form of Eq.
 \ref{eq1:LennardJones} is typically used in molecular simulations. To use Eq.
 \ref{eq1:LennardJones} in these simulations, the $a_{i,j}$ and $b_{i,j}$ values
-must computed for every pair of atoms in the system. For transferable force
+must be computed for every pair of atoms in the system. For transferable force
 fields (\ie force fields whose parameters can be used for many different, but
 related, systems), each type of atom defined in the force field is typically
 assigned an individual $\varepsilon$ and $\sigma$ parameter which must be

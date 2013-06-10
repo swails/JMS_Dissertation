@@ -37,15 +37,14 @@ not been changed since 2003. These scripts will be collectively referred to as
 \emph{mm\_pbsa.pl} from now on. Due to its age, \emph{mm\_pbsa.pl} was
 compatible only with the low-precision, inefficient ASCII trajectory format,
 and offered only a limited set of the available implicit solvent models and
-their options that had been developed over the decade that followed its initial
-release. Furthermore, the input for \emph{mm\_pbsa.pl} was very different from
-the typical input that most other Amber programs expected, from how input files
-were specified to how user options were provided. Finally, \emph{mm\_pbsa.pl}
-was only capable of running in serial, despite the fact that end-state analyses
-themselves could be trivially parallelized by computing binding free energies
-for individual frames simultaneously.
+input parameters that had been developed over the decade that followed its
+initial release. Furthermore, the input for \emph{mm\_pbsa.pl} was very
+different from the typical input that most other Amber programs expected.
+Finally, \emph{mm\_pbsa.pl} was only capable of running in serial, despite the
+fact that end-state analyses themselves could be trivially parallelized by
+computing binding free energies for individual frames simultaneously.
 
-The goal of this project was to revitalize this set of helpful scripts that had
+The goal of my project was to revitalize this set of helpful scripts that had
 fallen out of support and had grown outdated. We wanted to bring the input style
 in line with the rest of the Amber programs---for example, atom selections
 should be input via the Amber mask syntax, and groups of related variables
@@ -131,7 +130,7 @@ Amber \cite{AMBER12} provides several schemes to decompose calculated free
 energies into specific residue contributions using either the GB or PB implicit
 solvent models, \cite{Metz2012} following the work of \citeauthor{Gohlke2003}
 \cite{Gohlke2003} Interactions can be decomposed for each residue by including
-only those interaction in which one of the residue's atoms is involved---a
+only those interactions in which one of the residue's atoms is involved---a
 scheme called \emph{per-residue} decomposition. Alternatively, interactions can
 be decomposed by specific residue pairs by including only those interactions in
 which one atom from each of the analyzed residues is participating---a scheme
@@ -179,9 +178,9 @@ matrix, and diagonalizing it to obtain the vibrational frequencies
 (eigenvalues). Because of the Hessian diagonalization, normal-mode calculations
 scale as roughly $(3N)^3$, where N is the number of atoms in the system. While the
 quasi-harmonic approach is less computationally expensive, a large number of
-frames, or members of the ensemble, are typically needed to extrapolate the
-asymptotic limit of the total entropy for each ensemble, which increases the
-computational cost of the original simulation. \cite{Wang2001}
+snapshots are typically needed to extrapolate the asymptotic limit of the total
+entropy for each ensemble, which increases the computational cost of the
+original simulation. \cite{Wang2001}
 
 \subsection{General Workflow}
 
@@ -231,7 +230,7 @@ solvent model.
 The use of \emph{MMPBSA.py} is similar to that of Amber's MD engines
 \emph{sander} and \emph{pmemd}. The command-line flags common to both
 \emph{MMPBSA.py} and the MD engines are identical, and input files are separated
-with similar, Fortran-style namelists, indicated with an ampersand (&) prefix.
+with similar, Fortran-style namelists, indicated with an ampersand (\&) prefix.
 
 The \emph{MMPBSA.py} input file contains a &general namelist for variables that
 control general behavior. For example, variables that control the subset of
@@ -309,8 +308,8 @@ researchers to easily manipulate and extract information from Amber
 parameter-topology (prmtop) files. The prmtop is a compact ASCII (\ie pure text)
 file whose format was optimized for extensibility and Fortran-style parsing. The
 data structures stored in this file are similar to the data structures used
-inside the Amber codes that perform MM simulations, making them impossible to
-extract information from simply by reading its contents. The full structure and
+inside the Amber codes that perform MM simulations, making them overly tedious
+to extract information by simply reading its contents. The full structure and
 specification of the prmtop is presented in Appendix \ref{appendixB}.
 
 \subsection{Motivation}
@@ -323,10 +322,10 @@ released with Amber or AmberTools capable of modifying the topology file in a
 general way. Changing simple atomic properties---such as the partial charge or
 the set of intrinsic radii used for implicit solvent models---required the user
 to modify their original input files to \emph{tleap} and recreate a topology
-file from their original structure, or in some cases even modify \emph{tleap}
-directly! Because many input files for \emph{tleap} are shared among all users
-and original input files help document one's protocol, modifying these files
-frequently is dangerous.
+file from their original structure, or in some cases even modify the
+\emph{tleap} source code directly! Because many input files for \emph{tleap} are
+shared among all users and original input files help document one's protocol,
+modifying these files frequently is dangerous.
 
 The tedious and error-prone nature of this process is a deterrent for testing
 some new hypotheses and methods that require small changes to the topology file.
@@ -389,14 +388,14 @@ through other programs.
 \subsubsection{Lennard-Jones Parameter Modifications}
 
 I will briefly describe here how the radius ($r_i$) and well depth
-($\varepsilon_i$) assigned to each atom type $i$ in the parameter files defining
-each atom type is translated into a set of parameters used to compute the LJ
-potential in the Amber force field. Specifically, between pairs $i$ and $j$, the
-well depth $\varepsilon_{i,j}$ is the geometric average and the radius $r_{i,j}$
-is the arithmetic average
+($\varepsilon_i$) assigned in the parameter databases for each atom type $i$ is
+translated into a set of parameters used to compute the LJ potential in the
+Amber force field. Specifically, between pairs $i$ and $j$, the well depth
+$\varepsilon_{i,j}$ is the geometric average and the radius $r_{i,j}$ is the
+arithmetic average
 \begin{align}
    \varepsilon_{i,j} & = \sqrt{\varepsilon_i \varepsilon_j} \nonumber \\
-   R_{min,i,j} = R_{min,i} + R_{min,j}
+   R_{min,i,j} & = R_{min,i} + R_{min,j}
    \label{eq6:CombiningRules}
 \end{align}
 

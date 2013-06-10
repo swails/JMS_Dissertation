@@ -687,6 +687,44 @@ def enedist():
    
    fig.savefig('TempOverlap.ps')
 
+def ntrelax():
+   """ Creates the relaxation time pKa plot """
+   fig, (ax1, ax2) = plt.subplots(1,2, sharey=True)
+   ax1.set_xlim((0,300))
+   ax1.set_ylim((3.9,4.2))
+   ax2.set_xlim((1900,2200))
+   ax1.grid(lw=1); ax2.grid(lw=1)
+
+   ax1.set_xlabel(r'$\tau_{rlx}$ (fs)',
+                  fontdict=dict(family='sans-serif', size=20), position=(1,1))
+   ax1.set_ylabel(r'$pK_a$', fontdict=dict(family='sans-serif', size=20))
+
+   xdata = np.asarray((10, 40, 100, 200, 2000))
+   ydata = np.asarray((4.1, 4.08, 4.07, 4.1, 4.05))
+
+   ax1.plot(xdata, ydata, 'ko', markersize=6)
+   ax2.plot(xdata, ydata, 'ko', markersize=6)
+
+   # Hide the spines
+   ax1.spines['right'].set_visible(False)
+   ax2.spines['left'].set_visible(False)
+   ax1.yaxis.tick_left()
+   ax1.tick_params(labeltop='off')
+   ax2.yaxis.tick_right()
+
+   plt.subplots_adjust(wspace=0.10)
+
+   # Diagonal line size
+   d = 0.015
+   kwargs = dict(transform=ax1.transAxes, color='k', clip_on=False)
+   ax1.plot((1-d, 1+d), (-d, d), **kwargs)
+   ax1.plot((1-d, 1+d), (1-d, 1+d), **kwargs)
+   kwargs.update(transform=ax2.transAxes)
+   ax2.plot((-d,d), (-d,d), **kwargs)
+   ax2.plot((-d,d), (1-d, 1+d), **kwargs)
+
+   fig.savefig('pKaplot.ps')
+
 if __name__ == '__main__':
    """ Determine which plots to make """
    parser = ArgumentParser()
@@ -721,6 +759,10 @@ if __name__ == '__main__':
    group.add_argument('--umbrella', dest='umbrella', default=False,
                       action='store_true', help='''Create the figure showing the
                       effect of umbrellas for umbrella sampling''')
+   group = parser.add_argument_group('Chapter 4 Figures')
+   group.add_argument('--ntrelax', dest='ntrelax', default=False,
+                      action='store_true', help='''Create the figure showing the
+                      correlation between ntrelax and the predicted pKa''')
    group = parser.add_argument_group('Chapter 5 Figures')
    group.add_argument('--energy-distributions', dest='enedist', default=False,
                       action='store_true', help='''Create the figure of energy
@@ -750,3 +792,5 @@ if __name__ == '__main__':
       umbrella()
    if opt.enedist:
       enedist()
+   if opt.ntrelax:
+      ntrelax()
