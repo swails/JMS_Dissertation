@@ -369,10 +369,13 @@ interstitial region resembles a neck---as seen in Fig.
 \begin{figure}
    \includegraphics[height=6.5in, angle=90, trim=1cm 0.5cm 1cm 0.5cm, clip=true]
                    {Interstitial.ps}
-   \caption{Region of space between two atoms $i$ and $j$ of radius $R_i$ and
+   \caption[Region of space between two atoms $i$ and $j$ of radius $R_i$ and
             $R_j$ that is inaccessible to a spherical solvent molecule of radius
-            $R_solv$. This inaccessible region is called the \emph{neck} and is
-            shaded gray.}
+            $R_{solv}$.]
+           {Region of space between two atoms $i$ and $j$ of radius $R_i$ and
+            $R_j$ that is inaccessible to a spherical solvent molecule of radius
+            $R_{solv}$. This inaccessible region is called the \emph{neck} and
+            is shaded gray.}
    \label{fig2:Interstitial}
 \end{figure}
 
@@ -484,7 +487,10 @@ are explored in the next three sections.
 \begin{figure}
    \includegraphics[height=6.5in, angle=90, trim=0.7cm 3cm 0.7cm 3cm, clip=true]
                    {PBC.ps}
-   \caption{Periodic simulation in two dimensions with a rectangular unit cell.
+   \caption[Periodic simulation in two dimensions with a rectangular unit cell.
+            The maximum permissible cutoff (r\sub{cut}) for the minimum image
+            convention is shown]
+           {Periodic simulation in two dimensions with a rectangular unit cell.
             The maximum permissible cutoff (r\sub{cut}) for the minimum image
             convention is shown with a blue dotted circle centered on particle 1
             in the first box.}
@@ -566,13 +572,15 @@ function is shown in Fig. \ref{fig2:Cutoff}C.
 
 \begin{figure}
    \includegraphics[height=6.5in, angle=90]{Cutoff.ps}
-   \caption{Effects of various 16 {\AA} cutoff schemes on the electrostatic
-   interaction of two monovalent ions with opposite charges. A) shows the
-   effect of imposing a hard cutoff. B) shows a typical switching function
-   starting at 8 {\AA}. C) shows a typical shifting function for the
-   electrostatic potential. The energies as a function of distance are shown in
-   the top 3 plots and the forces as a function of distance are the bottom 3
-   plots.}
+   \caption[Effects of various 16 {\AA} cutoff schemes on the electrostatic
+            interaction of two monovalent ions with opposite charges.]
+           {Effects of various 16 {\AA} cutoff schemes on the electrostatic
+            interaction of two monovalent ions with opposite charges. A) shows
+            the effect of imposing a hard cutoff. B) shows a typical switching
+            function starting at 8 {\AA}. C) shows a typical shifting function
+            for the electrostatic potential. The energies as a function of
+            distance are shown in the top 3 plots and the forces as a function
+            of distance are the bottom 3 plots.}
    \label{fig2:Cutoff}
 \end{figure}
 
@@ -594,7 +602,9 @@ diagrammatically in Fig. \ref{fig2:PeriodicCells}.
 \begin{figure}
    \includegraphics[height=4in, angle=90, trim=0.1cm 2cm 0.1cm 2cm, clip=true]
                     {PeriodicCells.ps}
-   \caption{Periodic cells added in a spherical shape radially from the central
+   \caption[Periodic cells added in a spherical shape radially from the central
+            unit cell. The progression from darker to lighter cells shows]
+           {Periodic cells added in a spherical shape radially from the central
             unit cell. The progression from darker to lighter cells shows the
             order in which interactions are accumulated in the sum of the
             electrostatic interactions (with the darker cells being added before
@@ -801,7 +811,9 @@ very long unbiased simulation to cross that barrier.
 
 \begin{figure}
    \includegraphics[width=6.5in]{FreeEnergyProfile.ps}
-   \caption{An example 1-dimensional PMF (shown in black). Two biasing umbrella
+   \caption[An example 1-dimensional PMF (shown in black). Two biasing umbrella
+            potentials are shown alongside the resulting, biased PMF. All PMF]
+           {An example 1-dimensional PMF (shown in black). Two biasing umbrella
             potentials are shown alongside the resulting, biased PMF. All PMF
             curves have been translated so that the `minimum' free energy is 0.
             Because only energy differences are significant, vertical
@@ -1031,7 +1043,10 @@ replicas to sample along the state space coordinate in REMD calculations.
 %  \includegraphics[height=6.5in, angle=90, trim=1cm 0.5cm 1cm 0.5cm, clip=true]
    \includegraphics[height=6.5in, angle=90]
                    {REMD.ps}
-   \caption{Diagrammatic sketch of REMD simulations. Replicas are represented as
+   \caption[Diagrammatic sketch of REMD simulations. Replicas are represented as
+            thick arrows and exchange attempts are shown between adjacent
+            replicas]
+           {Diagrammatic sketch of REMD simulations. Replicas are represented as
             thick arrows and exchange attempts are shown between adjacent
             replicas connected by thin black arrows. The question-mark indicates
             that a MC move is accepted with the probability calculated according
@@ -1215,7 +1230,9 @@ vanishing atoms show significantly better convergence of free energies.
 
 \begin{figure}
    \includegraphics[width=6.5in, height=4.06in]{SoftCore.png}
-   \caption{Functional form of soft-core Lennard Jones interactions with
+   \caption[Functional form of soft-core Lennard Jones interactions with
+            different values of $\alpha$ from Eq. \ref{eq2:SoftCore}.]
+           {Functional form of soft-core Lennard Jones interactions with
             different values of $\alpha$ from Eq. \ref{eq2:SoftCore}. The
             $\lambda = 1$ state is the one in which an atom has vanished. See
             Fig. \ref{fig2:HardCore} to see how soft cores enable sampling close
@@ -1305,7 +1322,8 @@ system.
 
 \begin{figure}
    \includegraphics[height=6.5in, angle=90]{MMPBSA.ps}
-   \caption{Thermodynamic cycle for MM/PBSA calculations. Implicit solvent is
+   \caption[Thermodynamic cycle for MM/PBSA calculations.]
+           {Thermodynamic cycle for MM/PBSA calculations. Implicit solvent is
             represented with a blue background, while a white background
             represents systems in the gas phase.}
    \label{fig2:MMPBSA}

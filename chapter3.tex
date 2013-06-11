@@ -391,7 +391,9 @@ simulation.
 
 \begin{figure}
  \includegraphics[width=6.5in, height=4.06in]{1AKI_RMSD_Comparison.png}
- \caption{RMSD plots for CpHMD simulations (a) and pH-REMD simulations at
+ \caption[RMSD plots for CpHMD simulations (a) and pH-REMD simulations at
+          different exchange attempt frequencies (b-d) as a function of time]
+         {RMSD plots for CpHMD simulations (a) and pH-REMD simulations at
           different exchange attempt frequencies (b-d) as a function of time
           throughout the simulation. The first nanosecond is excluded, as
           described in \emph{Methods}. The RMSD is plotted with respect to the
@@ -415,22 +417,24 @@ where $f_d$ is the fraction of the total simulation that the titratable residue
 spent in a deprotonated state.
 
 \begin{table}
-  \caption{pK\sub{a} and Hill coefficients for each residue taken from each set
+  \caption[pK\sub{a} and Hill coefficients for each residue taken from each set
+           of simulations. The pK\sub{a}s and Hill coefficients (\textit{n})
+           are shown for each EAF.]
+          {pK\sub{a} and Hill coefficients for each residue taken from each set
            of simulations. The pK\sub{a}s and Hill coefficients (\textit{n})
            are shown for each EAF. pK\sub{a} root mean square errors (RMSEs)
            from the \super{13}C-NMR experimental values published by
            \citeauthor{Webb_Proteins_2011_v79_p685}
-           \cite{Webb_Proteins_2011_v79_p685} are shown in bold in the last row.
+           \cite{Webb_Proteins_2011_v79_p685} are shown in the last row.
            Asp 66 was problematic because it is positioned between several
            Arginine residues, causing it to resist protonation. When it
            significantly impacts the RMSE, the RMSE for all residues
            \emph{except} Asp 66 is shown in parentheses next to the total RMSE.}
   \label{tbl3:pkas}
-  \begin{tabular}{|l|c|c|c|c|c|c|c|}
+  \begin{tabular}{lrcrcccc}
     \hline
-    & \multicolumn{2}{|c|}{CpHMD} & \multicolumn{2}{|c|}{EAF=0.5 ps\super{-1}} & 
-      \multicolumn{2}{|c|}{EAF=50.0 ps\super{-1}} & \\
-    \hline
+    & \multicolumn{2}{c}{CpHMD} & \multicolumn{2}{c}{EAF=0.5 ps\super{-1}} & 
+      \multicolumn{2}{c}{EAF=50.0 ps\super{-1}} & \\
     Residue & pK\sub{a} & \textit{n} & pK\sub{a} & \textit{n} &  
     pK\sub{a} & \textit{n} & Expt. pK\sub{a} \\
     \hline
@@ -444,11 +448,11 @@ spent in a deprotonated state.
     ASP 87 & 2.52 & 0.81 & 2.61 & 0.81 & 2.66 & 0.91 & 2.2 $\pm$ 0.1 \\
     ASP 101 & 3.69 & 2.10 & 3.66 & 1.00 & 3.57 & 0.87 & 4.5 $\pm$ 0.1 \\
     ASP 119 & 2.26 & 0.98 & 2.73 & 1.04 & 2.43 & 0.96 & 3.5 $\pm$ 0.3 \\
-    \hline
-\textbf{RMSE} & \multicolumn{2}{|c|}{\textbf{6.15 (0.74)}} & 
-                \multicolumn{2}{|c|}{\textbf{1.56 (0.76)}} & 
-                \multicolumn{2}{|c|}{\textbf{0.89}} &
-                \textbf{---} \\
+    \\
+    RMSE & \multicolumn{2}{c}{6.15 (0.74)} & 
+                \multicolumn{2}{c}{1.56 (0.76)} & 
+                \multicolumn{2}{c}{0.89} &
+                --- \\
     \hline
   \end{tabular}
 \end{table}
@@ -525,14 +529,17 @@ to the CpHMD simulations.  The results for the 8 residues plotted in Figs.
 \ref{fig3:GoodTitr} and \ref{fig3:BadTitr} are shown in Table \ref{tbl3:fits}.
 
 \begin{table}
- \caption{Value of $RSS$ according to Eq. \ref{eq3:fit_quality} for the 8
+ \caption[Value of $RSS$ according to Eq. \ref{eq3:fit_quality} for the 8
+          residues shown in Figs. \ref{fig3:GoodTitr} and \ref{fig3:BadTitr}.
+          Larger values represent more deviation from the fitted curve]
+         {Value of $RSS$ according to Eq. \ref{eq3:fit_quality} for the 8
           residues shown in Figs. \ref{fig3:GoodTitr} and \ref{fig3:BadTitr}.
           Larger values represent more deviation from the fitted curve, whereas
           a value of 0 represents a perfect fit. The `good' titratable residues
           (Fig.  \ref{fig3:GoodTitr}) are the first 4 entries and the `bad'
           titratable residues (Fig. \ref{fig3:BadTitr}) are the last 4 entries.}
  \label{tbl3:fits}
- \begin{tabular}{|c|c|c|}
+ \begin{tabular}{ccc}
   \hline
   Residue & $RSS$ (CpHMD) & $RSS$ (EAF=50 ps\super{-1}) \\
   \hline
@@ -597,18 +604,20 @@ fitting Eq. \ref{eq3:hill} to the data obtained from each pH.  The results are
 summarized in Table \ref{tbl3:pkastats}.
 
 \begin{table}
- \caption{Standard deviations of pK\sub{a} ($\sigma_{pK_a}$) and Hill
+ \caption[Standard deviations of pK\sub{a} ($\sigma_{pK_a}$) and Hill
+          coefficient ($\sigma_n$) and average Hill coefficient ($\bar n$)
+          calculated by dividing each simulation into sections of 0.25 ns.]
+         {Standard deviations of pK\sub{a} ($\sigma_{pK_a}$) and Hill
           coefficient ($\sigma_n$) and average Hill coefficient ($\bar n$)
           calculated by dividing each simulation into sections of 0.25 ns.  The
           pK\sub{a} and Hill coefficients are calculated for each section of the
           simulation by fitting fitting data from all pH replicas to
           Eq. \ref{eq3:hill} and calculating the statistics from the 60
           resulting data points.}
- \begin{tabular}{|l|c|c|c||c|c|c||c|c|c|}
+ \begin{tabular}{lrccrcclcc}
   \hline
-    & \multicolumn{3}{|c||}{CpHMD} & \multicolumn{3}{c||}{EAF=0.5 ps\super{-1}} & 
-      \multicolumn{3}{c|}{EAF=50.0 ps\super{-1}} \\
-  \hline
+    & \multicolumn{3}{c}{CpHMD} & \multicolumn{3}{c}{EAF=0.5 ps\super{-1}} & 
+      \multicolumn{3}{c}{EAF=50.0 ps\super{-1}} \\
    Residue & $\sigma_{pK_a}$ & $\bar{n}$ & $\sigma_{n}$ & $\sigma_{pK_{a}}$ & $\bar{n}$ & $\sigma_{n}$ &
            $\sigma_{pK_{a}}$ & $\bar{n}$ & $\sigma_{n}$ \\
   \hline
@@ -616,14 +625,16 @@ summarized in Table \ref{tbl3:pkastats}.
   HIS 15 & 0.24 & 2.6 & 1.7 & 0.21 & 1.2 & 0.4 & 0.20 & 1.0 & 0.1 \\
   ASP 18 & 0.27 & 1.4 & 0.7 & 0.29 & 1.0 & 0.3 & 0.28 & 1.0 & 0.3 \\
   GLU 35 & 0.42 & 8.1 & 6.7 & 0.30 & 1.6 & 0.6 & 0.41 & 1.2 & 0.3 \\
-  ASP 48 & 6.61 & 1.8 & 3.5 & 5.1 & 1.0 & 1.2 & 3.3 & 1.1 & 0.8 \\
+  ASP 48 & 6.61 & 1.8 & 3.5 & 5.1\verb; ; & 1.0 & 1.2 & 3.3 & 1.1 & 0.8 \\
   ASP 52 & 1.04 & 1.2 & 0.8 & 0.40 & 1.2 & 0.5 & 0.64 & 1.0 & 0.7 \\
-  ASP 66 & 15 & 0.8 & 0.9 & 15 & 1.0 & 0.3 & 4.9 & 1.4 & 0.9 \\
+  ASP 66 & 15\verb;   ; & 0.8 & 0.9 & 15\verb;   ; & 1.0 & 0.3 & 4.9 &
+           1.4 & 0.9 \\
   ASP 87 & 0.42 & 2.0 & 1.8 & 0.37 & 1.0 & 0.4 & 0.43 & 1.1 & 0.3 \\
   ASP 101 & 0.20 & 3.8 & 2.1 & 0.19 & 1.1 & 0.2 & 0.30 & 0.7 & 0.2 \\
   ASP 119 & 0.33 & 1.4 & 0.8 & 0.22 & 1.2 & 0.3 & 0.24 & 1.1 & 0.3 \\
-  \hline
-  \textit{Average} & 2.4 & 3.0 & 2.7 & 2.2 & 1.1 & 0.4 & 1.1 & 1.1 & 0.4 \\
+  \\
+  Average & 2.4\verb; ; & 3.0 & 2.7 & 2.2\verb; ; & 1.1 & 0.4 & 1.1 & 
+            1.1 & 0.4 \\
   \hline
  \end{tabular}
  \label{tbl3:pkastats}
@@ -669,7 +680,8 @@ simulation, protonation state changes are attempted every 5 steps.
 
 \begin{figure}
  \includegraphics[width=6.5in, height=4.06in]{transitions.png}
- \caption{Number of protonation state transitions per ns of simulation time. A
+ \caption[Number of protonation state transitions per ns of simulation time.]
+         {Number of protonation state transitions per ns of simulation time. A
           transition is counted if consecutive snapshots in the ensemble have a
           different number of protons for that residue. The CpHMD results are
           labeled with EAF=0.1 ps\super{-1} to fit on the log-scale.}
@@ -762,7 +774,9 @@ shorter amount of time.
 
 \begin{figure}
  \includegraphics[width=6.5in, height=3.05in]{Kullback_Leibler.png}
- \caption{Kullback-Leibler divergence for each simulation calculated via Eq.
+ \caption[Kullback-Leibler divergence for each simulation calculated via Eq.
+          \ref{eq3:k-l}.]
+         {Kullback-Leibler divergence for each simulation calculated via Eq.
           \ref{eq3:k-l}.  $P(i)$ is the RMSD histogram of the indicated
           simulation at time $t$ and $Q(i)$ is the RMSD histogram of the entire
           indicated simulation.  Values closer to zero indicate distributions of
@@ -800,7 +814,9 @@ the pH-REMD simulations with a low EAF.
 
 \begin{figure}
  \includegraphics[width=6.5in, height=6.09in]{residue_fluctuations.png}
- \caption{Average atomic fluctuations for each residue relative to the average
+ \caption[Average atomic fluctuations for each residue relative to the average
+          structure of the ensemble.]
+         {Average atomic fluctuations for each residue relative to the average
           structure of the ensemble. Data are shown for CpHMD, low EAF (0.5
           ps\super{-1}) and high EAF (50 ps\super{-1}).}
  \label{fig3:fluxes}
@@ -900,11 +916,12 @@ simulation per day, can be directly compared. The average results obtained for
 each EAF is summarized in Table \ref{tbl3:timings}.
 
 \begin{table}
- \caption{Average timings for CpHMD and pH-REMD simulations. CpHMD simulations
+ \caption[Average timings for CpHMD and pH-REMD simulations.]
+         {Average timings for CpHMD and pH-REMD simulations. CpHMD simulations
           used 24 processors, whereas pH-REMD simulations used 288
           processors---24 per replica. All simulations were performed on NICS
           Keeneland. \cite{Vetter2011}}
- \begin{tabular}{|c|c|}
+ \begin{tabular}{rc}
   \hline
   EAF (ps \super{-1}) & Efficiency (ns/day) \\
   \hline

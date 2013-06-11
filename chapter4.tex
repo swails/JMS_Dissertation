@@ -241,7 +241,9 @@ their values prior to the relaxation and the standard dynamics is continued.
 
 \begin{figure}
    \includegraphics[width=4in]{CpHMD_Workflow.eps}
-   \caption{Workflow of the proposed discrete protonation CpHMD method in
+   \caption[Workflow of the proposed discrete protonation CpHMD method in
+            explicit solvent.]
+           {Workflow of the proposed discrete protonation CpHMD method in
             explicit solvent. Following the standard MD, the solvent, including
             all non-structural ions (as determined by user-input), are stripped
             and the protonation state changes are evaluated in a GB potential.
@@ -333,22 +335,25 @@ model compound. This is shown in Eq. \ref{eq4:RefEnergyShift}. A summary of the
 required changes is given in Table \ref{tbl4:refenes}.
 
 \begin{equation}
-   \Delta G _ {ref} = \Delta G_{TI} + kT\,\ln 10\, \Delta N pK_{a, model}
+   \Delta G _ {ref} = \Delta G_{TI} + kT\,\ln 10\, \Delta N \, pK_{a, model}
    \label{eq4:RefEnergyShift}
 \end{equation}
 
 \begin{table}
-   \caption{Model compound pK\sub{a} values and reference energies. Because only
-   differences in reference energies are used in the MC calculation, one state
-   is arbitrarily assigned a reference energy of 0 (the deprotonated states of
-   AS4 and GL4, the protonated state of CYS, and the double-protonated state of
-   HIP). The listed reference energies are calculated with respect to the
-   arbitrary zero value.  $pK _ {a} ^ {calc}$ are pK\sub{a}s calculated with the
-   proposed method using the GB reference energy ($\Delta G _ {ref} ^ {GB}$).
-   Adjusted reference energies for explicit solvent CpHMD are labeled as $\Delta
-   G _ {ref} ^ *$. All energies are in \emph{kcal/mol}}
+   \caption[Model compound pK\sub{a} values and reference energies.]
+           {Model compound pK\sub{a} values and reference energies. Because only
+            differences in reference energies are used in the MC calculation,
+            one state is arbitrarily assigned a reference energy of 0 (the
+            deprotonated states of AS4 and GL4, the protonated state of CYS, and
+            the double-protonated state of HIP). The listed reference energies
+            are calculated with respect to the arbitrary zero value.  $pK _ {a}
+            ^ {calc}$ are pK\sub{a}s calculated with the proposed method using
+            the GB reference energy ($\Delta G _ {ref} ^ {GB}$).  Adjusted
+            reference energies for explicit solvent CpHMD are labeled as $\Delta
+            G _ {ref} ^ *$. All energies are in \emph{kcal/mol}}
 
-   \begin{tabular}{ccccc}
+   \begin{tabular}{ccrcr}
+      \hline
       Residue & Reference pK\sub{a} & $\Delta G _ {ref} ^ {GB}$ &
             $pK _ {a} ^ {calc}$ & $\Delta G _ {ref} ^ *$ \\
       \hline
@@ -498,7 +503,9 @@ solvent buffer for these types of simulations.
 
 \begin{figure}
    \includegraphics[width=6.5in]{model_AS4_RDF_box.eps}
-   \caption{Radial distribution functions (RDFs) of solvent oxygen atoms (O) and
+   \caption[Radial distribution functions (RDFs) of solvent oxygen atoms (O) and
+            hydrogen atoms (H) with different unit cell sizes.]
+           {Radial distribution functions (RDFs) of solvent oxygen atoms (O) and
             hydrogen atoms (H) with different unit cell sizes. The shown
             measurements---10, 15, and 20 \text{\AA}---represent the size of the
             solvent buffer surrounding the solute. RDF plots for three different
@@ -547,7 +554,10 @@ states compared to aspartate, glutamate, and histidine.
 
 \begin{figure}
    \includegraphics[width=6in]{Cys_ntrelax_energies.eps}
-   \caption{The relaxation of the protonated state---starting from the
+   \caption[The relaxation of the protonated state---starting from the
+            protonated trajectory---is shown in blue with its autocorrelation
+            function shown in purple.]
+           {The relaxation of the protonated state---starting from the
             protonated trajectory---is shown in blue with its autocorrelation
             function shown in purple. The relaxation of the deprotonated state
             from an equilibrated snapshot from the protonated ensemble is shown
@@ -597,7 +607,9 @@ the value of $\tau _ {rlx}$.
 
 \begin{figure}
    \includegraphics[width=6.5in]{ntrelax_radial_ph.eps}
-   \caption{RDFs of water oxygen atoms (O) and hydrogen atoms (H) around the
+   \caption[RDFs of water oxygen atoms (O) and hydrogen atoms (H) around the
+            center-of-mass of the carboxylate group]
+           {RDFs of water oxygen atoms (O) and hydrogen atoms (H) around the
             center-of-mass of the carboxylate group of the model aspartate
             molecule at different solution pHs.}
    \label{fig4:ntrelax_rdfs}
@@ -644,7 +656,10 @@ respectively.
 
 \begin{figure}
    \includegraphics[width=6.5in]{ACFCA_Titration_Curves.eps}
-   \caption{Titration curves of Cys 2 and Cys 4 in the \emph{ACFCA}
+   \caption[Titration curves of Cys 2 and Cys 4 in the \emph{ACFCA}
+            pentapeptide. Results from CpHMD (no replica exchange attempts) and
+            pH-REMD are shown]
+           {Titration curves of Cys 2 and Cys 4 in the \emph{ACFCA}
             pentapeptide. Results from CpHMD (no replica exchange attempts) and
             pH-REMD are shown in the plots on the left and right, respectively.}
    \label{fig4:acfca_titration_curves}
@@ -680,7 +695,10 @@ are summarized in Table \ref{tbl4:hewl_noions_pkas} for both starting
 structures.
 
 \begin{table}
-   \caption{Calculated pK\sub{a}s for acid-range titratable residues in HEWL
+   \caption[Calculated pK\sub{a}s for acid-range titratable residues in HEWL
+            using the proposed method for both starting structures---PDBs 1AKI
+            and 4LYT---without ions.]
+           {Calculated pK\sub{a}s for acid-range titratable residues in HEWL
             using the proposed method for both starting structures---PDBs 1AKI
             and 4LYT---without ions. The root mean square error (RMSE) and mean
             unsigned error (MUE) with respect to the experimental values are
@@ -735,7 +753,9 @@ correlated with the improved titration of aspartate 66.
 
 \begin{figure}
    \includegraphics[width=6.5in]{1AKI_RMSDs.eps}
-   \caption{RMSD plots over 20 ns of pH-REMD simulation for HEWL at pH 2, 4, 6
+   \caption[RMSD plots over 20 ns of pH-REMD simulation for HEWL at pH 2, 4, 6
+            and 8 with respect to the starting crystal structure 1AKI.]
+           {RMSD plots over 20 ns of pH-REMD simulation for HEWL at pH 2, 4, 6
             and 8 with respect to the starting crystal structure 1AKI. The
             distributions are very similar for the starting structure 4LYT as
             well.}
@@ -784,9 +804,12 @@ around titratable residues enough to induce large pK\sub{a} shifts, making them
 important to include in the proposed method.
 
 \begin{table}
-   \caption{Calculated pK\sub{a}s for acid-range titratable residues in HEWL
+   \caption[Calculated pK\sub{a}s for acid-range titratable residues in HEWL
             using the proposed method for both starting structures---PDBs 1AKI
-            and 4LYT---with 21 added ions. The root mean square error (RMSE) and
+            and 4LYT---with 21 ions.]
+           {Calculated pK\sub{a}s for acid-range titratable residues in HEWL
+            using the proposed method for both starting structures---PDBs 1AKI
+            and 4LYT---with 21 ions. The root mean square error (RMSE) and
             mean unsigned error (MUE) with respect to the experimental values
             are shown in the last two rows.  Experimental values are taken from
             \citeauthor{Webb_Proteins_2011_v79_p685}
@@ -824,7 +847,10 @@ important to include in the proposed method.
 
 \begin{figure}
    \includegraphics[width=6.5in]{HEWL_AspArg_Dist_Ion_Comparison.eps}
-   \caption{Distance distribution functions calculated from HEWL simulations
+   \caption[Distance distribution functions calculated from HEWL simulations
+            begun with crystal structure 1AKI for all snapshots in the ensemble
+            at pH 1.0.]
+           {Distance distribution functions calculated from HEWL simulations
             begun with crystal structure 1AKI for all snapshots in the ensemble
             at pH 1.0. The probability distributions were calculated using
             \mbox{10 000} snapshots and smoothed using a gaussian kernel density
@@ -848,7 +874,9 @@ those from HEWL. This is expected, however, since the average magnitude of the
 pK\sub{a} shifts with respect to the model compounds is smaller in RNase A.
 
 \begin{table}
-   \caption{Calculated pK\sub{a}s for RNase A using simulations begun from
+   \caption[Calculated pK\sub{a}s for RNase A using simulations begun from
+            crystal structures 1KF5 and 7RSA.]
+           {Calculated pK\sub{a}s for RNase A using simulations begun from
             crystal structures 1KF5 and 7RSA. Experimental values shown are
             taken from Ref. \citenum{Baker_ArchBiochemBiophys_1996_v327_p189}.
             Root mean squared error (RMSE) and mean unsigned error (MUE) does
@@ -905,7 +933,9 @@ titratable residues that proved problematic in the simulations without the ions,
 following the trend seen in the HEWL calculations. The full summary of
 calculated pK\sub{a}s is shown in Table \ref{tbl4:rnase_a_ions_pkas}.
 \begin{table}
-   \caption{Calculated pK\sub{a}s for RNase A simulations run with explicit
+   \caption[Calculated pK\sub{a}s for RNase A simulations run with explicit
+            counterions present.]
+           {Calculated pK\sub{a}s for RNase A simulations run with explicit
             counterions present. All calculated pK\sub{a}s are included in the
             calculated root mean squared error (RMSE) and mean unsigned error
             (MUE).}
