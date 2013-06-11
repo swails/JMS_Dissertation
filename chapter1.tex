@@ -189,8 +189,13 @@ mathematically.
 The link between these ensembles and thermodynamics is the natural logarithm of
 the \emph{partition function}, which happens to be the normalization constant
 from Eq. \ref{eq1:EnsembleAvg} for each of the ensembles. The partition
-functions of the common ensembles are shown below in Eqs.
-\ref{eq1:MicrocanonicalPF} to \ref{eq1:IsobaricIsothermPF}.
+functions of the common ensembles are shown in Eqs. \ref{eq1:MicrocanonicalPF}
+to \ref{eq1:IsobaricIsothermPF}.
+
+The logarithm of the partition function for each ensemble is directly
+proportional to the thermodynamic function that has the same set of `natural'
+variables. These connections are summarized in Eqs. \ref{eq1:ThermoLink1}
+to \ref{eq1:ThermoLink4}. \cite{McQuarrie_Book_StatMech_1973}
 
 \begin{align}
    \text{Microcanonical} && \Omega(N, V, E) & = \omega(E) 
@@ -205,15 +210,11 @@ functions of the common ensembles are shown below in Eqs.
                Q(N, V, T) \exp(-\beta p V)
                \label{eq1:IsobaricIsothermPF}
 \end{align}
-where $\omega$ is the total number of states with a given energy and $\beta$ is
-$1 / k_BT$. According to the principle of equal \emph{a priori} probabilities,
-all states in the microcanonical ensemble are considered equally probable simply
-because there is no reason to assume otherwise.
-
-The logarithm of the partition function for each ensemble is directly
-proportional to the thermodynamic function that has the same set of `natural'
-variables. These connections are summarized below in Eqs. \ref{eq1:ThermoLink1}
-to \ref{eq1:ThermoLink4}. \cite{McQuarrie_Book_StatMech_1973}
+In Eqs. \ref{eq1:MicrocanonicalPF} to \ref{eq1:IsobaricIsothermPF}, $\omega$ is
+the total number of states with a given energy and $\beta$ is $1 / k_BT$.
+According to the principle of equal \emph{a priori} probabilities, all states in
+the microcanonical ensemble are considered equally probable simply because there
+is no reason to assume otherwise.
 
 \begin{align}
    \text{Microcanonical} && S & = k \ln \left ( \Omega (N, V, E) \right ) 

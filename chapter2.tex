@@ -670,22 +670,20 @@ contributions in reciprocal space. The result is then reverse-Fourier
 transformed to obtain the electrostatic potential at each of the particles.
 \cite{Allen_Tildesley}
 
-\paragraph{Particle-Mesh Ewald}
-
-A weakness of Ewald's summation is that the Fourier transform is a slow
-operation---on the order of $O(N^2)$ where $N$ is the number of particles. To
-address this shortcoming, the charge density due to the canceling charge
-distributions can be discretized on a 3-dimensional mesh with a given grid
-spacing. This allows us to use the fast Fourier transform algorithm (FFT) to
-perform both the Fourier transform and reverse Fourier transform to calculate
-the electrostatic potential at each of the mesh points. Unlike the standard
-Fourier transform, the FFT scales as $O(N\log(N))$, resulting in a substantial
-increase in computational efficiency. The potential at each of the
-particles---and its gradient---can then be interpolated from the adjacent grid
-points on the mesh using cardinal B-splines. \cite{Darden_Structure_1999_v7_p55}
-This approach is termed \emph{Particle-Mesh Ewald} (PME) due to the way in which
-the particles interact with the mesh to determine the long-range electrostatic
-interactions.
+\textbf{Particle-Mesh Ewald.} A weakness of Ewald's summation is that the
+Fourier transform is a slow operation---on the order of $O(N^2)$ where $N$ is
+the number of particles. To address this shortcoming, the charge density due to
+the canceling charge distributions can be discretized on a 3-dimensional mesh
+with a given grid spacing. This allows us to use the fast Fourier transform
+algorithm (FFT) to perform both the Fourier transform and reverse Fourier
+transform to calculate the electrostatic potential at each of the mesh points.
+Unlike the standard Fourier transform, the FFT scales as $O(N\log(N))$,
+resulting in a substantial increase in computational efficiency. The potential
+at each of the particles---and its gradient---can then be interpolated from the
+adjacent grid points on the mesh using cardinal B-splines.
+\cite{Darden_Structure_1999_v7_p55} This approach is termed \emph{Particle-Mesh
+Ewald} (PME) due to the way in which the particles interact with the mesh to
+determine the long-range electrostatic interactions.
 
 \subsubsection{Other Approaches}
 
@@ -1191,19 +1189,18 @@ singularity that prevents particles from entering the space occupied by a
 partially-vanished atom. This approach, described below, is referred to as
 \emph{soft-core thermodynamic integration}.
 
-\paragraph{Soft-core TI}
-
-To avoid the singularity in the Lennard Jones potential term of a vanishing atom
-in TI calculations, the functional form of this potential is adjusted by Eq.
-\ref{eq2:SoftCore}. A good choice for the functional form of the soft-core
-potential should satisfy several conditions. First, the potential should be
-either 0 for a vanished atom or the original Lennard Jones potential for an atom
-that is `fully' present. Second, the potential must not diverge between a
-partially vanished atom and an unperturbed atom when their separation approaches
-zero.  Finally, the force must remain conservative (\ie the energy difference
-between any two points must be independent of the path taken between them). Eq.
-\ref{eq2:SoftCore} satisfies all of these requirements, making it a good
-candidate to replace the standard Lennard-Jones potential in vanishing atoms.
+\textbf{Soft-core TI.} To avoid the singularity in the Lennard Jones potential
+term of a vanishing atom in TI calculations, the functional form of this
+potential is adjusted by Eq.  \ref{eq2:SoftCore}. A good choice for the
+functional form of the soft-core potential should satisfy several conditions.
+First, the potential should be either 0 for a vanished atom or the original
+Lennard Jones potential for an atom that is `fully' present. Second, the
+potential must not diverge between a partially vanished atom and an unperturbed
+atom when their separation approaches zero.  Finally, the force must remain
+conservative (\ie the energy difference between any two points must be
+independent of the path taken between them). Eq.  \ref{eq2:SoftCore} satisfies
+all of these requirements, making it a good candidate to replace the standard
+Lennard-Jones potential in vanishing atoms.
 
 \begin{align}
    U^{LJ}_{i,j}(r_{i,j}, \lambda) & = \lambda ^ n 4 \varepsilon_{i,j} \left(

@@ -194,19 +194,17 @@ useful in future studies if Gibbs' sampling exchange attempts were implemented,
 \cite{Chodera_JChemPhys_2011_v135_p194110} or in situations where swapping only
 an umbrella potential simplifies calculating Eq. \ref{eq5:HExchProb}.
 
-\paragraph{Replica Exchange Free Energy Perturbation}
-
-Here I will refocus on free energy perturbation---Eq.  \ref{eq2:FEP}---and its
-relationship with the H-REMD exchange probability shown in Eq.
-\ref{eq5:HExchProbNotemp}. By comparing these two equations, we see that the
-energy differences required in Eq. \ref{eq2:FEP} are calculated every time the
-exchange probability is calculated in Eq. \ref{eq5:HExchProbNotemp}!  Therefore,
-the term $\left\langle\exp\left(-\beta(E_B-E_A))\right)\right\rangle$ can be
-accumulated in both the forward and reverse directions during the course of the
-H-REMD simulation. This approach of computing FEP-based energy differences
-between two states during a H-REMD simulation is referred to as \emph{Replica
-Exchange Free Energy Perturbation} (REFEP).
-\cite{Meng_JChemTheoryComput_2011_v7_p2721,
+\textbf{Replica Exchange Free Energy Perturbation.} Here I will refocus on free
+energy perturbation---Eq. \ref{eq2:FEP}---and its relationship with the H-REMD
+exchange probability shown in Eq. \ref{eq5:HExchProbNotemp}. By comparing these
+two equations, we see that the energy differences required in Eq. \ref{eq2:FEP}
+are calculated every time the exchange probability is calculated in Eq.
+\ref{eq5:HExchProbNotemp}!  Therefore, the term
+$\left\langle\exp\left(-\beta(E_B-E_A))\right)\right\rangle$ can be accumulated
+in both the forward and reverse directions during the course of the H-REMD
+simulation. This approach of computing FEP-based energy differences between two
+states during a H-REMD simulation is referred to as \emph{Replica Exchange Free
+Energy Perturbation} (REFEP). \cite{Meng_JChemTheoryComput_2011_v7_p2721,
 Jiang_JChemTheoryComput_2010_v6_p2559}
 
 \section{Multi-Dimensional REMD}
@@ -245,7 +243,9 @@ required increases exponentially with each additional dimension.
 
 \begin{figure}
    \includegraphics[height=6.5in, angle=90]{MultiDREMD.ps}
-   \caption{Schematic showing exchange attempts in multi-dimensional REMD
+   \caption[Schematic showing exchange attempts in multi-dimensional REMD
+            simulations. Exchange attempts are indicated by the colored arrows]
+           {Schematic showing exchange attempts in multi-dimensional REMD
             simulations. Exchange attempts are indicated by the colored arrows,
             where red arrows indicate exchange attempts between the \emph{j}
             state parameters and blue arrows indicate exchange attempts between
@@ -295,18 +295,17 @@ Also important is the nature of the exchange itself. The two approaches
 currently used in Amber---exchanging state parameters or exchanging
 coordinates---are described below.
 
-\paragraph{Exchanging State Parameters}
-
-The most efficient way to carry out replica exchanges is to swap state
-parameters---an approach used in Amber for both T-REMD and pH-REMD. In this
-case, replicas typically differ by a term that modifies a potential energy
-function that is otherwise the same for each replica. In this instance,
-simulations are subject to a different thermodynamic constraint after exchanges
-are successful. Following successful exchanges, the position of each replica in
-the ordered list of state parameters changes. As a result, the nearest neighbors
-between whom exchanges are attempted changes after each exchange attempt.
-Prior to each exchange attempt, each replica must figure out where every replica
-resides in state space so they know how to carry out exchanges.
+\textbf{Exchanging State Parameters.} The most efficient way to carry out
+replica exchanges is to swap state parameters---an approach used in Amber for
+both T-REMD and pH-REMD. In this case, replicas typically differ by a term that
+modifies a potential energy function that is otherwise the same for each
+replica. In this instance, simulations are subject to a different thermodynamic
+constraint after exchanges are successful. Following successful exchanges, the
+position of each replica in the ordered list of state parameters changes. As a
+result, the nearest neighbors between whom exchanges are attempted changes after
+each exchange attempt.  Prior to each exchange attempt, each replica must figure
+out where every replica resides in state space so they know how to carry out
+exchanges.
 
 When exchanging state parameters, replicas typically need to exchange a minimal
 amount of information---their state parameter and a related conjugate property.
@@ -331,16 +330,14 @@ take advantage of the faster convergence accessible via rapid exchange attempts
 \cite{Sindhikara2008, Sindhikara2010} or Gibbs' sampling.
 \cite{Chodera_JChemPhys_2011_v135_p194110}
 
-\paragraph{Exchanging Coordinates and Momenta}
-
-The alternative to swapping state parameters between replicas is to swap
-coordinates and their conjugate momenta, which is logically equivalent to
-swapping full potential energy functions. It is significantly simpler---and
-requires far less communication between exchanging replicas to be fully
-general---than swapping the full potential energy function. It is for the added
-simplicity and reduced communication overhead that H-REMD is implemented in
-Amber by swapping coordinates and velocities (scaling the velocities if
-exchanging pairs have different temperatures).
+\textbf{Exchanging Coordinates and Momenta.} The alternative to swapping state
+parameters between replicas is to swap coordinates and their conjugate momenta,
+which is logically equivalent to swapping full potential energy functions. It is
+significantly simpler---and requires far less communication between exchanging
+replicas to be fully general---than swapping the full potential energy function.
+It is for the added simplicity and reduced communication overhead that H-REMD is
+implemented in Amber by swapping coordinates and velocities (scaling the
+velocities if exchanging pairs have different temperatures).
 \cite{Meng_JChemTheoryComput_2011_v7_p2721}
 
 Adding to the computational expense, however, is the need to either recompute or
@@ -400,7 +397,10 @@ illustrated in Fig. \ref{fig5:MultiDREMDExchg}.
 
 \begin{figure}
    \includegraphics[height=6.5in, angle=90]{MultiDREMDExchg.ps}
-   \caption{Communicator arrangement in multi-dimensional REMD simulations at
+   \caption[Communicator arrangement in multi-dimensional REMD simulations at
+            multiple exchange steps following some successful state parameter
+            exchanges.]
+           {Communicator arrangement in multi-dimensional REMD simulations at
             multiple exchange steps following some successful state parameter
             exchanges. The large numbers in the background are the (unchanging)
             thread numbers in the communicator linking the `master' threads of

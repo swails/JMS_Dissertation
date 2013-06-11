@@ -258,6 +258,7 @@ ignored. The GB code uses the exclusion list in the topology file.
 
 \subsection*{NONBONDED\_PARM\_INDEX}
 
+\sloppy
 This section contains the pointers for each pair of LJ atom types into the {\tt
 LENNARD\_JONES\_ACOEF} and {\tt LENNARD\_JONES\_BCOEF} arrays (see below). The
 pointer for an atom pair in this array is calculated from the LJ atom type index
@@ -318,8 +319,8 @@ contains an index into this array.
 \subsection*{BOND\_EQUIL\_VALUE}
 
 This section lists all of the bond equilibrium distances ($\vec{r}_{eq}$ in Eq.
-\ref{eqB:Bond}) in units of \AA for each unique bond type. This list is indexed
-the same way as {\tt BOND\_FORCE\_CONSTANT}.
+\ref{eqB:Bond}) in units of {\AA} for each unique bond type. This list is
+indexed the same way as {\tt BOND\_FORCE\_CONSTANT}.
 
 \noindent {\tt \%FORMAT(5E16.8)}
 
@@ -361,6 +362,7 @@ Torsion energies are calculated for each term according to the equation
    \label{eqB:Dihedral}
 \end{equation}
 
+\sloppy
 This section lists the torsion force constants ($k_{tor}$ in Eq.
 \ref{eqB:Dihedral}) in units of $kcal\, mol^{-1}$ for each unique torsion type.
 Each torsion in {\tt DIHEDRALS\_INC\_HYDROGEN} and {\tt
@@ -756,7 +758,7 @@ More info can be found online at http://ambermd.org/formats.html
 
 \begin{table}
    \caption{List of all of the perturbed topology file sections.}
-   \begin{tabular}{|c|c|c|c|}
+   \begin{tabular}{cccc}
       \hline
       FLAG name & {\tt \%FORMAT} & # of values & Description \\
       \hline
@@ -853,7 +855,7 @@ and the same data, but with a different Fortran format identifier.
 \begin{table*}
    \caption{List of flags that are common between Amber and chamber topology
             files, but have different {\tt FORMAT} identifiers.}
-   \begin{tabular}{|c|c|c|}
+   \begin{tabular}{ccc}
       \hline
       FLAG name & AMBER Format & chamber Format \\
       \hline
@@ -979,8 +981,9 @@ up in chamber topologies.
 \noindent There are $\left [ {\tt NTYPES} \times ( {\tt NTYPES} + 1 ) \right ] /
 2$ floating point numbers in this section.
 
-\subsection*{LENNARD\_JONES\_BCOEF}
+\subsection*{LENNARD\_JONES\_14\_BCOEF}
 
+\sloppy
 This section contains the LJ B-coefficients for 1-4 interactions. See
 {LENNARD\_JONES\_14\_ACOEF} above.
 
