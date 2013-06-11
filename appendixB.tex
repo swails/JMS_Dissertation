@@ -51,10 +51,9 @@ All names (\eg atom names, atom type names, and residue names) are limited to
 wide, left-justified. This means that names might not be space-delimited if any
 of the names have 4 characters.
 
-\paragraph{Requirements for prmtop parsers}
-
-Parsers, regardless of the language they are written in, should conform to a
-list of attributes to maximize the likelihood that they are parsed correctly.
+\textbf{Requirements for prmtop parsers.} Parsers, regardless of the language
+they are written in, should conform to a list of attributes to maximize the
+likelihood that they are parsed correctly.
 
 \begin{itemize}
    \item Parsers should expect that some 4-character fields (\eg atom or residue
@@ -70,10 +69,9 @@ list of attributes to maximize the likelihood that they are parsed correctly.
          is required.
 \end{itemize}
 
-\paragraph{Requirements for modifying {\tt SECTION}s}
-
-To minimize the impact of prmtop changes to existing, third-party parsers, the
-following conventions should be followed.
+\textbf{Requirements for modifying {\tt SECTION}s.} To minimize the impact of
+prmtop changes to existing, third-party parsers, the following conventions
+should be followed.
 
 \begin{itemize}
    \item Any new {\tt SECTION} should be added to the end of the topology file to

@@ -24,16 +24,14 @@ coordinates) that may be a more natural way to express certain problems. For
 instance, polar coordinates more naturally describe the mechanics of orbiting
 bodies than standard Euclidean space.
 
-\paragraph{Lagrangian Equation}
-
-The Lagrangian function, $L = K - V$, where $K$ is the kinetic energy and $V$ is
-the potential energy, satisfies the Lagrangian equation (Eq.
-\ref{eqA:Lagrangian}) for $m$ generalized coordinates ($q_m$). The advantage of
-Eq. \ref{eqA:Lagrangian} is that it is derived without any assumption of a
-specific coordinate system for $q_m$. Generalized velocities are the first
-time-derivative of the generalized coordinates, $\dot q_m$. These generalized
-velocities are used to define the kinetic energy in the familiar form $K = 1/2
-\dot q_m ^ 2$.
+\textbf{Lagrangian Equation.} The Lagrangian function, $L = K - V$, where $K$ is
+the kinetic energy and $V$ is the potential energy, satisfies the Lagrangian
+equation (Eq.  \ref{eqA:Lagrangian}) for $m$ generalized coordinates ($q_m$).
+The advantage of Eq. \ref{eqA:Lagrangian} is that it is derived without any
+assumption of a specific coordinate system for $q_m$. Generalized velocities are
+the first time-derivative of the generalized coordinates, $\dot q_m$. These
+generalized velocities are used to define the kinetic energy in the familiar
+form $K = 1/2 \dot q_m ^ 2$.
 
 Another advantage to the Lagrangian formulation of classical mechanics is that
 the equations are still valid when subject to constraints on the dynamics of the
@@ -55,18 +53,16 @@ q_m$ are the set of corresponding generalized velocities. When applying Eq.
 constraints, the familiar form of Newton's equations are recovered.
 \cite{CorbenClassicalMechanics}
 
-\paragraph{Hamiltonian Equation}
-
-The Hamiltonian formulation of classical mechanics builds on the strengths of
-the Lagrangian formulation and provides a deeper insight into the physical
-behavior of classical systems. Unlike the Lagrangian, the Hamiltonian is defined
-as the total energy of the system: $H = K + V$. The Lagrangian of the system,
-$L = K - V$, plays an important part in Hamilton's formulation. The degrees of
-freedom in Hamilton's equation (Eq. \ref{eqA:Hamiltonian}) are the generalized
-coordinates $q_m$ as defined in the Lagrangian, and their conjugate momenta,
-$p_m$. The generalized coordinates and momenta are said to be canonically
-conjugate because they obey the relationship given in Eq. \ref{eqA:Hamiltonian}.
-\cite{CorbenClassicalMechanics}
+\textbf{Hamiltonian Equation.} The Hamiltonian formulation of classical
+mechanics builds on the strengths of the Lagrangian formulation and provides a
+deeper insight into the physical behavior of classical systems. Unlike the
+Lagrangian, the Hamiltonian is defined as the total energy of the system: $H = K
++ V$. The Lagrangian of the system, $L = K - V$, plays an important part in
+Hamilton's formulation. The degrees of freedom in Hamilton's equation (Eq.
+\ref{eqA:Hamiltonian}) are the generalized coordinates $q_m$ as defined in the
+Lagrangian, and their conjugate momenta, $p_m$. The generalized coordinates and
+momenta are said to be canonically conjugate because they obey the relationship
+given in Eq. \ref{eqA:Hamiltonian}. \cite{CorbenClassicalMechanics}
 
 \begin{align}
    q_m & = \frac {\partial H} {\partial p_m} \nonumber \\
@@ -204,9 +200,7 @@ potentially lost when a small number is added to a difference of large numbers.
 velocities are handled, the leap-frog and velocity Verlet methods are discussed
 below.
 
-\paragraph{Velocity Verlet}
-
-In \citeyear{Swope_JChemPhys_1982_v76_p637},
+\textbf{Velocity Verlet.} In \citeyear{Swope_JChemPhys_1982_v76_p637},
 \citeauthor{Swope_JChemPhys_1982_v76_p637} developed a variant of the Verlet
 algorithm that sidesteps the potential roundoff errors and naturally stores
 positions, velocities, and accelerations at the same time. A Taylor series
@@ -239,12 +233,11 @@ The \emph{NAB} and \emph{mdgx} programs of the AmberTools 12 program suite (and
 earlier versions, where available), utilize the velocity Verlet algorithm for
 dynamics.
 
-\paragraph{Leap-frog}
-
-A common integrator used in MD simulations is the \emph{leap-frog} method,
-so-called because the computed velocities `leap' over the computed coordinates
-in a manner that will be explained shortly. The main dynamics engines in the
-Amber 12 program suite---pmemd and sander---use the leap-frog integrator.
+\textbf{Leap-frog.} A common integrator used in MD simulations is the
+\emph{leap-frog} method, so-called because the computed velocities `leap' over
+the computed coordinates in a manner that will be explained shortly. The main
+dynamics engines in the Amber 12 program suite---pmemd and sander---use the
+leap-frog integrator.
 
 While similar to the velocity Verlet approach, the leap-frog algorithm computes
 positions and accelerations of particles at integral time steps, but
