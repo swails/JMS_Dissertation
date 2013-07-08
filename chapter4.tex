@@ -59,11 +59,10 @@ dynamics is run in explicit solvent for 2 ps
 \cite{Machuqueiro_Proteins_2008_v72_p289}, after which a cycle of protonation
 state change attempts are evaluated using the Poisson-Boltzmann (PB) equation to
 treat solvation effects for every titratable residue and interacting titratable
-residue pair.  About \mbox{40 000} full cycles are attempted each time
-protonation state changes are attempted.
-\cite{Baptista_JPhysChemB_2001_v105_p293} Afterwards, the solute is held fixed
-while MD is propagated on the solvent to reorganize the solvent distribution to
-the new set of protonation states.
+residue pair.  About 40,000 full cycles are attempted each time protonation
+state changes are attempted. \cite{Baptista_JPhysChemB_2001_v105_p293}
+Afterwards, the solute is held fixed while MD is propagated on the solvent to
+reorganize the solvent distribution to the new set of protonation states.
 
 Implicit solvent models---in this case GB and PB---average over all solvent
 degrees of freedom, allowing such approaches to instantly incorporate the
@@ -571,9 +570,9 @@ The relaxation energies plotted in Fig. \ref{fig4:ntrelax_and_autocorr} begin to
 stabilize after 4 to 6 ps of relaxation dynamics, and the autocorrelation
 function indicates that the relaxation energies are uncorrelated from the point
 of the protonation state change. However, because 4 ps of MD---corresponding to
-\mbox{2 000} steps of dynamics with a 2 fs time step---adds dramatically to the
-cost of CpHMD simulations in explicit solvent, I explored the approximation of
-using a significantly smaller value for $\tau _ {rlx}$.
+2000 steps of dynamics with a 2 fs time step---adds dramatically to the cost of
+CpHMD simulations in explicit solvent, I explored the approximation of using a
+significantly smaller value for $\tau _ {rlx}$.
 
 Both the relaxation energies and autocorrelations drop very sharply at the start
 of the relaxation dynamics, so the majority of the benefit gained by relaxing
@@ -853,7 +852,7 @@ important to include in the proposed method.
            {Distance distribution functions calculated from HEWL simulations
             begun with crystal structure 1AKI for all snapshots in the ensemble
             at pH 1.0. The probability distributions were calculated using
-            \mbox{10 000} snapshots and smoothed using a gaussian kernel density
+            10,000 snapshots and smoothed using a gaussian kernel density
             estimate with a bandwidth of 0.1}
    \label{fig4:hewl_asparg_dist}
 \end{figure}

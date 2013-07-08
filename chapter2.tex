@@ -447,14 +447,13 @@ other hand, contain on the order of $10^{23}$ atoms---an intractable number for
 modern hardware, so our simulations must be scaled down to a microscopic size.
 
 As a demonstration, the hairpin ribozyme is a biomolecule that contains roughly
-\mbox{2 100} atoms. Adding only \mbox{22 000} water molecules---enough to create
-a 20 {\AA} spherical solvent buffer around the ribozyme---increases the
-simulation size to roughly \mbox{90 000} atoms. It is quite clear, therefore,
-that even on the largest supercomputers, we can only model a microscopic droplet
-in explicit solvent. At such small sizes, the ratio of surface area to volume
-for these minuscule droplets is astronomically large, and water molecules at the
-solvent-air interface behave quite differently from those molecules in bulk
-solvent.
+2100 atoms. Adding only 22,000 water molecules---enough to create a 20 {\AA}
+spherical solvent buffer around the ribozyme---increases the simulation size to
+roughly 90,000 atoms. It is quite clear, therefore, that even on the largest
+supercomputers, we can only model a microscopic droplet in explicit solvent. At
+such small sizes, the ratio of surface area to volume for these minuscule
+droplets is astronomically large, and water molecules at the solvent-air
+interface behave quite differently from those molecules in bulk solvent.
 
 While early approaches of applying a `cap' potential---an artificial biasing
 potential penalizing solvent that diffuses too far away from the solute---helped
@@ -871,7 +870,7 @@ delta function that serves to extract only those ensemble members that
 correspond to the specific point $\vec{x}_0$ on the PMF, and $A$ is the free
 energy along the PMF at that value. The unbiased probability distribution, which
 is directly related to the unbiased free energy up to an arbitrary constant, can
-be estimated according to \cite{Tuckerman_Book_StatMech_TheoryAndSim}
+be estimated according to
 \begin{equation*}
    \pi_{unbias}(\vec{x}) = \exp\left(-\beta(A_{bias}-A_{unbias}) \right)
                   \exp\left[\beta\left(\frac 1 2 k_{umb}(f(\vec{x})-s)^2 \right)
