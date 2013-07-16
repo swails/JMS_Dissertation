@@ -250,7 +250,7 @@ molecules with an arbitrary size and shape.
 \cite{Still_JAmChemSoc_1990_v112_p6127, Qiu_JPhysChemA_1997_v101_p3005,
 Onufriev_JPhysChemB_2000_v104_p3712, Bashford_AnnuRevPhysChem_2000_v51_p129,
 Onufriev_JComputChem_2002_v23_p1297}
-\citeauthor{Still_JAmChemSoc_1990_v112_p6127} was the first to propose the
+\citeauthor{Still_JAmChemSoc_1990_v112_p6127} were the first to propose the
 method, adjusting the Born equation (Eq. \ref{eq2:Born}) as shown below.
 \cite{Still_JAmChemSoc_1990_v112_p6127}
 \begin{equation}
@@ -528,7 +528,7 @@ Saito_JChemPhys_1994_v101_p4055, Auffinger_ChemPhysLett_1995_v234_p413,
 Cheatham_JAmChemSoc_1995_v117_p4193, Feller_JPhysChem_1996_v100_p17011,
 Patra_BiophysJ_2003_v84_p3636} This effect is particularly pronounced for
 electrostatic interactions---a very long-range potential of the form $1/r$. As
-mentioned before, this function decays so slowly that $\sum_{i=1}^{\infty} 1/r =
+mentioned before, this function decays so slowly that $\sum_{i=1}^{\infty} 1/i =
 \infty$.  Two monovalent ions must be separated by $\sim$332 {\AA} before their
 interaction energy drops to 1 kcal/mol. Such a cutoff would require a unit cell
 size at least 664 {\AA} on each edge containing $\sim$10\super{7} water
@@ -714,10 +714,9 @@ For many years, the efficiency of the central processing unit (CPU), typically
 measured in the speed with which it executes each operation (\ie clock speed),
 improved as engineers were able to shrink the size of the transistors and place
 increasingly more of these transistors onto each CPU die. Recently, however, the
-laws of physics---such as the wavelength of light used in the photo-exposure of
-the chip's design pattern---began to impede the rate at which these transistors
-could be shrunk. In turn, this limited the gains in clock speed, driving chip
-manufacturers to increase the computational power of these CPUs by simply adding
+power requirements to increase the clock speed caused chips to melt since the
+the heat generated could not be dissipated quickly enough. This drove chip
+manufacturers to increase the computational power of these CPUs by adding
 additional cores. To take advantage of this form of improved CPU efficiency,
 computational algorithms must be designed to run in parallel. It turns out that
 due to the non-local nature of the FFT and the algorithmic details of its
@@ -1116,7 +1115,7 @@ two states. A linear switching function, with
    f(\lambda) & = \lambda \\
    g(\lambda) & = 1 - \lambda
 \end{eqnarray*}
-is commonly used due to their simplicity. Because the scaling parameter
+is commonly used due to its simplicity. Because the scaling parameter
 $\lambda$ is continuous and can be made to vary infinitely slowly, sampling done
 at the intermediate states (\ie $0 < \lambda < 1$) are always at equilibrium.
 The total free energy, then, can be calculated via the integral shown in Eq.
@@ -1325,19 +1324,19 @@ system.
    \label{fig2:MMPBSA}
 \end{figure}
 
-The principle computational cost of an MM-PBSA calculation is due to the initial
+The principal computational cost of an MM-PBSA calculation is due to the initial
 simulations required to construct each ensemble. To reduce the cost of computing
 binding free energies with MM-PBSA, all three ensembles mentioned above can be
 extracted from a single simulation of the bound complex, a technique referred to
 as the \emph{single trajectory protocol}. \cite{MMPBSApy} This approach will
 always underestimate the binding free energy (predicting overly-stable binding),
 since the bound states of the receptor and ligand will always be less stable in
-the bound conformation than they are free in solution. However, when making the
-same approximation for a family of related receptors and ligands, the systematic
-errors in each end-state calculation will be similar. Therefore, MM-PBSA methods
-can be useful for tasks like rank-ordering a handful of proposed inhibitors for
-a specific enzyme by calculating accurate relative binding free energies.
-\cite{Homeyer2012}
+the bound conformation than they are when free in solution. However, when making
+the same approximation for a family of related receptors and ligands, the
+systematic errors in each end-state calculation will be similar. Therefore,
+MM-PBSA methods can be useful for tasks like rank-ordering a handful of proposed
+inhibitors for a specific enzyme by calculating accurate relative binding free
+energies. \cite{Homeyer2012}
 
 \subsubsection{LIE}
 

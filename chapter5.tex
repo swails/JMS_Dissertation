@@ -213,7 +213,7 @@ As the architecture of modern computers continues its push into massive
 parallelization, highly scalable techniques such as REMD become increasingly
 cost-efficient methods in the field of computational chemistry. While we have
 seen that REMD simulations, in general, enhance sampling by expanding our
-original ensemble though state space (\eg temperature space, Hamiltonian space,
+original ensemble through state space (\eg temperature space, Hamiltonian space,
 etc.), different variants of REMD bestow different advantages on the simulation.
 For instance, T-REMD enhances conformational sampling by flattening the free
 energy surface, pH-REMD enhances sampling by allowing simulations to dodge free
@@ -334,11 +334,12 @@ take advantage of the faster convergence accessible via rapid exchange attempts
 parameters between replicas is to swap coordinates and their conjugate momenta,
 which is logically equivalent to swapping full potential energy functions. It is
 significantly simpler---and requires far less communication between exchanging
-replicas to be fully general---than swapping the full potential energy function.
-It is for the added simplicity and reduced communication overhead that H-REMD is
-implemented in Amber by swapping coordinates and velocities (scaling the
-velocities if exchanging pairs have different temperatures).
-\cite{Meng_JChemTheoryComput_2011_v7_p2721}
+replicas to be fully general---than swapping the full potential energy function
+(which potentially includes particle charges, masses, pairwise Lennard-Jones
+parameters, restraints, etc.).  It is for the added simplicity and reduced
+communication overhead that H-REMD is implemented in Amber by swapping
+coordinates and velocities (scaling the velocities if exchanging pairs have
+different temperatures). \cite{Meng_JChemTheoryComput_2011_v7_p2721}
 
 Adding to the computational expense, however, is the need to either recompute or
 exchange the full pairlist of each replica. Either choice is quite expensive
@@ -379,9 +380,9 @@ communicators provide a simple and efficient way of programmatically separating
 threads into different groups, we take advantage of this feature when organizing
 the workload in MPI programs. Intra-replica communication---which allows a
 single replica to be run using multiple processors---is handled by a dedicated
-replica communicator. The arbitrarily designated `first' thread---or
-\emph{master}---of all replicas are assigned to separate communicators for
-sending all data pertinent to carrying out replica exchange attempts.
+replica communicator. An arbitrarily designated \emph{master} thread of each
+replica is assigned to separate communicators for communicating all data
+pertinent to carrying out replica exchange attempts.
 
 In typical REMD simulations involving only a single state parameter, the REMD
 communicator is simply a communicator that links all replica masters. In
