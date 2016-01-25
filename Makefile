@@ -24,7 +24,7 @@ paper: clean bib
 	-bibtex $(PAPER)
 	-yes s | pdflatex $(PAPER).tex
 	-yes s | pdflatex $(PAPER).tex
-	-dvipdfmx $(PAPER).dvi
+	dvipdfmx $(PAPER).dvi
 
 bib::
 	-/bin/rm -f $(PAPER).bib
